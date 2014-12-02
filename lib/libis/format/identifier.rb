@@ -4,6 +4,7 @@ require 'singleton'
 require 'csv'
 
 require 'LIBIS_Tools'
+require 'libis/tools/extend/string'
 
 require_relative 'mime_type'
 
@@ -80,7 +81,7 @@ module LIBIS
         if fido_result && fido_result[0] == 'OK'
           format = fido_result[2]
           mimetype = fido_result[7]
-          mimetype = ::LIBIS::Tools::Format::MimeType.puid_to_mime(format) if mimetype == 'None'
+          mimetype = ::LIBIS::Format::MimeType.puid_to_mime(format) if mimetype == 'None'
           #info "Fido MIME-type: #{mimetype} (PRONOM UID: #{format})"
           result = {mimetype: mimetype, puid: format} unless BAD_MIMETYPES.include? mimetype
         end

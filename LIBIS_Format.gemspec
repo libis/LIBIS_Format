@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'libis/format/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'LIBIS_Services'
+  spec.name          = 'LIBIS_Format'
   spec.version       = LIBIS::Format::VERSION
   spec.authors       = ['Kris Dekeyser']
   spec.email         = ['kris.dekeyser@libis.be']
