@@ -8,6 +8,16 @@ module LIBIS
 
       class ArchiveConverter < Base
 
+        protected
+
+        def init(source)
+          puts "Initializing #{self.class} with '#{source}'"
+        end
+
+        def do_convert(target, format)
+          puts "#{self.class}::do_convert(#{target},#{format}) not implemented yet."
+        end
+
         private
 
         INPUT_TYPES = [:EAD]
@@ -21,14 +31,6 @@ module LIBIS
 
         def self.output_types
           OUTPUT_TYPES
-        end
-
-        def init(source)
-          puts "Initializing #{self.class} with '#{source}'"
-        end
-
-        def do_convert(target, format)
-          puts "#{self.class}::do_convert(#{target},#{format}) not implemented yet."
         end
 
       end

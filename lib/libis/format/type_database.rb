@@ -8,8 +8,8 @@ module LIBIS
     class TypeDatabase
       include Singleton
 
-      def self.type2media(t)
-        self.instance.type2media_map[t]
+      def self.type2group(t)
+        self.instance.type2group_map[t]
       end
 
       def self.type2mime(t)
@@ -20,9 +20,9 @@ module LIBIS
         self.instance.type2ext_map[t].first
       end
 
-      def self.media2type(media)
-        self.instance.type2media_map.select do |_, v|
-          v == media
+      def self.group2type(group)
+        self.instance.type2group_map.select do |_, v|
+          v == group
         end.keys
       end
 
@@ -33,8 +33,8 @@ module LIBIS
         nil
       end
 
-      def self.mime2media(mime)
-        type2media(mime2type(mime))
+      def self.mime2group(mime)
+        type2group(mime2type(mime))
       end
 
       def self.ext2type(ext)
@@ -45,25 +45,25 @@ module LIBIS
       end
 
       def self.known_mime?(mime)
-        self.instance.type2mime_map.each do |t, m|
+        self.instance.type2mime_map.each do |_, m|
           return true if m.include? mime
         end
         false
       end
 
-      attr_reader :type2media_map, :type2mime_map, :type2ext_map, :types
+      attr_reader :type2group_map, :type2mime_map, :type2ext_map, :types
 
       private
 
       def initialize
-        @type2media_map = {}
+        @type2group_map = {}
         @type2mime_map = {}
         @type2ext_map = {}
         @types = Set.new
-        CONFIG.each do |media, type_info|
+        CONFIG.each do |group, type_info|
           type_info.each do |type, info|
             @types.add type
-            @type2media_map[type] = media
+            @type2group_map[type] = group
             @type2mime_map[type] = info[:MIME].split(',')
             @type2ext_map[type] = info[:EXTENSIONS].split(',')
           end

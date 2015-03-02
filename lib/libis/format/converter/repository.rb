@@ -92,7 +92,7 @@ module LIBIS
           get_converters.each do |converter|
             next unless converter.input_type? src_type
             converter.output_types(src_type).each do |tmp_type|
-              # would like to enable the following for optimalizationn, but some operation may require such a step
+              # would like to enable the following for optimalization, but some operation may require such a step
               # next if tmp_type == src_type
               # next if current_chain.any? { |c| c[:target] == tmp_type}
               recursive_chain(tmp_type, tgt_type, operations, chains_found,

@@ -8,6 +8,16 @@ module LIBIS
 
       class AudioConverter < Base
 
+        protected
+
+        def init(source)
+          puts "Initializing #{self.class} with '#{source}'"
+        end
+
+        def do_convert(target, format)
+          puts "#{self.class}::do_convert(#{target},#{format}) not implemented yet."
+        end
+
         private
 
         TYPES = [:WAV, :MP3, :FLAC, :OGG]
@@ -20,14 +30,6 @@ module LIBIS
 
         def self.output_types
           TYPES
-        end
-
-        def init(source)
-          puts "Initializing #{self.class} with '#{source}'"
-        end
-
-        def do_convert(target, format)
-          puts "#{self.class}::do_convert(#{target},#{format}) not implemented yet."
         end
 
       end

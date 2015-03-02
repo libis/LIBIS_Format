@@ -41,6 +41,32 @@ module LIBIS
 
         end
 
+        private
+
+        INPUT_TYPES = [
+            :TXT,
+            :RTF,
+            :HTML,
+            :MSDOC,
+            :MSXLS,
+            :MSPPT,
+            :MSDOCX,
+            :MSXLSX,
+            :MSPPTX,
+            :WORDPERFECT
+        ]
+        OUTPUT_TYPES = [:PDF]
+
+        protected
+
+        def self.input_types
+          INPUT_TYPES
+        end
+
+        def self.output_types
+          OUTPUT_TYPES
+        end
+
       end
     end
   end

@@ -77,7 +77,7 @@ module LIBIS
             cmd = 'gs -dPDFA -dBATCH -dNOPAUSE -dNOOUTERSAVE -dUseCIEColor -sProcessColorModel=DeviceCMYK -sDEVICE=pdfwrite'
             cmd += ' -dPDFACompatibilityPolicy=1'
             cmd += " -sOutputFile=#{target}"
-            cmd += " #{File.absolute_path(File.join(File.dirname(__FILE__),'..','..','..','..','..','data','PDFA_def.ps'))}"
+            cmd += " #{File.absolute_path(File.join(File.dirname(__FILE__),'..','..','..','..','data','PDFA_def.ps'))}"
             cmd += " #{@source}"
 
             debug "Converting PDF to PDFA using: '#{cmd}'"
@@ -87,6 +87,21 @@ module LIBIS
 
 
           result
+        end
+
+        private
+
+        INPUT_TYPES = [:PDF]
+        OUTPUT_TYPES = [:PDF, :PDFA]
+
+        protected
+
+        def self.input_types
+          INPUT_TYPES
+        end
+
+        def self.output_types
+          OUTPUT_TYPES
         end
 
       end

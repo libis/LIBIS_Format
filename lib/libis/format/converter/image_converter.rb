@@ -8,21 +8,55 @@ module LIBIS
 
       class ImageConverter < Base
 
-        private
+        public
 
-        TYPES = [:TIFF, :JPEG, :PNG, :BMP, :GIF]
-        INPUT_TYPES = [:JPEG2000, :PDF]
-        OUTPUT_TYPES = [:JPEG2000]
+        def initialized?
+          !@source.nil?
+        end
+
+        def scale(percent)
+          options[:scale] = percent
+        end
+
+        def resize(geometry)
+          options[:resize] = geometry
+        end
+
+        def quality(value)
+          options[:quality] = value
+        end
+
+        def dpi(value)
+          options[:density] = value
+        end
+
+        def resample(value)
+          options[:density] = value
+        end
+
+        def flatten(value)
+          flags[:flatten] = value
+        end
+
+        def colorspace(value)
+          options[:colorspace] = value
+        end
+
+        def watermark(options = {})
+          watermark_info = options[:watermark_info]
+          watermark_file = options[:watermark_file]
+          watermark_image = watermark_info
+          unless watermark_image and File.exist? watermark_image
+            watermark_image = watermark_file + '.png'
+          end
+          unless File.exist?(watermark_image)
+            watermark_info = '© LIBIS' if watermark_info.nil?
+            `#{ConfigFile['dtl_base']}/#{ConfigFile['dtl_bin_dir']}/create_watermark.sh '#{watermark_image}' '#{watermark_info}'`
+          end
+          @wm_image = watermark_image
+        end
 
         protected
-
-        def self.input_types
-          TYPES + INPUT_TYPES
-        end
-
-        def self.output_types
-          TYPES + OUTPUT_TYPES
-        end
 
         attr_accessor :wm_image, :source
 
@@ -84,54 +118,21 @@ module LIBIS
 
         end
 
-        public
+        private
 
-        def initialized?
-          !@source.nil?
+        TYPES = [:TIFF, :JPEG, :PNG, :BMP, :GIF]
+        INPUT_TYPES = [:JPEG2000, :PDF]
+        OUTPUT_TYPES = [:JPEG2000]
+
+        protected
+
+        def self.input_types
+          TYPES + INPUT_TYPES
         end
 
-        def scale(percent)
-          options[:scale] = percent
+        def self.output_types
+          TYPES + OUTPUT_TYPES
         end
-
-        def resize(geometry)
-          options[:resize] = geometry
-        end
-
-        def quality(value)
-          options[:quality] = value
-        end
-
-        def dpi(value)
-          options[:density] = value
-        end
-
-        def resample(value)
-          options[:density] = value
-        end
-
-        def flatten(value)
-          flags[:flatten] = value
-        end
-
-        def colorspace(value)
-          options[:colorspace] = value
-        end
-
-        def watermark(options = {})
-          watermark_info = options[:watermark_info]
-          watermark_file = options[:watermark_file]
-          watermark_image = watermark_info
-          unless watermark_image and File.exist? watermark_image
-            watermark_image = watermark_file + '.png'
-          end
-          unless File.exist?(watermark_image)
-            watermark_info = '© LIBIS' if watermark_info.nil?
-            `#{ConfigFile['dtl_base']}/#{ConfigFile['dtl_bin_dir']}/create_watermark.sh '#{watermark_image}' '#{watermark_info}'`
-          end
-          @wm_image = watermark_image
-        end
-
 
       end
     end
