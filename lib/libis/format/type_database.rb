@@ -83,7 +83,7 @@ module LIBIS
           IMAGE: {# Image types
                   TIFF: {
                       MIME: 'image/tiff',
-                      EXTENSIONS: %w(tif tiff)
+                      EXTENSIONS: 'tif,tiff'
                   },
                   JPEG2000: {
                       MIME: 'image/jp2',
