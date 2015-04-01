@@ -136,6 +136,7 @@ module Libis
         fido = ::Libis::Tools::Command.run(cmd, *args)
         keys = [:status, :time, :puid, :format_name, :signature_name, :filesize, :filename, :mimetype, :matchtype]
         fido_output = CSV.parse(fido[:out].join("\n")).map { |a| Hash[keys.zip(a)] }
+        debug "Fido errors: #{fido[:err]}"
         debug "Fido output: #{fido_output.to_s}"
         fido_output.each do |x|
           if x[:status] == 'OK'
@@ -156,7 +157,7 @@ module Libis
             fido_results << x
           end
         end
-
+        return result if fido_results.size == 0
         fido_results = fido_results.sort { |a, b| a[:score] <=> b[:score] }
         result.merge fido_results.last
         result[:method] = 'fido'
