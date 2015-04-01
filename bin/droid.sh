@@ -132,7 +132,7 @@ BASEDIR=$(dirname $0)
 
 # Run the command line or user interface version with the options:
 if [ $# -gt 0 ]; then
-    java $OPTIONS -jar $BASEDIR/droid-command-line-6.1.5.jar "$@"
+    java $OPTIONS -jar $BASEDIR/droid/droid-command-line-6.1.5.jar "$@"
 else
-    java $OPTIONS -jar $BASEDIR/droid-ui-6.1.5.jar
+    java $OPTIONS -jar $BASEDIR/droid/droid-ui-6.1.5.jar
 fi

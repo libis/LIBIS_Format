@@ -131,6 +131,8 @@ REM Run DROID:
 REM ==========
 :RunDROID
 
+SET BASEDIR=%~dp0
+
 REM ECHO Running DROID with the following options: %DROIDOPTIONS%
 
 REM Choose whether to run the command line or gui version of DROID:
@@ -138,13 +140,13 @@ IF "%1"=="" GOTO NOPARAM
 
 :PARAM
 REM has command line parameters passed - run command line version:
-java %DROIDOPTIONS% -jar droid-command-line-6.1.5.jar %*
+java %DROIDOPTIONS% -jar %BASEDIR%\droid-command-line-6.1.5.jar %*
 
 GOTO end
 
 :NOPARAM
 REM no command line parameters passed - run GUI version:
-start javaw %DROIDOPTIONS% -jar droid-ui-6.1.5.jar
+start javaw %DROIDOPTIONS% -jar %BASEDIR%\droid\droid-ui-6.1.5.jar
 
 :END
 

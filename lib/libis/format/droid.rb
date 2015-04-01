@@ -11,7 +11,7 @@ module Libis
     class Droid
 
       def self.run(file)
-        droid_dir = File.join(File.dirname(__FILE__), '..','..','..','bin','droid')
+        droid_dir = File.join(File.dirname(__FILE__), '..','..','..','bin')
         droid_cmd = File.join(droid_dir, OS.windows? ? 'droid.bat' : 'droid.sh')
         profile = File.join Dir.tmpdir, Dir::Tmpname.make_tmpname(%w'droid .profile', nil)
         report = File.join Dir.tmpdir, Dir::Tmpname.make_tmpname(%w'droid .csv', nil)
