@@ -158,7 +158,7 @@ module Libis
         end
 
         fido_results = fido_results.sort { |a, b| a[:score] <=> b[:score] }
-        result = fido_results.last
+        result.merge fido_results.last
         result[:method] = 'fido'
 
         debug "Fido MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})" unless result.empty?
