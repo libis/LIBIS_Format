@@ -1,0 +1,12 @@
+TESTMEDIUM:
+  TESTDATA:
+    NAME: Test data format
+    MIME: test/data, application/test/data
+    PUID: test-fmt/001 spec-fmt/101
+    EXTENSIONS: dat data
+
+  TESTSPEC:
+    NEW: Test specification format
+    MIME: test/spec application/test/spec
+    PUID: test-fmt/002 spec-fmt/102
+    EXTENSIONS: spc,spec

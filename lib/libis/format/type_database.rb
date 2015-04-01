@@ -1,235 +1,168 @@
 # coding: utf-8
 
 require 'singleton'
+require 'yaml'
 
-module LIBIS
+require 'backports/rails/hash'
+require 'libis/tools/logger'
+require 'libis/tools/extend/string'
+
+module Libis
   module Format
 
     class TypeDatabase
       include Singleton
+      include ::Libis::Tools::Logger
 
-      def self.type2group(t)
-        self.instance.type2group_map[t]
+      def self.typeinfo(t)
+        self.instance.types[t] || {}
       end
 
-      def self.type2mime(t)
-        self.instance.type2mime_map[t].first
+      def self.enrich(info, map_keys = {})
+        return {} unless info.is_a? Hash
+        mapper = Hash.new {|hash,key| hash[key] = key}
+        mapper.merge! map_keys
+        unless (puid = info[mapper[:PUID]]).blank?
+          info[mapper[:TYPE]] ||= self.puid_infos(puid).first[:TYPE] rescue nil
+        end
+        unless (mime = info[mapper[:MIME]]).blank?
+          info[mapper[:TYPE]] ||= self.mime_infos(mime).first[:TYPE] rescue nil
+        end
+        unless (type_name = info[mapper[:TYPE]]).nil?
+          info[mapper[:MIME]] = self.type_mimetypes(type_name).first if info[mapper[:MIME]].blank?
+          info[mapper[:PUID]] = self.type_puids(type_name).first if info[mapper[:PUID]].blank?
+          info[mapper[:EXTENSIONS]] = self.type_extentions(type_name)
+          info[mapper[:GROUP]] = self.type_group(type_name)
+        end
+        info
       end
 
-      def self.type2ext(t)
-        self.instance.type2ext_map[t].first
+      def self.type_group(t)
+        typeinfo(t)[:GROUP]
       end
 
-      def self.group2type(group)
-        self.instance.type2group_map.select do |_, v|
-          v == group
+      def self.type_mimetypes(t)
+        typeinfo(t)[:MIME] || []
+      end
+
+      def self.type_puids(t)
+        typeinfo(t)[:PUID] || []
+      end
+
+      def self.type_extentions(t)
+        typeinfo(t)[:EXTENSIONS] || []
+      end
+
+      def self.group_types(group)
+        self.instance.types.select do |_, v|
+          v[:GROUP] == group.to_sym
         end.keys
       end
 
-      def self.mime2type(mime)
-        self.instance.type2mime_map.each do |t, m|
-          return t if m.include? mime
+      def self.puid_infos(puid)
+        self.instance.types.select do |_, v|
+          v[:PUID].include? puid rescue false
+        end.values
+      end
+
+      def self.puid_types(puid)
+        self.instance.types.select do |_, v|
+          v[:PUID].include? puid rescue false
+        end.keys
+      end
+
+      def self.puid_groups(puid)
+        puid_types(puid).map do |t|
+          type_group t
         end
-        nil
       end
 
-      def self.mime2group(mime)
-        type2group(mime2type(mime))
+      def self.mime_infos(mime)
+        self.instance.types.select do |_, v|
+          v[:MIME].include? mime rescue false
+        end.values
       end
 
-      def self.ext2type(ext)
-        self.instance.type2ext_map.each do |k, v|
-          return k if v.include? ext
+      def self.mime_types(mime)
+        self.instance.types.select do |_, v|
+          v[:MIME].include? mime rescue false
+        end.keys
+      end
+
+      def self.mime_groups(mime)
+        mime_types(mime).map do |t|
+          type_group t
+        end
+      end
+
+      def self.ext_infos(ext)
+        ext = ext.gsub /^\./, ''
+        self.instance.types.select do |_, v|
+          v[:EXTENSIONS].include?(ext) rescue false
+        end.values
+      end
+
+      def self.ext_types(ext)
+        ext = ext.gsub /^\./, ''
+        self.instance.types.select do |_, v|
+          v[:EXTENSIONS].include?(ext) rescue false
+        end.keys
+      end
+
+      def self.puid_typeinfo(puid)
+        self.instance.types.each do |_, v|
+          return v if v[:PUID] and v[:PUID].include?(puid)
         end
         nil
       end
 
       def self.known_mime?(mime)
-        self.instance.type2mime_map.each do |_, m|
-          return true if m.include? mime
+        self.instance.types.each do |_, v|
+          return true if v[:MIME].include? mime
         end
         false
       end
 
-      attr_reader :type2group_map, :type2mime_map, :type2ext_map, :types
+      attr_reader :types
 
-      private
-
-      def initialize
-        @type2group_map = {}
-        @type2mime_map = {}
-        @type2ext_map = {}
-        @types = Set.new
-        CONFIG.each do |group, type_info|
-          type_info.each do |type, info|
-            @types.add type
-            @type2group_map[type] = group
-            @type2mime_map[type] = info[:MIME].split(',')
-            @type2ext_map[type] = info[:EXTENSIONS].split(',')
+      def load_types(file_or_hash = {}, append = true)
+        hash = file_or_hash.is_a?(Hash) ? file_or_hash : YAML::load_file(file_or_hash)
+        # noinspection RubyResolve
+        hash.each do |group, type_info|
+          type_info.each do |type_name, info|
+            type_key = type_name.to_sym
+            info.symbolize_keys!
+            info[:TYPE] = type_key
+            info[:GROUP] = group.to_sym
+            info[:MIME] = info[:MIME].strip.split(/[\s,]+/).map { |v| v.strip } rescue []
+            info[:EXTENSIONS] = info[:EXTENSIONS].strip.split(/[\s,]+/).map { |v| v.strip } rescue []
+            info[:PUID] = info[:PUID].strip.split(/[\s,]+/).map { |v| v.strip } if info[:PUID]
+            if @types.has_key?(type_key)
+              warn 'Type %s already defined; merging with info from %s.', type_name.to_s, file_or_hash
+              info.merge!(@types[type_key]) do |_,v_new,v_old|
+                case v_old
+                  when Array
+                    append ? v_old + v_new : v_new + v_old
+                  when Hash
+                    append ? v_new.merge(v_old) : v_old.merge(v_new)
+                  else
+                    append ? v_old : v_new
+                end
+              end
+            end
+            @types[type_key] = info
           end
         end
       end
 
-      CONFIG = {
+      protected
 
-          # This lists all the types the converters know about along with the mime types and file extensions.
-          # The first file extension in the list is the default one that will be used when a file of that type is created.
-          # The mime types need to be unique. Some mime types need to be 'invented' like for instance for PDF/A. The MimeType
-          # class should take care of that.
-          # Preferably the file extensions are unique too. If not, the first matching entry in the list will be used when a
-          # reverse lookup from extension to type identifier is performed. However, file extensions will typically not be used
-          # to determine type identifier or mime types. So you should be fairly safe when the file extensions are not unique.
-
-          IMAGE: {# Image types
-                  TIFF: {
-                      MIME: 'image/tiff',
-                      EXTENSIONS: 'tif,tiff'
-                  },
-                  JPEG2000: {
-                      MIME: 'image/jp2',
-                      EXTENSIONS: 'jp2,jpg2'
-                  },
-                  JPEG: {
-                      MIME: 'image/jpeg',
-                      EXTENSIONS: 'jpg,jpe,jpeg'
-                  },
-                  PNG: {
-                      MIME: 'image/png',
-                      EXTENSIONS: 'png'
-                  },
-                  BMP: {
-                      MIME: 'image/bmp,image/x-ms-bmp',
-                      EXTENSIONS: 'bmp'
-                  },
-                  GIF: {
-                      MIME: 'image/gif',
-                      EXTENSIONS: 'gif'}
-          },
-          AUDIO: {# Audio types
-                  WAV: {
-                      MIME: 'audio/x-wav',
-                      EXTENSIONS: 'wav'
-                  },
-                  MP3: {
-                      MIME: 'audio/mpeg',
-                      EXTENSIONS: 'mp3'
-                  },
-                  FLAC: {
-                      MIME: 'audio/flac',
-                      EXTENSIONS: 'flac'
-                  },
-                  OGG: {
-                      MIME: 'audio/ogg',
-                      EXTENSIONS: 'ogg'
-                  }
-          },
-          VIDEO: {# Video types
-                  MPEG: {
-                      MIME: 'video/mpeg',
-                      EXTENSIONS: 'mpg,mpeg,mpa,mpe,mpv2'
-                  },
-                  MPEG4: {
-                      MIME: 'video/mp4',
-                      EXTENSIONS: 'mp4,mpeg4'
-                  },
-                  MJPEG2000: {
-                      MIME: 'video/jpeg2000',
-                      EXTENSIONS: 'mjp2'
-                  },
-                  QUICKTIME: {
-                      MIME: 'video/quicktime',
-                      EXTENSIONS: 'qt,mov'
-                  },
-                  AVI: {
-                      MIME: 'video/x-msvideo',
-                      EXTENSIONS: 'avi'
-                  },
-                  OGGV: {
-                      MIME: 'video/ogg',
-                      EXTENSIONS: 'ogv'
-                  },
-                  WMV: {
-                      MIME: 'video/x-ms-wmv',
-                      EXTENSIONS: 'wmv'},
-                  DV: {
-                      MIME: 'video/dv',
-                      EXTENSIONS: 'dv'
-                  },
-                  FLASH: {
-                      MIME: 'video/x-flv',
-                      EXTENSIONS: 'flv'
-                  }
-          },
-          DOCUMENT: {# Office document types
-                     TXT: {
-                         MIME: 'text/plain',
-                         EXTENSIONS: 'txt'
-                     },
-                     RTF: {
-                         MIME: 'text/rtf,application/msword',
-                         EXTENSIONS: 'rtf'
-                     },
-                     HTML: {
-                         MIME: 'text/html',
-                         EXTENSIONS: 'html, htm'
-                     },
-                     MSDOC: {
-                         MIME: 'application/vnd.ms-word,application/msword',
-                         EXTENSIONS: 'doc'
-                     },
-                     MSDOCX: {
-                         PUID: 'fido-fmt/189.word',
-                         MIME: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                         EXTENSIONS: 'docx'
-                     },
-                     MSXLS: {
-                         MIME: 'application/vnd.ms-excel,application/msexcel',
-                         EXTENSIONS: 'xls'
-                     },
-                     MSXLSX: {
-                         PUID: 'fido-fmt/189.xl',
-                         MIME: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                         EXTENSIONS: 'xslx'
-                     },
-                     MSPPT: {
-                         MIME: 'application/vnd.ms-powerpoint,application/mspowerpoint',
-                         EXTENSIONS: 'ppt'
-                     },
-                     MSPPTX: {
-                         PUID: 'fido-fmt/189.ppt',
-                         MIME: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                         EXTENSIONS: 'pptx'
-                     },
-                     PDF: {
-                         MIME: 'application/pdf',
-                         EXTENSIONS: 'pdf'
-                     },
-                     PDFA: {
-                         PUID: 'fmt/95',
-                         MIME: 'application/pdfa', # Note the invented mime type here. It requires implementation in the MimeType class.
-                         EXTENSIONS: 'pdf'
-                     },
-                     WORDPERFECT: {
-                         PUID: 'x-fmt/44',
-                         MIME: 'application/vnd.wordperfect',
-                         EXTENSIONS: 'wpd'
-                     },
-                     XML: {
-                         MIME: 'text/xml',
-                         EXTENSIONS: 'xml'
-                     },
-                     SHAREPOINT_MAP: {
-                         MIME: 'text/xml/sharepoint_map',
-                         EXTENSIONS: 'xml'
-                     }
-          },
-          ARCHIVE: {# Archive types
-                    EAD: {
-                        MIME: 'archive/ead', # This is again an invented mime type. It's actually an XML ...
-                        EXTENSIONS: 'ead,xml'
-                    }
-          }
-      }
+      def initialize
+        @types = Hash.new
+        data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
+        type_database = File.join(data_dir, 'types.yml')
+        load_types(type_database)
+      end
 
     end
 

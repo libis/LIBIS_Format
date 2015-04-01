@@ -1,0 +1,213 @@
+---
+# This lists all the types the converters know about along with the mime types and file extensions.
+# The first file extension in the list is the default one that will be used when a file of that type is created.
+# The mime types need to be unique. Some mime types need to be invented like for instance for PDF/A. The MimeType
+# class should take care of that.
+# Preferably the file extensions are unique too. If not, the first matching entry in the list will be used when a
+# reverse lookup from extension to type identifier is performed. However, file extensions will typically not be used
+# to determine type identifier or mime types. So you should be fairly safe when the file extensions are not unique.
+
+IMAGE:
+  TIFF:
+    NAME: Tagged Image File Format (TIFF)
+    MIME: image/tiff
+    EXTENSIONS: tif,tiff
+
+  JPEG2000:
+    NAME: Joint Photographic Experts Group 2000 (JPEG 2000)
+    MIME: image/jp2
+    EXTENSIONS: jp2
+
+  JPEG:
+    NAME: Joint Photographic Experts Group (JPEG)
+    MIME: image/jpeg
+    EXTENSIONS: jpg,jpe,jpeg
+
+  PNG:
+    NAME: Portable Network Graphics (PNG)
+    MIME: image/png
+    EXTENSIONS: png
+
+  BMP:
+    NAME: Device Independent Bitmap (DIP/BMP)
+    MIME: image/bmp,image/x-ms-bmp
+    EXTENSIONS: bmp
+
+  GIF:
+    NAME: Graphics Interchange Format (GIF)
+    MIME: image/gif
+    EXTENSIONS: gif
+
+  PBM:
+    NAME: Portable Bitmap Format (PBM)
+    PUID: fmt/409
+    MIME: image/x‑portable‑bitmap
+    EXTENSIONS: pbm
+
+  PGM:
+    NAME: Portable GrayMap Format (PGM)
+    PUID: fmt/406
+    MIME: image/x‑portable‑graymap
+    EXTENSIONS: pgm
+
+  PPM:
+    NAME: Portable Pixel Map (PPM)
+    PUID: fmt/408
+    MIME: image/x‑portable‑pixmap
+    EXTENSIONS: ppm
+
+AUDIO:
+
+  WAV:
+    NAME: Waveform Audio File Format (WAVE)
+    MIME: audio/x-wav
+    EXTENSIONS: wav
+
+  MP3:
+    NAME: MPEG-1 or MPEG-2 Audio Layer III (MP3)
+    MIME: audio/mpeg
+    EXTENSIONS: mp3
+
+  FLAC:
+    NAME: Free Lossless Audio Codec (FLAC)
+    MIME: audio/flac
+    EXTENSIONS: flac
+
+VIDEO:
+
+  MPEG:
+    NAME: Moving Picture Experts Group (MPEG-1/MPEG-2)
+    MIME: video/mpeg
+    EXTENSIONS: mpg mpeg mp1 mp2 mp3 m1v m1a m2a mpa mpv
+
+  MPEG4:
+    NAME: Moving Picture Experts Group (MPEG-4)
+    MIME: video/mp4
+    EXTENSIONS: mp4,mpeg4
+
+  MJP2:
+    NAME: Motion JPEG 2000 (MJP2)
+    MIME: video/mj2
+    EXTENSIONS: mj2, mjp2
+
+  QTFF:
+    NAME: QuickTime File Format (QTFF)
+    MIME: video/quicktime
+    EXTENSIONS: mov, qt
+
+  AVI:
+    NAME: Audio Video Interleave (AVI)
+    MIME: video/x-msvideo
+    EXTENSIONS: avi
+
+  OGGV:
+    NAME: OGG Video (OGGV)
+    MIME: video/ogg
+    EXTENSIONS: ogv
+
+  WMV:
+    NAME: Windows Media Video (WMV)
+    MIME: video/x-ms-wmv
+    EXTENSIONS: wmv
+
+  DV:
+    NAME: Digital Video (DV)
+    MIME: video/dv
+    EXTENSIONS: dv
+
+  FLASH:
+    NAME: Flash video (FLV)
+    MIME: video/x-flv
+    EXTENSIONS: flv
+
+DOCUMENT:
+
+  TXT:
+    NAME: Unformatted text
+    MIME: text/plain
+    EXTENSIONS: txt
+
+  RTF:
+    NAME: Rich Text Format (RTF)
+    PUID: fmt/45
+    MIME: text/rtf application/rtf
+    EXTENSIONS: rtf
+
+  HTML:
+    NAME: HyperText Markup Language (HTML)
+    MIME: text/html
+    EXTENSIONS: html, htm
+
+  MSDOC:
+    NAME: Microsoft Word Document (DOC)
+    PUID: fmt/609 fmt/39 x-fmt/2 x-fmt/129 x-fmt/273 x-fmt/274 x-fmt/275 x-fmt/276 fmt/37 fmt/38 fmt/40
+    MIME: application/vnd.ms-word application/msword
+    EXTENSIONS: doc
+
+  MSDOCX:
+    NAME: Microsoft Word OpenXML Document (DOCX)
+    PUID: fmt/412 fido-fmt/189.word lias-fmt/189.word
+    MIME: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+    EXTENSIONS: docx
+
+  MSXLS:
+    NAME: Microsoft Excel Spreadsheet (XLS)
+    MIME: application/vnd.ms-excel,application/msexcel
+    EXTENSIONS: xls
+
+  MSXLSX:
+    NAME: Microsoft Excel OpenXML Spreadheet (XSLX)
+    PUID: fido-fmt/189.xl
+    MIME: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    EXTENSIONS: xslx
+
+  MSPPT:
+    NAME: Microsoft Powerpoint Presentation (PPT)
+    MIME: application/vnd.ms-powerpoint,application/mspowerpoint
+    EXTENSIONS: ppt
+
+  MSPPTX:
+    NAME: Microsoft Powerpoint OpenXML Presentation (PPTX)
+    PUID: fido-fmt/189.ppt
+    MIME: application/vnd.openxmlformats-officedocument.presentationml.presentation
+    EXTENSIONS: pptx
+
+  PDF:
+    NAME: Adobe Portable Document Format (PDF)
+    PUID: fmt/14 fmt/15 fmt/16 fmt/17 fmt/18 fmt/19 fmt/20 fmt/276
+    MIME: application/pdf
+    EXTENSIONS: pdf
+
+  PDFA:
+    NAME: Adobe Portable Document Format for Archives (PDFA)
+    PUID: fmt/95 fmt/354 fmt/476 fmt/477 fmt/478 fmt/479 fmt/480 fmt/481
+    MIME: application/pdf
+    EXTENSIONS: pdf
+
+  WORDPERFECT:
+    NAME: WordPerfect Document (WPD)
+    PUID: x-fmt/44 x-fmt/394
+    MIME: application/vnd.wordperfect
+    EXTENSIONS: wpd
+
+  XML:
+    NAME: Extensible Markup Language (XML)
+    MIME: text/xml
+    PUID: fmt/101
+    EXTENSIONS: xml
+
+  SHAREPOINT_MAP:
+    NAME: Sharepoint mapping file
+    # This is again an invented mime type. Its actually an XML ...
+    MIME: text/xml/sharepoint_map
+    PUID: fmt/101
+    EXTENSIONS: xml
+
+ARCHIVE:
+
+  EAD:
+    NAME: Encoded Archival Description (EAD)
+    # This is again an invented mime type. Its actually an XML ...
+    MIME: archive/ead
+    PUID: fmt/101
+    EXTENSIONS: ead,xml

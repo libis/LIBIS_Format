@@ -1,6 +1,6 @@
 require 'libis/format/version'
 
-module LIBIS
+module Libis
   module Format
     autoload :Identifier, 'libis/format/identifier'
     autoload :MimeType, 'libis/format/mime_type'

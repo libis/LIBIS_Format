@@ -1,6 +1,6 @@
 # code utf-8
 
-module LIBIS
+module Libis
   module Format
     module Converter
       autoload :Base, 'libis/format/converter/base'

@@ -7,13 +7,13 @@ require 'libis/tools/logger'
 
 require_relative 'chain'
 
-module LIBIS
+module Libis
   module Format
     module Converter
 
       class Repository
         include Singleton
-        include ::LIBIS::Tools::Logger
+        include ::Libis::Tools::Logger
 
         attr_reader :converters
         attr_writer :converters_glob
@@ -54,7 +54,7 @@ module LIBIS
             end
             debug msg
           end
-          ::LIBIS::Format::Converters::Chain.new(chain_list[0])
+          ::Libis::Format::Converters::Chain.new(chain_list[0])
         end
 
         private

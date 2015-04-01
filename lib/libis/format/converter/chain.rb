@@ -5,12 +5,12 @@ require 'fileutils'
 require 'libis/tools/logger'
 require 'libis/format/type_database'
 
-module LIBIS
+module Libis
   module Format
     module Converter
 
       class Chain
-        include ::LIBIS::Tools::Logger
+        include ::Libis::Tools::Logger
 
         def initialize(converter_chain)
           @converter_chain = converter_chain

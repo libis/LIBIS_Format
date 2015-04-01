@@ -1,3 +1,5 @@
 source 'https://rubygems.org'
 
-gemspec name: 'LIBIS_Format', development_group: :test
+gem 'coveralls', group: :test, require: false
+
+gemspec name: 'libis-format', development_group: :test

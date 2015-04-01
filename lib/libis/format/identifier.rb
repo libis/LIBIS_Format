@@ -2,24 +2,32 @@
 
 require 'singleton'
 require 'csv'
+require 'os'
 
-require 'LIBIS_Tools'
+require 'libis-tools'
 require 'libis/tools/extend/string'
+require 'libis/tools/extend/hash'
+require 'libis/tools/extend/empty'
 
-require_relative 'mime_type'
+require 'libis/format/type_database'
 
-module LIBIS
+require_relative 'droid'
+
+module Libis
   module Format
 
     class Identifier
-      include ::LIBIS::Tools::Logger
+      include ::Libis::Tools::Logger
       include Singleton
 
-      BAD_MIMETYPES = %w(None)
-      RETRY_MIMETYPES = %w(application/rtf text/rtf) + BAD_MIMETYPES
+      BAD_MIMETYPES = [nil, '', 'None', 'application/octet-stream']
+      RETRY_MIMETYPES = %w(application/zip) + BAD_MIMETYPES
+      FIDO_FAILURES = %w(application/vnd.oasis.opendocument.text application/vnd.oasis.opendocument.spreadsheet)
 
       attr_reader :fido_formats
       attr_reader :xml_validations
+
+      protected
 
       def initialize
         data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
@@ -27,6 +35,25 @@ module LIBIS
         # noinspection RubyStringKeysInHashInspection
         @xml_validations = {'archive/ead' => File.join(data_dir, 'ead.xsd')}
       end
+
+      def result_ok?(result, who_is_asking = nil)
+        result = ::Libis::Format::TypeDatabase.enrich(result, PUID: :puid, MIME: :mimetype)
+        return false if result.empty?
+        return true unless result[:TYPE].empty?
+        return false if RETRY_MIMETYPES.include? result[:mimetype]
+        return false if FIDO_FAILURES.include? result[:mimetype] and who_is_asking == :DROID
+        !(result[:mimetype].empty? and result[:puid].empty?)
+      end
+
+      def get_mimetype(puid)
+        ::Libis::Format::TypeDatabase.puid_typeinfo(puid)[:MIME].first rescue nil
+      end
+
+      def get_puid(mimetype)
+        ::Libis::Format::TypeDatabase.mime_infos(mimetype).first[:PUID].first rescue nil
+      end
+
+      public
 
       def self.add_fido_format(f)
         instance.fido_formats << f
@@ -44,79 +71,161 @@ module LIBIS
         instance.xml_validations
       end
 
-      def self.get(file_path, options)
+      def self.get(file_path, options = nil)
+        instance.get file_path, options
+      end
 
-        fp = file_path.to_s.escape_for_string
+      def get(file, options = nil)
+
+        unless File.exists? file
+          error 'File %s cannot be found.', file
+          return nil
+        end
+        if File.directory? file
+          error '%s is a directory.', file
+          return nil
+        end
+
         options ||= {}
 
         result = {}
-        mimetype = nil
 
+        # use FIDO
+        # Note: FIDO does not always do a good job, mainly due to lacking container inspection.
+        # FIDO misses should be registered in
+        result = get_fido_identification(file, result, options[:formats]) unless options[:droid]
+
+        # use DROID
+        result = get_droid_identification file, result
+
+        # use FILE
+        result = get_file_identification(file, result)
+
+        # Try file extension
+        result = get_extension_identification(file, result)
+
+        # determine XML type. Add custom types at runtime with
+        # Libis::Tools::Format::Identifier.add_xml_validation('my_type', '/path/to/my_type.xsd')
+        result = validate_against_xml_schema(file, result)
+
+        result ? info("Identification of '#{file}': '#{result}'") : warn("Could not identify MIME type of '#{file}'")
+
+        result
+      end
+
+      def get_fido_identification(file, result = {}, xtra_formats = nil)
+        return result if result_ok? result
+        fido_results = []
         formats = self.fido_formats.dup
-        case options[:formats]
+        case xtra_formats
           when Array
-            formats += options[:formats]
+            formats += xtra_formats
           when String
-            formats << options[:formats]
+            formats << xtra_formats
           else
             # do nothing
         end
 
-        # use FIDO
-        cmd = 'fido'
+        ext = File.extname(file)
+
+        bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'bin'))
+        cmd = File.join(bin_dir, 'fido')
         args = []
-        args << '-loadformats' << "\"#{formats.join('","')}\"" unless formats.empty?
-        args << "\"#{fp}\""
-        fido = ::LIBIS::Tools::Command.run(cmd, *args)
-        #info "Fido result: '#{fido[:out].to_s}'"
-        fido_output = CSV.parse fido[:out]
-        fido_result = nil
-        while fido_output.size > 0
-          x = fido_output.pop
-          if x[0] == 'OK' && x[8] == 'signature'
-            fido_result = x
-            break
-          end
-        end
-        if fido_result && fido_result[0] == 'OK'
-          format = fido_result[2]
-          mimetype = fido_result[7]
-          mimetype = ::LIBIS::Format::MimeType.puid_to_mime(format) if mimetype == 'None'
-          #info "Fido MIME-type: #{mimetype} (PRONOM UID: #{format})"
-          result = {mimetype: mimetype, puid: format} unless BAD_MIMETYPES.include? mimetype
-        end
-
-        # use FILE
-        if result[:mimetype].nil? or RETRY_MIMETYPES.include? mimetype
-          mimetype = ::LIBIS::Tools::Command.run('file', '-ib', "\"#{fp}\"")[:out].strip.split(';')[0].split(',')[0]
-          #info "File result: '#{mimetype}'"
-          result = {mimetype: mimetype} unless BAD_MIMETYPES.include? mimetype
-        end
-
-        # determine XML type. Add custom types at runtime with
-        # LIBIS::Tools::Format::Identifier.add_xml_validation('my_type', '/path/to/my_type.xsd')
-        if result[:mimetype] == 'text/xml'
-          doc = ::LIBIS::Tools::XmlDocument.open file_path
-          xml_validations.each do |mime, xsd_file|
-            result[:mimetype] = mime if doc.validates_against?(xsd_file)
+        args << '-loadformats' << "#{formats.join(',')}" unless formats.empty?
+        args << "#{file.escape_for_string}"
+        fido = ::Libis::Tools::Command.run(cmd, *args)
+        keys = [:status, :time, :puid, :format_name, :signature_name, :filesize, :filename, :mimetype, :matchtype]
+        fido_output = CSV.parse(fido[:out].join("\n")).map { |a| Hash[keys.zip(a)] }
+        debug "Fido output: #{fido_output.to_s}"
+        fido_output.each do |x|
+          if x[:status] == 'OK'
+            x[:mimetype] = get_mimetype x[:puid] if x[:mimetype] == 'None'
+            next if BAD_MIMETYPES.include? x[:mimetype]
+            x[:score] = 5
+            case x[:matchtype]
+              when 'signature'
+                x[:score] += 5
+              when 'container'
+                typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(x[:puid])
+                if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
+                  x[:score] += 2
+                end
+              else
+                # do nothing
+            end
+            fido_results << x
           end
         end
 
-        # use ImageMagik's identify to detect JPeg 2000 files
-        if result.nil?
-          begin
-            x = ::LIBIS::Tools::Command.run('identify', '-format', '%m', "\"#{fp}\"")
-            x = x[:out]
-            info "Identify result: '#{x.to_s}'"
-            x = x.split[0].strip if x
-            result = 'image/jp2' if x == 'JP2'
-          rescue Exception
-            # ignored
+        fido_results = fido_results.sort { |a, b| a[:score] <=> b[:score] }
+        result = fido_results.last
+        result[:method] = 'fido'
+
+        debug "Fido MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})" unless result.empty?
+        result
+      end
+
+      def get_droid_identification(file, result = {})
+        return result if result_ok? result, :DROID
+        droid_output = ::Libis::Format::Droid.run file
+        debug "DROID: #{droid_output}"
+        warn 'Droid found multiple matches; using first match only' if droid_output.size > 1
+        result.clear
+        droid_output = droid_output.first
+        result[:mimetype] = droid_output[:mime_type].to_s.split(/[\s,]+/).find {|x| x =~ /.*\/.*/}
+        result[:matchtype] = droid_output[:method]
+        result[:puid] = droid_output[:puid]
+        result[:format_name] = droid_output[:format_name]
+        result[:format_version] = droid_output[:format_version]
+        result[:method] = 'droid'
+
+        debug "Droid MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})" if result
+        result
+      end
+
+      def get_file_identification(file, result = nil)
+        return result if result_ok? result
+        result = {}
+        begin
+          output = ::Libis::Tools::Command.run('file', '-b', '--mime-type', "\"#{file.escape_for_string}\"")[:err]
+          mimetype = output.strip.split
+          if mimetype
+            debug "File result: '#{mimetype}'"
+            result[:mimetype] = mimetype
+            result[:puid] = get_puid(mimetype)
+          end
+        rescue Exception
+          # ignored
+        end
+        result[:method] = 'file'
+        result
+      end
+
+      def get_extension_identification(file, result = nil)
+        return result if result_ok? result
+        result = {}
+        info = ::Libis::Format::TypeDatabase.ext_infos(File.extname(file)).first
+        debug "File extension info: #{info}"
+        if info
+          result[:mimetype] = info[:MIME].first rescue nil
+          result[:puid] = info[:PUID].first rescue nil
+        end
+        result[:method] = 'extension'
+        result
+      end
+
+      def validate_against_xml_schema(file, result)
+        return result unless result[:mimetype] =~ /^(text|application)\/xml$/
+        doc = ::Libis::Tools::XmlDocument.open file
+        xml_validations.each do |mime, xsd_file|
+          next unless xsd_file
+          if doc.validates_against?(xsd_file)
+            debug "XML file validated against XML Schema: #{xsd_file}"
+            result[:mimetype] = mime
+            result[:puid] = nil
+            result = ::Libis::Format::TypeDatabase.enrich(result, PUID: :puid, MIME: :mimetype)
           end
         end
-
-        # result ? info("Final MIME-type: '#{result}'") : warn("Could not identify MIME type of '#{fp}'")
-
         result
       end
 
