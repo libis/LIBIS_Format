@@ -35,7 +35,7 @@ module Libis
             # do nothing
         end
 
-        bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'bin'))
+        bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'bin', 'fido'))
         cmd = File.join(bin_dir, OS.windows? ? 'fido.bat' : 'fido.sh')
         args = []
         args << '-loadformats' << "#{fmt_list.join(',')}" unless fmt_list.empty?
@@ -65,12 +65,21 @@ module Libis
             fido_results << x
           end
         end
-        fido_results.sort! { |a, b| b[:score] <=> a[:score] }
+
+        fido_results = fido_results.inject({}) do |result, value|
+          result[value[:score]] ||= []
+          result[value[:score]] << value
+          result
+        end
 
         debug "Fido results: #{fido_results}"
 
-        fido_results
+        max_score = fido_results.keys.max
 
+        # Only if we find a single hit of type 'signature' or 'container', we are confident enough to return a result
+        return result unless max_score and max_score >= 5 && fido_results[max_score].size == 1
+
+        fido_results[max_score].first
       end
 
       def self.add_format(f)
