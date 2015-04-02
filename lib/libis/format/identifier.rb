@@ -1,16 +1,14 @@
 # encoding: utf-8
 
 require 'singleton'
-require 'csv'
-require 'os'
 
 require 'libis-tools'
 require 'libis/tools/extend/string'
-require 'libis/tools/extend/hash'
 require 'libis/tools/extend/empty'
 
 require 'libis/format/type_database'
 
+require_relative 'fido'
 require_relative 'droid'
 
 module Libis
@@ -20,11 +18,9 @@ module Libis
       include ::Libis::Tools::Logger
       include Singleton
 
-      BAD_MIMETYPES = [nil, '', 'None', 'application/octet-stream']
-      RETRY_MIMETYPES = %w(application/zip) + BAD_MIMETYPES
+      RETRY_MIMETYPES = %w(application/zip) + ::Libis::Format::Fido::BAD_MIMETYPES
       FIDO_FAILURES = %w(application/vnd.oasis.opendocument.text application/vnd.oasis.opendocument.spreadsheet)
 
-      attr_reader :fido_formats
       attr_reader :xml_validations
 
       protected
@@ -45,10 +41,6 @@ module Libis
         !(result[:mimetype].empty? and result[:puid].empty?)
       end
 
-      def get_mimetype(puid)
-        ::Libis::Format::TypeDatabase.puid_typeinfo(puid)[:MIME].first rescue nil
-      end
-
       def get_puid(mimetype)
         ::Libis::Format::TypeDatabase.mime_infos(mimetype).first[:PUID].first rescue nil
       end
@@ -56,11 +48,7 @@ module Libis
       public
 
       def self.add_fido_format(f)
-        instance.fido_formats << f
-      end
-
-      def self.fido_formats
-        instance.fido_formats
+        ::Libis::Format::Fido.add_format f
       end
 
       def self.add_xml_validation(mimetype, xsd_file)
@@ -115,51 +103,12 @@ module Libis
 
       def get_fido_identification(file, result = {}, xtra_formats = nil)
         return result if result_ok? result
-        fido_results = []
-        formats = self.fido_formats.dup
-        case xtra_formats
-          when Array
-            formats += xtra_formats
-          when String
-            formats << xtra_formats
-          else
-            # do nothing
-        end
 
-        ext = File.extname(file)
+        fido_result = ::Libis::Format::Fido.run(file, xtra_formats).first
 
-        bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'bin'))
-        cmd = File.join(bin_dir, 'fido')
-        args = []
-        args << '-loadformats' << "#{formats.join(',')}" unless formats.empty?
-        args << "#{file.escape_for_string}"
-        fido = ::Libis::Tools::Command.run(cmd, *args)
-        keys = [:status, :time, :puid, :format_name, :signature_name, :filesize, :filename, :mimetype, :matchtype]
-        fido_output = CSV.parse(fido[:out].join("\n")).map { |a| Hash[keys.zip(a)] }
-        debug "Fido errors: #{fido[:err]}"
-        debug "Fido output: #{fido_output.to_s}"
-        fido_output.each do |x|
-          if x[:status] == 'OK'
-            x[:mimetype] = get_mimetype x[:puid] if x[:mimetype] == 'None'
-            next if BAD_MIMETYPES.include? x[:mimetype]
-            x[:score] = 5
-            case x[:matchtype]
-              when 'signature'
-                x[:score] += 5
-              when 'container'
-                typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(x[:puid])
-                if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
-                  x[:score] += 2
-                end
-              else
-                # do nothing
-            end
-            fido_results << x
-          end
-        end
-        return result if fido_results.size == 0
-        fido_results = fido_results.sort { |a, b| a[:score] <=> b[:score] }
-        result.merge fido_results.last
+        return result unless fido_result.is_a? Hash
+
+        result.merge! fido_result
         result[:method] = 'fido'
 
         debug "Fido MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})" unless result.empty?
@@ -195,10 +144,10 @@ module Libis
             result[:mimetype] = mimetype
             result[:puid] = get_puid(mimetype)
           end
+          result[:method] = 'file'
         rescue Exception
           # ignored
         end
-        result[:method] = 'file'
         result
       end
 

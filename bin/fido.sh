@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 BASEDIR=$(dirname $0)
-FIDO_PROG=$BASEDIR/fido_git/fido/fido.py
+FIDO_PROG=$BASEDIR/fido/fido.py
 
 python "$FIDO_PROG" -bufsize 1000000 -container_bufsize 1000000 -q "$@"
