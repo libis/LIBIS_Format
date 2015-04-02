@@ -17,7 +17,7 @@ module Libis
 
       BAD_MIMETYPES = [nil, '', 'None', 'application/octet-stream']
 
-      def self.run(file, formats)
+      def self.run(file, formats = nil)
         instance.run file, formats
       end
 
@@ -35,13 +35,13 @@ module Libis
             # do nothing
         end
 
-        bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'bin', 'fido'))
+        bin_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'tools', 'fido'))
         cmd = File.join(bin_dir, OS.windows? ? 'fido.bat' : 'fido.sh')
         args = []
         args << '-loadformats' << "#{fmt_list.join(',')}" unless fmt_list.empty?
         args << "#{file.escape_for_string}"
         fido = ::Libis::Tools::Command.run(cmd, *args)
-        debug "Fido errors: #{fido[:err].join("\n")}" unless fido[:err].empty?
+        warn "Fido errors: #{fido[:err].join("\n")}" unless fido[:err].empty?
 
         keys = [:status, :time, :puid, :format_name, :signature_name, :filesize, :filename, :mimetype, :matchtype]
         fido_output = CSV.parse(fido[:out].join("\n")).map { |a| Hash[keys.zip(a)] }
@@ -77,7 +77,7 @@ module Libis
         max_score = fido_results.keys.max
 
         # Only if we find a single hit of type 'signature' or 'container', we are confident enough to return a result
-        return result unless max_score and max_score >= 5 && fido_results[max_score].size == 1
+        return {} unless max_score and max_score >= 5 && fido_results[max_score].size == 1
 
         fido_results[max_score].first
       end

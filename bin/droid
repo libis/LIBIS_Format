@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require 'libis-format'
+require 'libis-tools'
+
+::Libis::Tools::Config.logger.level = ::Logger::Severity::WARN
+
+result = ::Libis::Format::Droid.run ARGV[0]
+
+result.each do |r|
+  r.each do |key, value|
+    puts "#{key}: #{value}"
+  end
+  puts '------'
+end

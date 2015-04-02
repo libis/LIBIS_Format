@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require 'libis-format'
+require 'libis-tools'
+
+::Libis::Tools::Config.logger.level = ::Logger::Severity::WARN
+
+result = ::Libis::Format::Fido.run ARGV[0]
+
+result.each do |key, value|
+  puts "#{key}: #{value}"
+end

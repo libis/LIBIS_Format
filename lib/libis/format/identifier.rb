@@ -104,7 +104,7 @@ module Libis
       def get_fido_identification(file, result = {}, xtra_formats = nil)
         return result if result_ok? result
 
-        fido_result = ::Libis::Format::Fido.run(file, xtra_formats).first
+        fido_result = ::Libis::Format::Fido.run(file, xtra_formats)
 
         return result unless fido_result.is_a? Hash
 
