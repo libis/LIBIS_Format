@@ -7,7 +7,7 @@ describe 'Identfier' do
 
   before :all do
     @logoutput = StringIO.new
-    # ::Libis::Tools::Config.logger = Logger.new @logoutput
+    ::Libis::Tools::Config.logger = Logger.new @logoutput
   end
 
   it 'should initialize correctly' do
