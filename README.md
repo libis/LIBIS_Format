@@ -1,3 +1,4 @@
+[![Gem Version](https://badge.fury.io/rb/libis-format.svg)](http://badge.fury.io/rb/libis-format)
 [![Build Status](https://travis-ci.org/Kris-LIBIS/LIBIS_Format.svg?branch=master)](https://travis-ci.org/Kris-LIBIS/LIBIS_Format)
 [![Coverage Status](https://img.shields.io/coveralls/Kris-LIBIS/LIBIS_Format.svg)](https://coveralls.io/r/Kris-LIBIS/LIBIS_Format)
 [![Dependency Status](https://gemnasium.com/Kris-LIBIS/LIBIS_Format.svg)](https://gemnasium.com/Kris-LIBIS/LIBIS_Format)
