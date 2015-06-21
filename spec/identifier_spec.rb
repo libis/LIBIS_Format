@@ -47,6 +47,7 @@ describe 'Identfier' do
         'test-lzw.tif' => {mimetype: 'image/tiff', puid: 'fmt/353'},
         'test.ps' => {mimetype: 'application/postscript', puid: 'x-fmt/408'},
         'test.png' => {mimetype: 'image/png', puid: 'fmt/11'},
+        'test.jpg' => {mimetype: 'image/jpeg', puid: 'fmt/43'},
         'test.gif' => {mimetype: 'image/gif', puid: 'fmt/4'},
         'test.xml' => {mimetype: 'application/xml', puid: 'fmt/101'},
         'test-ead.xml' => {mimetype: 'archive/ead', puid: 'fmt/101'},
