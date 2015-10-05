@@ -1,7 +1,7 @@
 # coding: utf-8
 
 ### require 'tools/string'
-
+require 'tmpdir'
 require 'libis/tools/logger'
 require 'libis/format/type_database'
 
@@ -14,37 +14,36 @@ module Libis
       class Base
         include Libis::Tools::Logger
 
-        def input_types
+        attr_reader :options, :flags
+
+        def initialize
+          @options = {}
+          @flags = {}
+        end
+
+        def convert(source, target, format, opts = {})
+          unless File.exist? source
+            error "Cannot find file '#{source}'."
+            return nil
+          end
+          @options.merge!(opts[:options]) if opts[:options]
+          @flags.merge!(opts[:flags]) if opts[:flags]
+        end
+
+        def self.input_types(_ = nil)
           raise RuntimeError, 'Method #input_types needs to be overridden in converter'
         end
 
-        protected
-
-        def output_types
+        def self.output_types(_ = nil)
           raise RuntimeError, 'Method #output_types needs to be overridden in converter'
         end
 
-        attr_accessor :source, :options, :flags
-
-        def init(_)
-          raise RuntimeError, 'Method #init should be implemented in converter'
-        end
-
-        def do_convert(_, _)
-          raise RuntimeError, 'Method #do_convert should be implemented in converter'
-        end
-
-        public
-
-        def initialize( source = nil, options = {}, flags = {} )
-          @source = source
-          @options = options ? options : {}
-          @flags = flags ? flags : {}
-          init(source.to_s rescue nil)
-        end
-
-        def convert(target, format = nil)
-          do_convert(target, format)
+        def using_temp(target)
+          tempfile = File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname(['convert', File.extname(target)], File.basename(target, '.*')))
+          result = yield tempfile
+          return nil unless result
+          FileUtils.move result, target
+          target
         end
 
         def Base.inherited( klass )
@@ -54,7 +53,7 @@ module Libis
           class << self
 
             def conversions
-              input_types.inject({}) do |input_type, hash|
+              input_types.inject({}) do |hash, input_type|
                 hash[input_type] = output_types
                 hash
               end
@@ -92,9 +91,7 @@ module Libis
 
           end
 
-
         end
-
 
       end
 

@@ -76,7 +76,7 @@ module Libis
 
         options ||= {}
 
-        result = {}
+        result = { messages: [] }
 
         # use FIDO
         # Note: FIDO does not always do a good job, mainly due to lacking container inspection.
@@ -96,9 +96,9 @@ module Libis
         # Libis::Tools::Format::Identifier.add_xml_validation('my_type', '/path/to/my_type.xsd')
         result = validate_against_xml_schema(file, result)
 
-        result ? info("Identification of '#{file}': '#{result}'") : warn("Could not identify MIME type of '#{file}'")
-
-        result
+        result[:mimetype] ?
+            log_msg(result, :info, "Identification of '#{file}': '#{result}'") :
+            log_msg(result, :warn, "Could not identify MIME type of '#{file}'")
       end
 
       def get_fido_identification(file, result = {}, xtra_formats = nil)
@@ -111,14 +111,13 @@ module Libis
         result.merge! fido_result
         result[:method] = 'fido'
 
-        debug "Fido MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})" unless result.empty?
-        result
+        log_msg(result, :debug, "Fido MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})")
       end
 
       def get_droid_identification(file, result = {})
         return result if result_ok? result, :DROID
         droid_output = ::Libis::Format::Droid.run file
-        debug "DROID: #{droid_output}"
+        result[:messages] << [:debug, "DROID: #{droid_output}"]
         warn 'Droid found multiple matches; using first match only' if droid_output.size > 1
         result.clear
         droid_output = droid_output.first
@@ -129,18 +128,16 @@ module Libis
         result[:format_version] = droid_output[:format_version]
         result[:method] = 'droid'
 
-        debug "Droid MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})" if result
-        result
+        log_msg(result, :debug, "Droid MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})")
       end
 
       def get_file_identification(file, result = nil)
         return result if result_ok? result
-        result = {}
         begin
           output = ::Libis::Tools::Command.run('file', '-b', '--mime-type', "\"#{file.escape_for_string}\"")[:err]
           mimetype = output.strip.split
           if mimetype
-            debug "File result: '#{mimetype}'"
+            log_msg(result, :debug, "File result: '#{mimetype}'")
             result[:mimetype] = mimetype
             result[:puid] = get_puid(mimetype)
           end
@@ -153,9 +150,8 @@ module Libis
 
       def get_extension_identification(file, result = nil)
         return result if result_ok? result
-        result = {}
         info = ::Libis::Format::TypeDatabase.ext_infos(File.extname(file)).first
-        debug "File extension info: #{info}"
+        log_msg result, :debug, "File extension info: #{info}"
         if info
           result[:mimetype] = info[:MIME].first rescue nil
           result[:puid] = info[:PUID].first rescue nil
@@ -170,12 +166,20 @@ module Libis
         xml_validations.each do |mime, xsd_file|
           next unless xsd_file
           if doc.validates_against?(xsd_file)
-            debug "XML file validated against XML Schema: #{xsd_file}"
+            log_msg result, :debug, "XML file validated against XML Schema: #{xsd_file}"
             result[:mimetype] = mime
             result[:puid] = nil
             result = ::Libis::Format::TypeDatabase.enrich(result, PUID: :puid, MIME: :mimetype)
           end
         end
+        result
+      end
+
+      private
+
+      def log_msg(result, severity, text)
+        return {} unless result.is_a?(Hash)
+        (result[:messages] ||= []) << [severity, text]
         result
       end
 

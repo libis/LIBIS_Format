@@ -4,6 +4,7 @@ require 'set'
 require 'singleton'
 
 require 'libis/tools/logger'
+require 'libis/format/config'
 
 require_relative 'chain'
 
@@ -16,11 +17,11 @@ module Libis
         include ::Libis::Tools::Logger
 
         attr_reader :converters
-        attr_writer :converters_glob
+        attr_accessor :converters_glob
 
         def initialize
           @converters = Set.new
-          @converters_glob = File.join(File.basename(__FILE__), '*_converter.rb')
+          @converters_glob = File.join(File.dirname(__FILE__), '*_converter.rb')
         end
 
         def Repository.register(converter_class)
@@ -28,18 +29,26 @@ module Libis
         end
 
         def Repository.get_converters
-          if instance.converters.empty?
-            Dir.glob(instance.converters_glob).each do |filename|
+          instance.get_converters
+        end
+
+        def get_converters
+          if converters.empty?
+            Dir.glob(converters_glob).each do |filename|
               # noinspection RubyResolve
               require File.expand_path(filename)
             end
           end
-          instance.converters
+          converters
         end
 
-        def Repository.get_converter_chain(src_type, tgt_type, operations = [])
+        def Repository.get_converter_chain(src_type, tgt_type, operations = {})
+          instance.get_converter_chain src_type, tgt_type, operations
+        end
+
+        def get_converter_chain(src_type, tgt_type, operations = {})
           msg = "conversion from #{src_type.to_s} to #{tgt_type.to_s}"
-          chain_list = recursive_chain src_type, tgt_type, operations
+          chain_list = find_chains src_type, tgt_type, operations
           if chain_list.length > 1
             warn "Found more than one conversion chain for #{msg}. Picking the first one."
           end
@@ -48,59 +57,38 @@ module Libis
             return nil
           end
           chain_list.each do |chain|
-            msg = "Base chain: #{src_type.to_s}"
-            chain.each do |node|
-              msg += "->#{node[:converter].name}:#{node[:target].to_s}"
-            end
-            debug msg
+            debug "Matched chain: #{chain}"
           end
-          ::Libis::Format::Converters::Chain.new(chain_list[0])
+          chain_list[0]
         end
 
         private
 
-        def Repository.recursive_chain(src_type, tgt_type, operations, chains_found = [], current_chain = [])
-          return chains_found unless current_chain.length < 8 # upper limit of converter chain we want to consider
+        def find_chains(src_type, tgt_type, operations)
+          chain = Libis::Format::Converter::Chain.new(src_type, tgt_type, operations)
+          build_chains(chain)
+        end
 
-          get_converters.each do |converter|
-            if converter.conversion? src_type, tgt_type and !current_chain.any? { |c|
-              c[:converter] == converter and c[:target] == tgt_type }
-              node = Hash.new
-              node[:converter] = converter
-              node[:target] = tgt_type
-              sequence = current_chain.dup
-              sequence << node
-              # check if the chain supports all the operations
-              success = true
-              operations.each do |op, _|
-                success = false unless sequence.any? do |n|
-                  n[:converter].new.respond_to? op.to_s.downcase.to_sym
-                end
-              end
-              if success
-                # we only want to remember the shortest converter chains
-                if !chains_found.empty? and sequence.length < chains_found[0].length
-                  chains_found.clear
-                end
-                chains_found << sequence if chains_found.empty? or sequence.length == chains_found[0].length
-              end
+        def build_chains(chain)
+
+          found = []
+          chains = [chain]
+
+          # Avoid chains that are too long
+          Libis::Format::Config[:converter_chain_max_level].times do
+            new_chains = []
+            get_converters.each do |converter|
+              new_chains += chains.map { |c| c.append(converter) }.flatten
             end
+
+            found = new_chains.select { |c| c.valid?}
+            return found unless found.empty?
+
+            chains = new_chains
           end
 
-          return chains_found unless chains_found.empty? or current_chain.length + 1 < chains_found[0].length
+          found
 
-          get_converters.each do |converter|
-            next unless converter.input_type? src_type
-            converter.output_types(src_type).each do |tmp_type|
-              # would like to enable the following for optimalization, but some operation may require such a step
-              # next if tmp_type == src_type
-              # next if current_chain.any? { |c| c[:target] == tmp_type}
-              recursive_chain(tmp_type, tgt_type, operations, chains_found,
-                              current_chain.dup << {:converter => converter, :target => tmp_type})
-            end
-          end
-
-          chains_found
         end
 
       end

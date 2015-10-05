@@ -15,7 +15,7 @@ module Libis
       include ::Libis::Tools::Logger
 
       def self.typeinfo(t)
-        self.instance.types[t] || {}
+        self.instance.types[t.to_sym] || {}
       end
 
       def self.enrich(info, map_keys = {})

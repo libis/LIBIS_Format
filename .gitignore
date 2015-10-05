@@ -6,6 +6,7 @@
 /doc/
 /pkg/
 /spec/reports/
+/spec/work/
 /tmp/
 *.bundle
 *.so
@@ -14,3 +15,4 @@
 mkmf.log
 /.idea/
 *.pyc
+tools/pdf

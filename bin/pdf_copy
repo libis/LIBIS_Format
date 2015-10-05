@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'libis-format'
+require 'libis-tools'
+
+::Libis::Tools::Config.logger.level = ::Logger::Severity::WARN
+
+source = ARGV.shift
+target = ARGV.shift
+options = ARGV
+
+::Libis::Format::PdfCopy.run source, target, options
+

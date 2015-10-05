@@ -13,12 +13,12 @@ IMAGE:
     MIME: image/tiff
     EXTENSIONS: tif,tiff
 
-  JPEG2000:
+  JP2:
     NAME: Joint Photographic Experts Group 2000 (JPEG 2000)
     MIME: image/jp2
     EXTENSIONS: jp2
 
-  JPEG:
+  JPG:
     NAME: Joint Photographic Experts Group (JPEG)
     MIME: image/jpeg
     EXTENSIONS: jpg,jpe,jpeg
@@ -120,7 +120,7 @@ VIDEO:
     MIME: video/x-flv
     EXTENSIONS: flv
 
-DOCUMENT:
+TEXT:
 
   TXT:
     NAME: Unformatted text
@@ -149,28 +149,6 @@ DOCUMENT:
     PUID: fmt/412 fido-fmt/189.word lias-fmt/189.word
     MIME: application/vnd.openxmlformats-officedocument.wordprocessingml.document
     EXTENSIONS: docx
-
-  MSXLS:
-    NAME: Microsoft Excel Spreadsheet (XLS)
-    MIME: application/vnd.ms-excel,application/msexcel
-    EXTENSIONS: xls
-
-  MSXLSX:
-    NAME: Microsoft Excel OpenXML Spreadheet (XSLX)
-    PUID: fido-fmt/189.xl
-    MIME: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-    EXTENSIONS: xslx
-
-  MSPPT:
-    NAME: Microsoft Powerpoint Presentation (PPT)
-    MIME: application/vnd.ms-powerpoint,application/mspowerpoint
-    EXTENSIONS: ppt
-
-  MSPPTX:
-    NAME: Microsoft Powerpoint OpenXML Presentation (PPTX)
-    PUID: fido-fmt/189.ppt
-    MIME: application/vnd.openxmlformats-officedocument.presentationml.presentation
-    EXTENSIONS: pptx
 
   PDF:
     NAME: Adobe Portable Document Format (PDF)
@@ -202,6 +180,32 @@ DOCUMENT:
     MIME: text/xml/sharepoint_map
     PUID: fmt/101
     EXTENSIONS: xml
+
+TABULAR:
+
+  MSXLS:
+    NAME: Microsoft Excel Spreadsheet (XLS)
+    MIME: application/vnd.ms-excel,application/msexcel
+    EXTENSIONS: xls
+
+  MSXLSX:
+    NAME: Microsoft Excel OpenXML Spreadheet (XSLX)
+    PUID: fido-fmt/189.xl
+    MIME: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+    EXTENSIONS: xslx
+
+PRESENTATION:
+
+  MSPPT:
+    NAME: Microsoft Powerpoint Presentation (PPT)
+    MIME: application/vnd.ms-powerpoint,application/mspowerpoint
+    EXTENSIONS: ppt
+
+  MSPPTX:
+    NAME: Microsoft Powerpoint OpenXML Presentation (PPTX)
+    PUID: fido-fmt/189.ppt
+    MIME: application/vnd.openxmlformats-officedocument.presentationml.presentation
+    EXTENSIONS: pptx
 
 ARCHIVE:
 
