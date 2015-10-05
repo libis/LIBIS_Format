@@ -12,12 +12,12 @@ module Libis
     Config[:java_path] = 'java'
     Config[:soffice_path] = 'soffice'
     Config[:ghostscript_path] = 'gs'
-    Config[:pdfa_path] =
-        File.absolute_path(
-            File.join(
-                File.dirname(__FILE__), '..', '..', '..', 'tools', 'pdf', 'pdfa', 'pdfa'
-            )
-        )
+    # Config[:pdfa_path] =
+    #     File.absolute_path(
+    #         File.join(
+    #             File.dirname(__FILE__), '..', '..', '..', 'tools', 'pdf', 'pdfa', 'pdfa'
+    #         )
+    #     )
     Config[:droid_path] =
         File.absolute_path(
             File.join(
