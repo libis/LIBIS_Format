@@ -18,9 +18,10 @@ module Libis
 
       def run(source)
 
+        src_file = File.absolute_path(source)
+
         if (pdfa = Libis::Format::Config[:pdfa_path])
           # Keep it clean: tool generates fontconfig/ cache dir in current working dir
-          src_file = File.absolute_path(source)
           previous_wd = Dir.getwd
           Dir.chdir(Dir.tmpdir)
 
@@ -42,13 +43,13 @@ module Libis
         else
           jar = File.join(ROOT_DIR, 'tools', 'pdfbox', 'preflight-app-1.8.10.jar')
           result = Libis::Tools::Command.run(
-              'java',
+              Libis::Format::Config[:java_path],
               '-jar', jar,
               src_file
           )
-          unless result[:out][0] == "The file #{File.basename(src_file)} is a valid PDF/A-1b file"
+          unless result[:status] == 0
             warn "Validator failed to validate the PDF file '%s' against PDF/A-1B constraints:\n%s", source,
-                 result[:out].join("\n")
+                 result[:err].join("\n")
             return false
           end
         end

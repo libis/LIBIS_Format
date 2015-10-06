@@ -15,4 +15,4 @@
 mkmf.log
 /.idea/
 *.pyc
-tools/pdf
+tools/pdf/
