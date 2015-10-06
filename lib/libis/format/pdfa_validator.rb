@@ -49,7 +49,7 @@ module Libis
           )
           unless result[:status] == 0
             warn "Validator failed to validate the PDF file '%s' against PDF/A-1B constraints:\n%s", source,
-                 result[:err].join("\n")
+                 result[:out].join("\n")
             return false
           end
         end

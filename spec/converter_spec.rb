@@ -20,7 +20,9 @@ describe 'Converters' do
   let(:repository) { Libis::Format::Converter::Repository }
   let(:file_dir) { File.dirname(__FILE__)}
 
-  before(:all) { Libis::Tools::Config[:logger].level = Logger::WARN }
+  before(:all) {
+    Libis::Tools::Config[:logger].level = Logger::WARN
+  }
 
   context 'Repository' do
 
@@ -79,7 +81,7 @@ describe 'Converters' do
     it 'converts TIFF to JPEG' do
       src_file = File.join(file_dir, 'data', 'test.tif')
       ref_file = File.join(file_dir, 'data', 'test.jpg')
-      tgt_file = File.join(file_dir, 'work', 'test.jpg')
+      tgt_file = File.join('', 'tmp', 'test.jpg')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :JPG)
       expect(result).to eq tgt_file
@@ -90,7 +92,7 @@ describe 'Converters' do
     it 'converts TIFF to PNG' do
       src_file = File.join(file_dir, 'data', 'test.tif')
       ref_file = File.join(file_dir, 'data', 'test.png')
-      tgt_file = File.join(file_dir, 'work', 'test.png')
+      tgt_file = File.join('', 'tmp', 'test.png')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :PNG)
       expect(result).to eq tgt_file
@@ -101,7 +103,7 @@ describe 'Converters' do
     it 'converts PDF to TIFF' do
       src_file = File.join(file_dir, 'data', 'test.pdf')
       ref_file = File.join(file_dir, 'data', 'test.pdf.tif')
-      tgt_file = File.join(file_dir, 'work', 'test.pdf.tif')
+      tgt_file = File.join('', 'tmp', 'test.pdf.tif')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :TIFF)
       expect(result).to eq tgt_file
@@ -112,7 +114,7 @@ describe 'Converters' do
     it 'converts TIFF to JPEG with many options' do
       src_file = File.join(file_dir, 'data', 'test.tif')
       ref_file = File.join(file_dir, 'data', 'test-options.jpg')
-      tgt_file = File.join(file_dir, 'work', 'test-options.jpg')
+      tgt_file = File.join('', 'tmp', 'test-options.jpg')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.watermark(text: 'RSPEC', size: 5, opacity: 0.1, rotation: 15, gap: 0.5, composition: 'modulate')
       result = converter.convert(src_file, tgt_file, :JPG, options: {scale: '150%', quality: '70%'})
@@ -129,7 +131,7 @@ describe 'Converters' do
 
     it 'converts PDF to PDF/A' do
       src_file = File.join(file_dir, 'data', 'test.pdf')
-      tgt_file = File.join(file_dir, 'work', 'test_pdfa.pdf')
+      tgt_file = File.join('', 'tmp', 'test_pdfa.pdf')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :PDFA)
       expect(result).to eq tgt_file

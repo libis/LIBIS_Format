@@ -18,7 +18,7 @@ module Libis
 
       def run(source, target, options = {})
         workdir = '/...'
-        workdir = File.tmpdir unless Dir.exist? workdir
+        workdir = Dir.tmpdir unless Dir.exist? workdir
 
         workdir = File.join(workdir, rand(1000000).to_s)
         FileUtils.mkpath(workdir)
