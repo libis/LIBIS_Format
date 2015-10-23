@@ -49,16 +49,13 @@ module Libis
         )
 
         FileUtils.rm [icc_file, def_filename].compact, force: true
-        unless result[:status] == 0
-          warn (['Pdf2PdfA errors:'] + result[:err] + result[:out]).join("\n").gsub('%', '%%')
-        end
 
         unless PdfaValidator.run(target)
-          error "Failed to generate correct PDF/A file from '%s'", source
-          return nil
+          result[:status] = -999
+          result[:err] << 'Failed to validate generated PDF/A file.'
         end
 
-        target
+        result
       end
 
 

@@ -4,6 +4,7 @@ require 'fileutils'
 require 'deep_dive'
 
 require 'libis/tools/logger'
+require 'libis/tools/extend/hash'
 require 'libis/format/type_database'
 
 module Libis
@@ -15,9 +16,9 @@ module Libis
         include DeepDive
 
         def initialize(source_format, target_format, operations = {})
-          @source_format = source_format
-          @target_format = target_format
-          @operations = operations
+          @source_format = source_format.to_sym
+          @target_format = target_format.to_sym
+          @operations = operations || {}
           @converter_chain = []
         end
 
@@ -32,8 +33,8 @@ module Libis
 
         def closed?
           !@converter_chain.empty? &&
-              @converter_chain.first[:input] == @source_format &&
-              @converter_chain.last[:output] == @target_format
+              @converter_chain.first[:input].to_sym == @source_format &&
+              @converter_chain.last[:output].to_sym == @target_format
         end
 
         def valid?
@@ -51,21 +52,11 @@ module Libis
         alias_method :length, :size
 
         def to_s
-          # nodes_string = @converter_chain.map do |node|
-          #   node_name = node[:converter].name.gsub(/^.*::/,'')
-          #   node_operations = '(' + node[:operations].map do |operation|
-          #     op = "#{operation[:method]}:#{operation[:argument]}"
-          #     op
-          #   end.join(', ') + ')' rescue ''
-          #   node_string = "#{node_name}#{node_operations}->-#{node[:output]}"
-          #   node_string
-          # end.join('->-')
-          # "#{@source_format}->-#{nodes_string}"
           "#{@source_format}->-#{@converter_chain.map do |node|
-            "#{node[:converter].name.gsub(/^.*::/,'')}#{node[:operations] ?
-                "(#{node[:operations].each { |operation| "#{operation[:method]}:#{operation[:argument]}" }.join(',')})" :
-                ''
-            }->-#{node[:output]}"
+            "#{node[:converter].name.gsub(/^.*::/, '')}#{node[:operations].empty? ? '' :
+                "(#{node[:operations].each do |operation|
+                  "#{operation[:method]}:#{operation[:argument]}"
+                end.join(',')})"}->-#{node[:output]}"
           end.join('->-')}"
         end
 
@@ -87,11 +78,11 @@ module Libis
 
             node[:operations].each do |operation|
               converter.send operation[:method], operation[:argument]
-            end
+            end if node[:operations]
 
             target = target_file
 
-            if i < size
+            if i < size - 1
               target += ".temp.#{TypeDatabase.type_extentions(target_type).first}"
               target += ".#{TypeDatabase.type_extentions(target_type).first}" while File.exist? target
               temp_files << target
@@ -114,7 +105,6 @@ module Libis
         end
 
         def valid_chain_nodes(converter)
-          return [] if closed?
           source_format = @converter_chain.last[:output] rescue @source_format
           nodes = []
           if converter.input_types.include? source_format
@@ -128,7 +118,6 @@ module Libis
         end
 
         def add_chain_node(node = {})
-          return nil if closed?
           last_converter = @converter_chain.last
           source_format = last_converter ? last_converter[:output] : @source_format
           node[:input] ||= source_format
@@ -142,12 +131,11 @@ module Libis
         end
 
         def apply_operations
-          return false unless closed?
           temp_chain = @converter_chain.reverse.ddup
           applied = true
-          operations = @operations.ddup
+          operations = @operations && @operations.ddup || {}
           while (operation = operations.shift)
-            method = operation.first.to_s.downcase.to_sym
+            method = operation.first.to_s.to_sym
             applied &&= :found == temp_chain.each do |node|
               next unless node[:converter].instance_methods.include?(method)
               node[:operations] ||= []

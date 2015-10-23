@@ -30,6 +30,10 @@ module Libis
           [:PDF]
         end
 
+        def office_convert(_)
+          #force usage of this converter
+        end
+
         def convert(source, target, format, opts = {})
           super
 

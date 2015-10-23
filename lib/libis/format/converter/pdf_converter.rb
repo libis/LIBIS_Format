@@ -2,6 +2,7 @@
 
 require_relative 'base'
 
+require 'libis/tools/extend/hash'
 require 'libis/format/pdf_copy'
 require 'libis/format/pdf_to_pdfa'
 
@@ -19,6 +20,10 @@ module Libis
           [:PDF, :PDFA]
         end
 
+        def pdf_convert(_)
+          #force usage of this converter
+        end
+
         # Set metadata for Pdf file
         #
         # valid metadata keys are):
@@ -30,8 +35,9 @@ module Libis
         #
         # @param [Hash] values list of metadata values to set
         def metadata(values = {})
+          values.key_strings_to_symbols!
           values.each do |k, v|
-            next unless [:title, :author, :creator, :keywords, :subject].include?(k.to_s.to_sym)
+            next unless [:title, :author, :creator, :keywords, :subject].include?(k)
             @options["md_#{k}"] = v
           end
         end
@@ -59,6 +65,7 @@ module Libis
         #
         # @param [Hash] options Hash of options for watermark creation.
         def watermark(options = {})
+          options.key_strings_to_symbols!
           if options[:file] && File.exist?(options[:file])
             @options['wm_image'] = options[:file]
           else
@@ -66,7 +73,7 @@ module Libis
             @options['wm_text_rotation'] = options[:rotation] if options[:rotation]
             @options['wm_font_size'] = options[:size] if options[:size]
           end
-          @options['wm_opacity'] = options[:opacity]
+          @options['wm_opacity'] = options[:opacity] || '0.3'
           @options['wm_gap_ratio'] = options[:gap] if options[:gap].to_s =~ /^\s*(0+\.\d+|1\.0+)\s*$/
           @options['wm_gap_size'] = options[:gap] if options[:gap].to_s =~ /^\s*\d+\s*$/
         end
@@ -77,7 +84,7 @@ module Libis
           result = nil
 
           unless @options.empty?
-            result  = convert_pdf(source, target)
+            result = convert_pdf(source, target)
             return nil unless result
             source = result
           end
@@ -93,13 +100,35 @@ module Libis
 
         def convert_pdf(source, target)
 
-          using_temp(target) { |tmpname| Libis::Format::PdfCopy.run source, tmpname, @options.map { |k, v| ["--#{k}", v.to_s] }.flatten }
+          using_temp(target) do |tmpname|
+            result = Libis::Format::PdfCopy.run(
+                source, tmpname,
+                @options.map { |k, v|
+                  if v.nil?
+                    nil
+                  else
+                    ["--#{k}", (v.is_a?(Array) ? v : v.to_s)]
+                  end }.flatten
+            )
+            result[:err].empty? ? target : begin
+              error("Pdf conversion encountered errors:\n%s", result[:err].join('\n'))
+              nil
+            end
+            tmpname
+          end
 
         end
 
         def pdf_to_pdfa(source, target)
 
-          using_temp(target) { |tmpname| Libis::Format::PdfToPdfa.run source, tmpname }
+          using_temp(target) do |tmpname|
+            result = Libis::Format::PdfToPdfa.run source, tmpname
+            result[:status] == 0 ? target : begin
+              error("Pdf/A conversion encountered errors:\n%s", result[:err].join('\n'))
+              nil
+            end
+            tmpname
+          end
 
         end
 

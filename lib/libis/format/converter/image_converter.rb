@@ -4,6 +4,7 @@ require_relative 'base'
 require 'libis/format/identifier'
 
 require 'mini_magick'
+require 'fileutils'
 
 MiniMagick.configure do |config|
   config.debug = false
@@ -28,7 +29,7 @@ module Libis
           super
         end
 
-        def imaginate(_)
+        def image_convert(_)
           #force usage of this converter
         end
 
@@ -79,10 +80,10 @@ module Libis
         def watermark(options = {})
           text = options[:text] || '© LIBIS'
           image = options[:file] || (Dir::Tmpname.create(%w(wm_image .png)) { |_|})
-          @wm_size = (options[:size] || '4').to_int
-          @wm_opacity = ((options[:opacity] || 0.1).to_f * 100).to_int
+          @wm_size = (options[:size] || '4').to_i
+          @wm_opacity = ((options[:opacity] || 0.1).to_f * 100).to_i
           @wm_composition = options[:composition] || 'modulate'
-          gap = ((options[:gap] || 0.2).to_f * 100).to_int
+          gap = ((options[:gap] || 0.2).to_f * 100).to_i
           rotation = 360 - (options[:rotation] || 30).to_i
           @wm_image = MiniMagick::Image.new(image)
           unless @wm_image.valid?
@@ -115,6 +116,8 @@ module Libis
 
         def convert(source, target, format, opts = {})
           super
+
+          FileUtils.mkpath(File.dirname(target))
 
           if source.is_a? Array
             sources = source

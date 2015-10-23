@@ -20,28 +20,26 @@ module Libis
         tool_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'tools'))
         jar_file = File.join(tool_dir, 'PdfTool.jar')
         if OS.java?
-          # TODO: import library and execute in current VM. For now do exactly as in MRI
+          # TODO: import library and execute in current VM. For now do exactly as in MRI.
           result = Libis::Tools::Command.run(
               Libis::Format::Config[:java_path],
-              '-jar', jar_file,
+              '-cp', jar_file,
               'CopyPdf',
               '--file_input', source,
               '--file_output', target,
               *options
           )
-          warn "PdfCopy errors: #{result[:err].join("\n")}" unless result[:status] == 0
-          result[:out]
+          result
         else
           result = Libis::Tools::Command.run(
               Libis::Format::Config[:java_path],
-              '-jar', jar_file,
+              '-cp', jar_file,
               'CopyPdf',
               '--file_input', source,
               '--file_output', target,
               *options
           )
-          warn "PdfCopy errors: #{result[:err].join("\n")}" unless result[:status] == 0
-          result[:out]
+          result
         end
       end
     end
