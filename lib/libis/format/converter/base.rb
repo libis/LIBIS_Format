@@ -38,8 +38,9 @@ module Libis
           raise RuntimeError, 'Method #output_types needs to be overridden in converter'
         end
 
+
         def using_temp(target)
-          tempfile = File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname(['convert', File.extname(target)], File.basename(target, '.*')))
+          tempfile = File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname(['convert', File.extname(target)], File.basename(target, '.*').gsub(/\s/, '_')))
           result = yield tempfile
           return nil unless result
           FileUtils.move result, target
