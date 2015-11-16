@@ -49,16 +49,16 @@ module Libis
         def get_converter_chain(src_type, tgt_type, operations = {})
           msg = "conversion from #{src_type.to_s} to #{tgt_type.to_s}"
           chain_list = find_chains src_type, tgt_type, operations
-          if chain_list.length > 1
-            warn "Found more than one conversion chain for #{msg}. Picking the first one."
-          end
+          # if chain_list.length > 1
+          #   warn "Found more than one conversion chain for #{msg}. Picking the first one."
+          # end
           if chain_list.empty?
             error "No conversion chain found for #{msg}"
             return nil
           end
-          chain_list.each do |chain|
-            debug "Matched chain: #{chain}"
-          end
+          # chain_list.each do |chain|
+          #   debug "Matched chain: #{chain}"
+          # end
           chain_list[0]
         end
 
