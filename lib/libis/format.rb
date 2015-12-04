@@ -9,6 +9,8 @@ module Libis
     autoload :Droid, 'libis/format/droid'
     autoload :OfficeToPdf, 'libis/format/office_to_pdf'
     autoload :PdfCopy, 'libis/format/pdf_copy'
+    autoload :PdfMerge, 'libis/format/pdf_merge'
+    autoload :PdfSplit, 'libis/format/pdf_split'
     autoload :PdfToPdfa, 'libis/format/pdf_to_pdfa'
     autoload :PdfaValidator, 'libis/format/pdfa_validator'
 
