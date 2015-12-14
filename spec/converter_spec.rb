@@ -21,7 +21,7 @@ describe 'Converters' do
   let(:file_dir) { File.dirname(__FILE__)}
 
   before(:all) {
-    Libis::Tools::Config[:logger].level = Logger::WARN
+    Libis::Tools::Config.logger.level = Logger::WARN
   }
 
   context 'Repository' do
