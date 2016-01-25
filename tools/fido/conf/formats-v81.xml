@@ -12742,7 +12742,7 @@ The identification byte is followed by four or more bytes that are all equal to 
       <note>Pack Header Start Code + System Header Start Code</note>
       <pattern>
         <position>BOF</position>
-        <pronom_pattern>000001BA{8-12}000001BB{8-65536}000001B3{8-128}000001B5</pronom_pattern>
+        <pronom_pattern>000001BA{8-12}000001BB{8-65535}000001B3{8-128}000001B5</pronom_pattern>
         <regex>(?s)\A.{0,0}\x00\x00\x01\xba.{8,12}\x00\x00\x01\xbb.{8,65536}\x00\x00\x01\xb3.{8,128}\x00\x00\x01\xb5</regex>
       </pattern>
     </signature>
