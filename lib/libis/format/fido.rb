@@ -1,5 +1,6 @@
 require 'csv'
 
+require 'singleton'
 require 'libis/tools/extend/string'
 require 'libis/tools/logger'
 require 'libis/tools/command'
@@ -11,12 +12,13 @@ module Libis
   module Format
 
     class Fido
+      include Singleton
       include ::Libis::Tools::Logger
 
       BAD_MIMETYPES = [nil, '', 'None', 'application/octet-stream']
 
       def self.run(file, formats = nil)
-        self.new.run file, formats
+        self.instance.run file, formats
       end
 
       def run(file, xtra_formats = nil)

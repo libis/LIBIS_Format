@@ -1,3 +1,5 @@
+require 'singleton'
+
 require 'tempfile'
 require 'csv'
 
@@ -11,6 +13,7 @@ module Libis
   module Format
 
     class Droid
+      include Singleton
       include ::Libis::Tools::Logger
 
       def self.run(file)

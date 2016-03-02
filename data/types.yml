@@ -170,7 +170,7 @@ TEXT:
 
   XML:
     NAME: Extensible Markup Language (XML)
-    MIME: text/xml
+    MIME: text/xml application/xml
     PUID: fmt/101
     EXTENSIONS: xml
 
