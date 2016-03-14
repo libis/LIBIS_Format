@@ -6,9 +6,12 @@ describe 'Identfier' do
   dir = File.join File.absolute_path(File.dirname(__FILE__)), 'data'
 
   before :all do
-    @logoutput = StringIO.new
-    ::Libis::Tools::Config.logger = Logger.new @logoutput
+    ::Libis::Tools::Config.logger.appenders =
+        ::Logging::Appenders.string_io('StringIO', layout: ::Libis::Tools::Config.get_log_formatter)
+    ::Libis::Tools::Config.logger.level = :all
   end
+
+  let(:logoutput) { ::Libis::Tools::Config.logger.appenders.last.sio }
 
   it 'should initialize correctly' do
     # expect(Libis::Format::Identifier.fido_formats.size).to be 1

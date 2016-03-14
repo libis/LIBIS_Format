@@ -3,7 +3,7 @@
 require 'libis-format'
 require 'libis-tools'
 
-::Libis::Tools::Config.logger.level = ::Logger::Severity::WARN
+::Libis::Tools::Config.logger.level = :WARN
 
 result = ::Libis::Format::Droid.run ARGV[0]
 
