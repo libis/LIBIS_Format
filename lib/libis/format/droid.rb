@@ -17,7 +17,7 @@ module Libis
       include ::Libis::Tools::Logger
 
       def self.run(file)
-        self.new.run file
+        self.instance.run file
       end
 
       def run(file)
