@@ -76,7 +76,7 @@ module Libis
 
         options ||= {}
 
-        result = { messages: [] }
+        result = {messages: []}
 
         # use FIDO
         # Note: FIDO does not always do a good job, mainly due to lacking container inspection.
@@ -121,7 +121,7 @@ module Libis
         warn 'Droid found multiple matches; using first match only' if droid_output.size > 1
         result.clear
         droid_output = droid_output.first
-        result[:mimetype] = droid_output[:mime_type].to_s.split(/[\s,]+/).find {|x| x =~ /.*\/.*/}
+        result[:mimetype] = droid_output[:mime_type].to_s.split(/[\s,]+/).find { |x| x =~ /.*\/.*/ }
         result[:matchtype] = droid_output[:method]
         result[:puid] = droid_output[:puid]
         result[:format_name] = droid_output[:format_name]
@@ -165,11 +165,17 @@ module Libis
         doc = ::Libis::Tools::XmlDocument.open file
         xml_validations.each do |mime, xsd_file|
           next unless xsd_file
-          if doc.validates_against?(xsd_file)
-            log_msg result, :debug, "XML file validated against XML Schema: #{xsd_file}"
-            result[:mimetype] = mime
-            result[:puid] = nil
-            result = ::Libis::Format::TypeDatabase.enrich(result, PUID: :puid, MIME: :mimetype)
+          begin
+            if doc.validates_against?(xsd_file)
+              log_msg result, :debug, "XML file validated against XML Schema: #{xsd_file}"
+              result[:mimetype] = mime
+              result[:puid] = nil
+              result = ::Libis::Format::TypeDatabase.enrich(result, PUID: :puid, MIME: :mimetype)
+            end
+          rescue
+            # Do nothing - probably Nokogiri chrashed during validation.
+            # Could have many causes (remote schema: firewall, network, link rot, ...; schema syntax error; ...)
+            # so we just ignore and continue.
           end
         end
         result
