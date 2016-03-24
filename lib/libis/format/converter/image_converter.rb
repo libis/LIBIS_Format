@@ -6,9 +6,7 @@ require 'libis/format/identifier'
 require 'mini_magick'
 require 'fileutils'
 
-MiniMagick.configure do |config|
-  config.debug = false
-end
+MiniMagick.logger.level = ::Logger::WARN
 
 module Libis
   module Format
