@@ -5,11 +5,14 @@ module Libis
     autoload :Config, 'libis/format/config'
     autoload :TypeDatabase, 'libis/format/type_database'
     autoload :Identifier, 'libis/format/identifier'
+
     autoload :Fido, 'libis/format/fido'
     autoload :Droid, 'libis/format/droid'
+
     autoload :OfficeToPdf, 'libis/format/office_to_pdf'
     autoload :PdfCopy, 'libis/format/pdf_copy'
     autoload :PdfMerge, 'libis/format/pdf_merge'
+    autoload :PdfOptimizer, 'libis/format/pdf_optimizer'
     autoload :PdfSplit, 'libis/format/pdf_split'
     autoload :PdfToPdfa, 'libis/format/pdf_to_pdfa'
     autoload :PdfaValidator, 'libis/format/pdfa_validator'

@@ -5,6 +5,7 @@ require_relative 'base'
 require 'libis/tools/extend/hash'
 require 'libis/format/pdf_copy'
 require 'libis/format/pdf_to_pdfa'
+require 'libis/format/pdf_optimizer'
 
 module Libis
   module Format
@@ -78,12 +79,37 @@ module Libis
           @options['wm_gap_size'] = options[:gap] if options[:gap].to_s =~ /^\s*\d+\s*$/
         end
 
+        # Optimize the PDF
+        #
+        # This reduces the graphics quality to a level in order to limit file size. This option relies on the
+        # presence of ghostscript and takes one argument: the quality level. It should be one of:
+        #
+        # - 0 : lowest quality (Acrobat Distiller 'Screen Optimized' equivalent)
+        # - 1 : medium quality (Acrobat Distiller 'eBook' equivalent)
+        # - 2 : good quality
+        # - 3 : high quality (Acrobat Distiller 'Print Optimized' equivalent)
+        # - 4 : highest quality (Acrobat Distiller 'Prepress Optimized' equivalent)
+        #
+        # Note that the optimization is intended to be used with PDF's containing high-resolution images.
+        #
+        # @param [Integer] setting quality setting. [0-4]
+        def optimize(setting = 1)
+          @options['optimize'] = %w(screen ebook default printer prepress)[setting] if (0..4) === setting
+        end
+
         def convert(source, target, format, opts = {})
           super
 
           result = nil
 
           unless @options.empty?
+
+            if (quality = @options.delete('optimize'))
+              result = optimize_pdf(source, target, quality)
+              return nil unless result
+              source = result
+            end
+
             result = convert_pdf(source, target)
             return nil unless result
             source = result
@@ -97,6 +123,17 @@ module Libis
 
         end
 
+        def optimize_pdf(source, target, quality)
+
+          using_temp(target) do |tmpname|
+            result = Libis::Format::PdfOptimizer.run(source, tmpname, quality)
+            unless result[:err].empty?
+              error("Pdf optimization encountered errors:\n%s", (result[:err] + result[:out]).join('\n'))
+              next nil
+            end
+            tmpname
+          end
+        end
 
         def convert_pdf(source, target)
 
@@ -110,9 +147,9 @@ module Libis
                     ["--#{k}", (v.is_a?(Array) ? v : v.to_s)]
                   end }.flatten
             )
-            result[:err].empty? ? target : begin
+            unless result[:err].empty?
               error("Pdf conversion encountered errors:\n%s", result[:err].join('\n'))
-              nil
+              next nil
             end
             tmpname
           end
@@ -123,9 +160,9 @@ module Libis
 
           using_temp(target) do |tmpname|
             result = Libis::Format::PdfToPdfa.run source, tmpname
-            result[:status] == 0 ? target : begin
+            unless result[:status] == 0
               error("Pdf/A conversion encountered errors:\n%s", result[:err].join('\n'))
-              nil
+              next nil
             end
             tmpname
           end
