@@ -6,7 +6,7 @@ require 'libis/format/identifier'
 require 'mini_magick'
 require 'fileutils'
 
-MiniMagick.logger.level = ::Logger::WARN
+MiniMagick.logger.level = ::Logger::ERROR
 
 module Libis
   module Format
@@ -88,6 +88,7 @@ module Libis
             # noinspection RubyResolve
             MiniMagick::Tool::Convert.new do |convert|
               # noinspection RubyLiteralArrayInspection
+              convert.quiet
               convert.background 'transparent'
               convert.size('2000x2000')
               convert.gravity 'Center'
