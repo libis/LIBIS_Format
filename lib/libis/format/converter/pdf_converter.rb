@@ -127,7 +127,7 @@ module Libis
 
           using_temp(target) do |tmpname|
             result = Libis::Format::PdfOptimizer.run(source, tmpname, quality)
-            unless result[:err].empty?
+            unless result[:status] == 0
               error("Pdf optimization encountered errors:\n%s", (result[:err] + result[:out]).join('\n'))
               next nil
             end

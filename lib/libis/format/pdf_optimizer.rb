@@ -21,12 +21,12 @@ module Libis
         Libis::Tools::Command.run(
             'gs',
             '-sDEVICE=pdfwrite',
-            ' ',
+            '-dCompatibilityLevel=1.4',
             "-dPDFSETTINGS=/#{quality}",
             '-dNOPAUSE',
             '-dBATCH',
-            "-sOutputFile='#{target}'",
-            "'#{source}'"
+            "-sOutputFile=#{target}",
+            "#{source}"
         )
 
       end
