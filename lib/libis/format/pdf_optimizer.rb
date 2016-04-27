@@ -20,7 +20,7 @@ module Libis
 
         Libis::Tools::Command.run(
             'gs',
-            '-sDEVICE=prdfwrite',
+            '-sDEVICE=pdfwrite',
             '-dCompatibilityLevel=1.4',
             "dPDFSETTINGS=/#{quality}",
             '-dNOPAUSE',
