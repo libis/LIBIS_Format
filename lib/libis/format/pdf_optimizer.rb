@@ -21,8 +21,8 @@ module Libis
         Libis::Tools::Command.run(
             'gs',
             '-sDEVICE=pdfwrite',
-            '-dCompatibilityLevel=1.4',
-            "dPDFSETTINGS=/#{quality}",
+            ' ',
+            "-dPDFSETTINGS=/#{quality}",
             '-dNOPAUSE',
             '-dBATCH',
             "-sOutputFile='#{target}'",
