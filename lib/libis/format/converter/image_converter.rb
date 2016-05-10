@@ -59,6 +59,10 @@ module Libis
           @options[:colorspace] = value
         end
 
+        def profile(icc)
+          @options[:profile] = icc
+        end
+
         # Create or use a watermark image.
         #
         # The watermark options are:
@@ -182,6 +186,12 @@ module Libis
               convert.resize("#{image.width / @wm_size}x#{image.height / @wm_size}").write('mpr:watermark').delete.+
             end
 
+            conversions = {}
+            icc_options = {}
+            @options.each do |o, v|
+              ([:colorspace, :profile].include?(o) ? icc_options : conversions)[o] = v
+            end
+
             convert << source
             convert.flatten if format == :JPG
             if @wm_image
@@ -195,8 +205,14 @@ module Libis
               convert.compose(@wm_composition).define("compose:args=#{@wm_opacity}").composite
             end
 
-            @options.each { |o, v| convert.send(o, v) }
             @flags.each { |f, v| v.is_a?(FalseClass) ? convert.send(f).+ : convert.send(f) }
+
+            unless conversions.empty?
+              convert.colorspace('RGB')
+              conversions.each { |o, v| convert.send(o, v) }
+              convert.colorspace('sRGB') if icc_options.empty?
+            end
+            icc_options.each { |o, v| convert.send(o, v) }
 
             convert.format(format)
             convert << target
