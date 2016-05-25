@@ -11,16 +11,19 @@ IMAGE:
   TIFF:
     NAME: Tagged Image File Format (TIFF)
     MIME: image/tiff
-    EXTENSIONS: tif,tiff
+    PUID: fmt/353 fmt/154 fmt/153 fmt/156 fmt/155 fmt/152 x-fmt/399 x-fmt/388 x-fmt/387 fmt/202
+    EXTENSIONS: tif,TIF,tiff,tifx,dng,nef
 
   JP2:
     NAME: Joint Photographic Experts Group 2000 (JPEG 2000)
     MIME: image/jp2
+    PUID: fmt/406
     EXTENSIONS: jp2
 
   JPG:
     NAME: Joint Photographic Experts Group (JPEG)
     MIME: image/jpeg
+    PUID: fmt/42 fmt/43 fmt/44 fmt/41 x-fmt/398 x-fmt/390 x-fmt/391 fmt/645
     EXTENSIONS: jpg,jpe,jpeg
 
   PNG:

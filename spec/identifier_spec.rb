@@ -54,6 +54,8 @@ describe 'Identfier' do
         'test.gif' => {mimetype: 'image/gif', puid: 'fmt/4'},
         'test.xml' => {mimetype: 'application/xml', puid: 'fmt/101'},
         'test-ead.xml' => {mimetype: 'archive/ead', puid: 'fmt/101'},
+        'NikonRaw-CaptureOne.tif' => {mimetype: 'image/tiff', puid: 'x-fmt/387'},
+        'NikonRaw-CameraRaw.TIF' => {mimetype: 'image/tiff', puid: 'fmt/202'},
     }.each do |file, result|
       it "should identify test document '#{file}'" do
         expect(::Libis::Format::Identifier.get(File.join(dir,file))).to include result
