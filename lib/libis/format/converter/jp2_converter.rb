@@ -1,20 +1,16 @@
 # encoding: utf-8
+require 'libis-tools'
+require 'fileutils'
+require 'libis/format/config'
 
 require_relative 'base'
-require 'libis/format/identifier'
-
-require 'mini_magick'
-require 'fileutils'
-
-MiniMagick.logger.level = ::Logger::ERROR
-
 module Libis
   module Format
     module Converter
 
       class Jp2Converter < Libis::Format::Converter::Base
 
-        def self.input_types(format = nil)
+        def self.input_types(_ = nil)
           [:TIFF, :JPG, :PNG, :BMP, :GIF, :PDF]
         end
 
@@ -102,8 +98,6 @@ module Libis
           )
 
           target
-
-
         end
       end
     end
