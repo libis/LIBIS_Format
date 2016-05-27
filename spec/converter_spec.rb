@@ -83,9 +83,11 @@ describe 'Converters' do
       ref_file = File.join(file_dir, 'data', 'test.jpg')
       tgt_file = File.join('', 'tmp', 'test.jpg')
       FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.delete_date
       result = converter.convert(src_file, tgt_file, :JPG)
       expect(result).to eq tgt_file
-      expect(tgt_file).to be_same_file_as ref_file
+      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << '-metric' << 'mae' << ref_file << tgt_file << 'null:' }
+      expect(compare).to_not be_nil
       FileUtils.rm tgt_file, force: true
     end
 
@@ -94,9 +96,11 @@ describe 'Converters' do
       ref_file = File.join(file_dir, 'data', 'test.png')
       tgt_file = File.join('', 'tmp', 'test.png')
       FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.delete_date
       result = converter.convert(src_file, tgt_file, :PNG)
       expect(result).to eq tgt_file
-      expect(tgt_file).to be_same_file_as ref_file
+      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << '-metric' << 'mae' << ref_file << tgt_file << 'null:' }
+      expect(compare).to_not be_nil
       FileUtils.rm tgt_file, force: true
     end
 
@@ -105,6 +109,7 @@ describe 'Converters' do
       ref_file = File.join(file_dir, 'data', 'test.pdf.tif')
       tgt_file = File.join('', 'tmp', 'test.pdf.tif')
       FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.delete_date
       result = converter.convert(src_file, tgt_file, :TIFF)
       expect(result).to eq tgt_file
       expect(tgt_file).to be_same_file_as ref_file
@@ -117,9 +122,11 @@ describe 'Converters' do
       tgt_file = File.join('', 'tmp', 'test-options.jpg')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.watermark(text: 'RSPEC', size: 5, opacity: 0.1, rotation: 15, gap: 0.5, composition: 'modulate')
+      converter.delete_date
       result = converter.convert(src_file, tgt_file, :JPG, options: {scale: '150%', quality: '70%'})
       expect(result).to eq tgt_file
-      expect(tgt_file).to be_same_file_as ref_file
+      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << '-metric' << 'mae' << ref_file << tgt_file << 'null:' }
+      expect(compare).to_not be_nil
       FileUtils.rm tgt_file, force: true
     end
 

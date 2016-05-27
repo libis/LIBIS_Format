@@ -59,8 +59,12 @@ module Libis
           @options[:colorspace] = value
         end
 
+        def delete_date
+          @delete_date = true
+        end
+
         def profile(icc)
-          @options[:profile] = icc
+          @profile = icc
         end
 
         # Create or use a watermark image.
@@ -186,12 +190,6 @@ module Libis
               convert.resize("#{image.width / @wm_size}x#{image.height / @wm_size}").write('mpr:watermark').delete.+
             end
 
-            conversions = {}
-            icc_options = {}
-            @options.each do |o, v|
-              ([:colorspace, :profile].include?(o) ? icc_options : conversions)[o] = v
-            end
-
             convert << source
             convert.flatten if format == :JPG
             if @wm_image
@@ -206,13 +204,16 @@ module Libis
             end
 
             @flags.each { |f, v| v.is_a?(FalseClass) ? convert.send(f).+ : convert.send(f) }
-
-            unless conversions.empty?
-              convert.colorspace('RGB')
-              conversions.each { |o, v| convert.send(o, v) }
-              convert.colorspace('sRGB') if icc_options.empty?
+            if @delete_date
+              convert << '+set' << 'modify-date' <<  '+set' << 'create-date'
             end
-            icc_options.each { |o, v| convert.send(o, v) }
+
+            unless @options.empty?
+              convert.colorspace('RGB')
+              @options.each { |o, v| convert.send(o, v) }
+              convert.colorspace('sRGB') unless @options[:colorspace]
+            end
+            convert.profile @profile if @profile
 
             convert.format(format)
             convert << target

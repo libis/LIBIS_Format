@@ -10,6 +10,7 @@ module Libis
     Config[:converter_chain_max_level] = 8
 
     Config[:java_path] = 'java'
+    Config[:j2kdriver] = 'j2kdriver'
     Config[:soffice_path] = 'soffice'
     Config[:ghostscript_path] = 'gs'
     # Config[:pdfa_path] =
