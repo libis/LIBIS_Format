@@ -209,11 +209,12 @@ module Libis
               convert << '+set' << 'modify-date' <<  '+set' << 'create-date'
             end
 
+            colorspace = @options.delete(:colorspace) || 'sRGB'
             unless @options.empty?
               convert.colorspace('RGB')
               @options.each { |o, v| convert.send(o, v) }
-              convert.colorspace('sRGB') unless @options[:colorspace]
             end
+            convert.colorspace(colorspace)
             convert.profile @profile if @profile
 
             convert.format(format)
