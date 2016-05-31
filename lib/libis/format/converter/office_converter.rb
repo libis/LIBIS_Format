@@ -11,7 +11,7 @@ module Libis
 
       class OfficeConverter < Libis::Format::Converter::Base
 
-        def self.input_types(_ = nil)
+        def self.input_types
           [
               :TXT,
               :RTF,
@@ -26,7 +26,8 @@ module Libis
           ]
         end
 
-        def self.output_types(_ = nil)
+        def self.output_types(format = nil)
+          return [] unless input_types.include?(format)
           [:PDF]
         end
 

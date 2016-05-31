@@ -13,11 +13,12 @@ module Libis
 
       class PdfConverter < Libis::Format::Converter::Base
 
-        def self.input_types(_ = nil)
+        def self.input_types
           [:PDF]
         end
 
-        def self.output_types(_ = nil)
+        def self.output_types(format = nil)
+          return [] unless input_types.include?(format)
           [:PDF, :PDFA]
         end
 

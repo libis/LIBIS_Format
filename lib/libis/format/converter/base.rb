@@ -30,16 +30,19 @@ module Libis
           @flags.merge!(opts[:flags]) if opts[:flags]
         end
 
-        def self.input_types(_ = nil)
+        def self.input_types
           raise RuntimeError, 'Method #input_types needs to be overridden in converter'
         end
 
-        def self.output_types(_ = nil)
+        def self.output_types(_format = nil)
           raise RuntimeError, 'Method #output_types needs to be overridden in converter'
         end
 
+        def using_temp(target, &block)
+          self.class.using_temp(target, &block)
+        end
 
-        def using_temp(target)
+        def Base.using_temp(target)
           tempfile = File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname(['convert', File.extname(target)], File.basename(target, '.*').gsub(/\s/, '_')))
           result = yield tempfile
           return nil unless result

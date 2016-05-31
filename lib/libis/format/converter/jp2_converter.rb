@@ -10,11 +10,12 @@ module Libis
 
       class Jp2Converter < Libis::Format::Converter::Base
 
-        def self.input_types(_ = nil)
+        def self.input_types
           [:TIFF, :JPG, :PNG, :BMP, :GIF, :PDF]
         end
 
-        def self.output_types(_ = nil)
+        def self.output_types(format = nil)
+          return [] unless input_types.include?(format)
           [:JP2]
         end
 
@@ -68,7 +69,7 @@ module Libis
           @options.each do |key, value|
             case key
               when :color_xform
-                options << '--set-output-j2k-color-xform' << value ? 'YES' : 'NO'
+                options << '--set-output-j2k-color-xform' << (value ? 'YES' : 'NO')
               when :error_resilience
                 options << '--set-output-j2k-error-resilience' << value.to_s
               when :lossless
@@ -92,9 +93,10 @@ module Libis
           Libis::Tools::Command.run(
               Libis::Format::Config[:j2kdriver],
               '--input-file-name', source,
-              '--output-file-name', target,
               '--set-output-type', 'JP2',
-              *options
+              *options,
+              '--output-file-name', target,
+
           )
 
           target

@@ -14,19 +14,13 @@ module Libis
 
       class ImageConverter < Libis::Format::Converter::Base
 
-        def self.input_types(_ = nil)
+        def self.input_types
           [:TIFF, :JPG, :PNG, :BMP, :GIF, :JP2, :PDF]
         end
 
-        def self.output_types(input_format = nil)
-          case input_format
-            when :JP2
-              [:JP2]
-            when *(input_types - [:JP2])
-              input_types - [:JP2]
-            else
-              []
-          end
+        def self.output_types(format = nil)
+          return [] unless input_types.include?(format)
+          [:TIFF, :JPG, :PNG, :BMP, :GIF, :JP2, :PDF]
         end
 
         def initialize
