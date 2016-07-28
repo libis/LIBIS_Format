@@ -86,14 +86,14 @@ module Libis
         # @param [Hash] options Hash of options for watermark creation.
         def watermark(options = {})
           text = options[:text] || '© LIBIS'
-          image = options[:file] || (Dir::Tmpname.create(%w(wm_image .png)) { |_|})
           @wm_size = (options[:size] || '4').to_i
           @wm_opacity = ((options[:opacity] || 0.1).to_f * 100).to_i
           @wm_composition = options[:composition] || 'modulate'
           gap = ((options[:gap] || 0.2).to_f * 100).to_i
           rotation = 360 - (options[:rotation] || 30).to_i
-          @wm_image = MiniMagick::Image.new(image)
-          unless @wm_image.valid?
+          @wm_image = MiniMagick::Image.new(options[:file]) if options[:file]
+          unless @wm_image && @wm_image.valid?
+            image = options[:file] || (Dir::Tmpname.create(%w(wm_image .png)) { |_|})
             # noinspection RubyResolve
             MiniMagick::Tool::Convert.new do |convert|
               # noinspection RubyLiteralArrayInspection
@@ -182,13 +182,13 @@ module Libis
 
         def convert_image(source, target, format)
 
-          image = MiniMagick::Image.new(source)
+          image_info = MiniMagick::Image.Info.new(source)
 
           MiniMagick::Tool::Convert.new do |convert|
             if @wm_image
               convert << @wm_image.path
               convert.filter('Lagrange')
-              convert.resize("#{image.width / @wm_size}x#{image.height / @wm_size}").write('mpr:watermark').delete.+
+              convert.resize("#{image_info['width'] / @wm_size}x#{image_info['height'] / @wm_size}").write('mpr:watermark').delete.+
             end
 
             convert << source
@@ -196,10 +196,10 @@ module Libis
             if @wm_image
               # noinspection RubyResolve
               convert.stack do |stack|
-                stack.size("#{image.width}x#{image.height}")
+                stack.size("#{image_info['width']}x#{image_info['height']}")
                 stack << 'xc:transparent'
                 stack.tile('mpr:watermark')
-                stack.draw "rectangle 0,0,#{image.width},#{image.height}"
+                stack.draw "rectangle 0,0,#{image_info['width']},#{image_info['height']}"
               end
               convert.compose(@wm_composition).define("compose:args=#{@wm_opacity}").composite
             end
