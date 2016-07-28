@@ -49,7 +49,7 @@ module Libis
         end
 
         def resample(value)
-          @options[:density] = value
+          @options[:resample] = value
         end
 
         def flatten
