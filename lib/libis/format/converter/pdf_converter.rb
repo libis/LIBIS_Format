@@ -103,14 +103,13 @@ module Libis
 
           result = nil
 
+          if (quality = @options.delete('optimize'))
+            result = optimize_pdf(source, target, quality)
+            return nil unless result
+            source = result
+          end
+
           unless @options.empty?
-
-            if (quality = @options.delete('optimize'))
-              result = optimize_pdf(source, target, quality)
-              return nil unless result
-              source = result
-            end
-
             result = convert_pdf(source, target)
             return nil unless result
             source = result
