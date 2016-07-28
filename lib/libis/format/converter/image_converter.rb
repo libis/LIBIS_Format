@@ -182,7 +182,7 @@ module Libis
 
         def convert_image(source, target, format)
 
-          image_info = MiniMagick::Image.Info.new(source)
+          image_info = MiniMagick::Image::Info.new(source)
 
           MiniMagick::Tool::Convert.new do |convert|
             if @wm_image
