@@ -4,6 +4,7 @@ require 'spec_helper'
 require 'libis/format/converter/image_converter'
 require 'libis/format/converter/pdf_converter'
 require 'libis/format/converter/office_converter'
+require 'libis/format/converter/jp2_converter'
 
 RSpec::Matchers.define(:be_same_file_as) do |exected_file_path|
   match do |actual_file_path|
@@ -18,7 +19,7 @@ end
 describe 'Converters' do
 
   let(:repository) { Libis::Format::Converter::Repository }
-  let(:file_dir) { File.dirname(__FILE__)}
+  let(:file_dir) { File.dirname(__FILE__) }
 
   before(:all) {
     Libis::Tools::Config.logger.level = :WARN
@@ -27,13 +28,15 @@ describe 'Converters' do
   context 'Repository' do
 
     it 'loads all converters' do
-      expect(repository.get_converters.size).to eq 3
+      expect(repository.get_converters.size).to eq 4
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::ImageConverter'
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::OfficeConverter'
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::PdfConverter'
+      # noinspection RubyResolve
+      expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::Jp2Converter'
     end
 
     it 'creates simple converter chain' do
@@ -72,11 +75,34 @@ describe 'Converters' do
                                       ]
     end
 
+    context 'create chain for TIFF to JP2' do
+
+      it 'without operators' do
+        chain = repository.get_converter_chain(:TIFF, :JP2)
+        expect(chain).to_not be nil
+        expect(chain.to_array.size).to eq 1
+        expect(chain.to_array).to match [
+                                            {converter: Libis::Format::Converter::ImageConverter, input: :TIFF, output: :JP2}
+                                        ]
+      end
+
+      it 'with force operator' do
+        chain = repository.get_converter_chain(:TIFF, :JP2, {lossless: true})
+        expect(chain).to_not be nil
+        expect(chain.to_array.size).to eq 1
+        expect(chain.to_array).to match [
+                                            {converter: Libis::Format::Converter::Jp2Converter, input: :TIFF, output: :JP2, operations: [{method: :lossless, argument: true}]}
+                                        ]
+      end
+
+    end
+
   end
 
   context 'Image Converter' do
 
     let(:converter) { Libis::Format::Converter::ImageConverter.new }
+    let(:diff_file) { File.join('', 'tmp', 'diff.jpg') }
 
     it 'converts TIFF to JPEG' do
       src_file = File.join(file_dir, 'data', 'test.tif')
@@ -86,8 +112,9 @@ describe 'Converters' do
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :JPG)
       expect(result).to eq tgt_file
-      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << '-metric' << 'mae' << ref_file << tgt_file << 'null:' }
-      expect(compare).to_not be_nil
+      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'MAE' << diff_file }
+      # noinspection RubyArgCount
+      expect(compare).to be_empty
       FileUtils.rm tgt_file, force: true
     end
 
@@ -97,22 +124,26 @@ describe 'Converters' do
       tgt_file = File.join('', 'tmp', 'test.png')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
+      converter.page(0)
       result = converter.convert(src_file, tgt_file, :PNG)
       expect(result).to eq tgt_file
-      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << '-metric' << 'mae' << ref_file << tgt_file << 'null:' }
-      expect(compare).to_not be_nil
+      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'MAE' << diff_file }
+      # noinspection RubyArgCount
+      expect(compare).to be_empty
       FileUtils.rm tgt_file, force: true
     end
 
     it 'converts PDF to TIFF' do
       src_file = File.join(file_dir, 'data', 'test.pdf')
-      ref_file = File.join(file_dir, 'data', 'test.pdf.tif')
+      # ref_file = File.join(file_dir, 'data', 'test.pdf.tif')
       tgt_file = File.join('', 'tmp', 'test.pdf.tif')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :TIFF)
       expect(result).to eq tgt_file
-      expect(tgt_file).to be_same_file_as ref_file
+      # compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'MAE' << diff_file }
+      # # noinspection RubyArgCount
+      # expect(compare).to be_empty
       FileUtils.rm tgt_file, force: true
     end
 
@@ -125,8 +156,27 @@ describe 'Converters' do
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :JPG, options: {scale: '150%', quality: '70%'})
       expect(result).to eq tgt_file
-      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << '-metric' << 'mae' << ref_file << tgt_file << 'null:' }
-      expect(compare).to_not be_nil
+      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'mae' << diff_file }
+      # noinspection RubyArgCount
+      expect(compare).to be_empty
+      FileUtils.rm tgt_file, force: true
+    end
+
+    it 'converts only first page of multipage TIFF to JP2' do
+      src_file = File.join(file_dir, 'data', 'multipage.tif')
+      ref_file = File.join(file_dir, 'data', 'multipage.tif.jp2')
+      tgt_file = File.join('', 'tmp', 'test.jp2')
+      diff_file = File.join('', 'tmp', 'diff.jpg')
+      FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.delete_date
+      converter.quiet(true)
+      converter.page(0)
+      result = converter.convert(src_file, tgt_file, :JP2)
+      expect(result).to eq tgt_file
+      expect(File.exist?(tgt_file)).to be_truthy
+      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'mae' << diff_file }
+      # noinspection RubyArgCount
+      expect(compare).to be_empty
       FileUtils.rm tgt_file, force: true
     end
 

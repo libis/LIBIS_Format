@@ -32,6 +32,14 @@ module Libis
           #force usage of this converter
         end
 
+        def quiet(v)
+          @flags[:quiet] = !!v
+        end
+
+        def page(nr)
+          @page = nr
+        end
+
         def scale(percent)
           @options[:scale] = percent
         end
@@ -152,7 +160,11 @@ module Libis
             image = MiniMagick::Image.new(source)
 
             if image.pages.size > 1
-              assemble_and_convert(image.pages.map {|page| page.path}, target, format)
+              if @page
+                convert_image(image.pages[@page].path, target, format)
+              else
+                assemble_and_convert(image.pages.map { |page| page.path }, target, format)
+              end
             else
               convert_image(source, target, format)
             end
@@ -206,7 +218,7 @@ module Libis
 
             @flags.each { |f, v| v.is_a?(FalseClass) ? convert.send(f).+ : convert.send(f) }
             if @delete_date
-              convert << '+set' << 'modify-date' <<  '+set' << 'create-date'
+              convert << '+set' << 'modify-date' << '+set' << 'create-date'
             end
 
             colorspace = @options.delete(:colorspace) || 'sRGB'
