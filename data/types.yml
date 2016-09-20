@@ -218,3 +218,9 @@ ARCHIVE:
     MIME: archive/ead
     PUID: fmt/101
     EXTENSIONS: ead,xml
+
+  ZIP:
+    NAME: ZIP Format
+    MIME: application/zip
+    PUID: x-fmt/263
+    EXTENSIONS: zip,eip
