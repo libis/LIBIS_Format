@@ -24,7 +24,7 @@ module Libis
         FileUtils.mkpath(workdir)
 
         src_file = File.join(workdir, File.basename(source))
-        FileUtils.link source, src_file
+        FileUtils.symlink source, src_file
 
         tgt_file = File.join(workdir, File.basename(source, '.*') + '.pdf')
 
