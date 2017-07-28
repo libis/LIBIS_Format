@@ -18,8 +18,8 @@ end
 
 describe 'Converters' do
 
-  let(:repository) { Libis::Format::Converter::Repository }
-  let(:file_dir) { File.dirname(__FILE__) }
+  let(:repository) {Libis::Format::Converter::Repository}
+  let(:file_dir) {File.dirname(__FILE__)}
 
   before(:all) {
     Libis::Tools::Config.logger.level = :WARN
@@ -101,8 +101,8 @@ describe 'Converters' do
 
   context 'Image Converter' do
 
-    let(:converter) { Libis::Format::Converter::ImageConverter.new }
-    let(:diff_file) { File.join('', 'tmp', 'diff.jpg') }
+    let(:converter) {Libis::Format::Converter::ImageConverter.new}
+    let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}
 
     it 'converts TIFF to JPEG' do
       src_file = File.join(file_dir, 'data', 'test.tif')
@@ -112,10 +112,13 @@ describe 'Converters' do
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :JPG)
       expect(result).to eq tgt_file
-      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'MAE' << diff_file }
-      # noinspection RubyArgCount
-      expect(compare).to be_empty
-      FileUtils.rm tgt_file, force: true
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare.fuzz << '1%'
+      compare << diff_file
+      compare.call {|_, _, status| expect(status).to be 0}
+      # FileUtils.rm tgt_file, force: true
     end
 
     it 'converts TIFF to PNG' do
@@ -127,38 +130,48 @@ describe 'Converters' do
       converter.page(0)
       result = converter.convert(src_file, tgt_file, :PNG)
       expect(result).to eq tgt_file
-      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'MAE' << diff_file }
-      # noinspection RubyArgCount
-      expect(compare).to be_empty
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare << diff_file
+      compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
     end
 
     it 'converts PDF to TIFF' do
       src_file = File.join(file_dir, 'data', 'test.pdf')
-      # ref_file = File.join(file_dir, 'data', 'test.pdf.tif')
+      ref_file = File.join(file_dir, 'data', 'test.pdf.tif')
       tgt_file = File.join('', 'tmp', 'test.pdf.tif')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :TIFF)
       expect(result).to eq tgt_file
-      # compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'MAE' << diff_file }
-      # # noinspection RubyArgCount
-      # expect(compare).to be_empty
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare.fuzz << '100%'
+      compare << diff_file
+      compare.call {|_,_,status|expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
     end
 
-    it 'converts TIFF to JPEG with many options' do
+    it 'converts TIFF to PNG with many options' do
       src_file = File.join(file_dir, 'data', 'test.tif')
-      ref_file = File.join(file_dir, 'data', 'test-options.jpg')
-      tgt_file = File.join('', 'tmp', 'test-options.jpg')
+      ref_file = File.join(file_dir, 'data', 'test-options.png')
+      tgt_file = File.join('', 'tmp', 'test-options.png')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.watermark(text: 'RSPEC', size: 5, opacity: 0.1, rotation: 15, gap: 0.5, composition: 'modulate')
       converter.delete_date
-      result = converter.convert(src_file, tgt_file, :JPG, options: {scale: '150%', quality: '70%'})
+      result = converter.convert(src_file, tgt_file, :PNG, options: {scale: '150%'})
       expect(result).to eq tgt_file
-      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'mae' << diff_file }
-      # noinspection RubyArgCount
-      expect(compare).to be_empty
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare.fuzz << '1%'
+      compare << diff_file
+      compare.call do |_stdin, _stdout, status|
+        expect(status).to be 0
+      end
       FileUtils.rm tgt_file, force: true
     end
 
@@ -174,9 +187,12 @@ describe 'Converters' do
       result = converter.convert(src_file, tgt_file, :JP2)
       expect(result).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
-      compare = MiniMagick::Tool::Compare.new { |cmp| cmp << ref_file << tgt_file << '-metric' << 'mae' << diff_file }
-      # noinspection RubyArgCount
-      expect(compare).to be_empty
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare.fuzz << '10%'
+      compare << diff_file
+      compare.call {|_,_,status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
     end
 
@@ -184,7 +200,7 @@ describe 'Converters' do
 
   context 'Pdf Converter' do
 
-    let(:converter) { Libis::Format::Converter::PdfConverter.new }
+    let(:converter) {Libis::Format::Converter::PdfConverter.new}
 
     it 'converts PDF to PDF/A' do
       src_file = File.join(file_dir, 'data', 'test.pdf')
@@ -199,7 +215,7 @@ describe 'Converters' do
 
   context 'Office Converter' do
 
-    let(:converter) { Libis::Format::Converter::OfficeConverter.new }
+    let(:converter) {Libis::Format::Converter::OfficeConverter.new}
 
     it 'converts Word document to PDF' do
       src_file = File.join(file_dir, 'data', 'test.doc')
