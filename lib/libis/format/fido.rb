@@ -1,101 +1,77 @@
-require 'csv'
-
-require 'singleton'
 require 'libis/tools/extend/string'
-require 'libis/tools/logger'
 require 'libis/tools/command'
 
+require 'csv'
 require 'libis/format/config'
-require 'libis/format/type_database'
+
+require_relative 'identification_tool'
 
 module Libis
   module Format
 
-    class Fido
-      include Singleton
-      include ::Libis::Tools::Logger
+    class Fido < Libis::Format::IdentificationTool
 
-      BAD_MIMETYPES = [nil, '', 'None', 'application/octet-stream']
-
-      def self.run(file, formats = nil)
-        self.instance.run file, formats
+      def self.add_formats(formats_file)
+        self.instance.formats << formats_file unless self.instance.formats.include?(formats_file)
       end
 
-      def run(file, xtra_formats = nil)
-
-        fido_results = []
-
-        fmt_list = formats.dup
-        case xtra_formats
-          when Array
-            fmt_list += xtra_formats
-          when String
-            fmt_list << xtra_formats
-          else
-            # do nothing
-        end
-
-        args = []
-        args << '-loadformats' << "#{fmt_list.join(',')}" unless fmt_list.empty?
-        args << "#{file.escape_for_string}"
-        fido = ::Libis::Tools::Command.run(Libis::Format::Config[:fido_path], *args)
-        warn "Fido errors: #{fido[:err].join("\n")}" unless fido[:err].empty?
-
-        keys = [:status, :time, :puid, :format_name, :signature_name, :filesize, :filename, :mimetype, :matchtype]
-        fido_output = CSV.parse(fido[:out].join("\n")).map { |a| Hash[keys.zip(a)] }
-
-        fido_output.each do |x|
-          if x[:status] == 'OK'
-            x[:mimetype] = get_mimetype(x[:puid]) if x[:mimetype] == 'None'
-            next if BAD_MIMETYPES.include? x[:mimetype]
-            x[:score] = 5
-            case x[:matchtype]
-              when 'signature'
-                x[:score] += 5
-              when 'container'
-                typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(x[:puid])
-                ext = File.extname(file)
-                x[:score] += 2 if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
-              else
-                # do nothing
-            end
-            fido_results << x
-          end
-        end
-
-        fido_results = fido_results.inject({}) do |result, value|
-          result[value[:score]] ||= []
-          result[value[:score]] << value
-          result
-        end
-
-        max_score = fido_results.keys.max
-
-        # Only if we find a single hit of type 'signature' or 'container', we are confident enough to return a result
-        return {} unless max_score and max_score >= 5 && fido_results[max_score].size == 1
-
-        fido_results[max_score].first
+      def self.del_formats(formats_file)
+        self.instance.formats.delete(formats_file)
       end
-
-      def self.add_format(f)
-        instance.formats << f
-      end
-
-      def self.formats
-        instance.formats
-      end
-
-      protected
 
       attr_reader :formats
 
+      protected
+
       def initialize
-        data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
-        @formats = [(File.join(data_dir, 'lias_formats.xml'))]
+        @formats = Libis::Format::Config[:fido_formats].dup
+        bad_mimetype('application/vnd.oasis.opendocument.text')
+        bad_mimetype('application/vnd.oasis.opendocument.spreadsheet')
       end
 
-      def get_mimetype(puid)
-        ::Libis::Format::TypeDatabase.puid_typeinfo(puid)[:MIME].first rescue nil
+      attr_writer :formats
+
+      def run_list(filelist)
+        create_list_file(filelist) do |list_file|
+          output = runner(nil, '-input', list_file.escape_for_string)
+          process_output(output)
+        end
+      end
+
+      def run_dir(dir, recursive = true)
+        args = []
+        args << '-recursive' if recursive
+        output = runner(dir, *args)
+        process_output(output)
+      end
+
+      def run(file)
+        output = runner(file)
+        process_output(output)
+      end
+
+      def runner(filename, *args)
+        # Load custome format definitions if present
+        args << '-loadformats' << "#{formats.join(',')}" unless formats.empty?
+
+        # Add filename to argument list (optional)
+        args << "#{filename.escape_for_string}" if filename
+
+        # Run command and capture results
+        fido = ::Libis::Tools::Command.run(Libis::Format::Config[:fido_path], *args)
+
+        # Log warning if needed
+        warn "Fido errors: #{fido[:err].join("\n")}" unless fido[:err].empty?
+
+        # Parse output (CSV) text into array and return result
+        keys = [:status, :time, :puid, :format_name, :signature_name, :filesize, :filepath, :mimetype, :matchtype]
+        result = CSV.parse(fido[:out].join("\n")).map {|a| Hash[keys.zip(a.values)]}.select {|a| a[:status] == 'OK'}
+        result.each do |r|
+          r.delete(:time)
+          r.delete(:status)
+          r.delete(:filesize)
+          r[:source] = :fido
+        end
       end
 
     end

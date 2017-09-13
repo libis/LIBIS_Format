@@ -1,35 +1,9 @@
 # encoding: utf-8
 require 'spec_helper'
+require 'libis/format/identifier'
 
-describe 'Identfier' do
-
-  dir = File.join File.absolute_path(File.dirname(__FILE__)), 'data'
-
-  before :all do
-    ::Libis::Tools::Config.logger.appenders =
-        ::Logging::Appenders.string_io('StringIO', layout: ::Libis::Tools::Config.get_log_formatter)
-    ::Libis::Tools::Config.logger.level = :all
-  end
-
-  let(:logoutput) { ::Libis::Tools::Config.logger.appenders.last.sio }
-
-  it 'should initialize correctly' do
-    # expect(Libis::Format::Identifier.fido_formats.size).to be 1
-    # expect(File.basename(Libis::Format::Identifier.fido_formats.first)).to eq 'lias_formats.xml'
-
-    expect(Libis::Format::Identifier.xml_validations.size).to be 1
-    expect(File.basename Libis::Format::Identifier.xml_validations['archive/ead']).to eq 'ead.xsd'
-  end
-
-  it 'should not attempt to identify a directory' do
-    expect(Libis::Format::Identifier.get dir).to be_nil
-  end
-
-  it 'should not attempt to identify a file that does not exist' do
-    expect(Libis::Format::Identifier.get File.join(dir, 'does_not_exist_file')).to be_nil
-  end
-
-    # noinspection RubyStringKeysInHashInspection
+# noinspection RubyStringKeysInHashInspection
+formatlist =
     {
         'Cevennes2.ppm' => {mimetype: 'image/x‑portable‑pixmap', puid: 'fmt/408'},
         'Cevennes2.bmp' => {mimetype: 'image/bmp', puid: 'fmt/116'},
@@ -56,10 +30,77 @@ describe 'Identfier' do
         'test-ead.xml' => {mimetype: 'archive/ead', puid: 'fmt/101'},
         'NikonRaw-CaptureOne.tif' => {mimetype: 'image/tiff', puid: 'x-fmt/387'},
         'NikonRaw-CameraRaw.TIF' => {mimetype: 'image/tiff', puid: 'fmt/202'},
-    }.each do |file, result|
-      it "should identify test document '#{file}'" do
-        expect(::Libis::Format::Identifier.get(File.join(dir,file))).to include result
+    }
+
+
+describe 'Identfier' do
+
+  dir = File.join File.absolute_path(File.dirname(__FILE__)), 'data'
+
+  before :all do
+    ::Libis::Tools::Config.logger.appenders =
+        ::Logging::Appenders.string_io('StringIO', layout: ::Libis::Tools::Config.get_log_formatter)
+    ::Libis::Tools::Config.logger.level = :all
+    ::Libis::Format::Config[:droid_path] = '/opt/droid/droid.sh'
+    ::Libis::Format::Config[:fido_path] = '/usr/local/bin/fido'
+  end
+
+  let(:logoutput) {::Libis::Tools::Config.logger.appenders.last.sio}
+
+  it 'should initialize correctly' do
+    # expect(Libis::Format::Identifier.fido_formats.size).to be 1
+    # expect(File.basename(Libis::Format::Identifier.fido_formats.first)).to eq 'lias_formats.xml'
+
+    expect(::Libis::Format::Identifier.xml_validations.size).to be 1
+    expect(File.basename Libis::Format::Identifier.xml_validations['archive/ead']).to eq 'ead.xsd'
+  end
+
+  it 'should not attempt to identify a directory' do
+    expect(::Libis::Format::Identifier.get dir).to be_nil
+  end
+
+  it 'should not attempt to identify a file that does not exist' do
+    expect(::Libis::Format::Identifier.get File.join(dir, 'does_not_exist_file')).to be_nil
+  end
+
+
+  # formatlist.each do |file, result|
+  #   it "should identify test document '#{file}'" do
+  #     expect(::Libis::Format::Identifier.get(File.join(dir, file))).to include result
+  #   end
+  # end
+
+  context 'Fido' do
+
+    it 'should identify list of test documents' do
+      filelist = formatlist.keys.map {|file| File.join(dir, file)}
+      fido_result = ::Libis::Format::Fido.instance.run_list(filelist)
+      puts fido_result
+      filelist.each do |filename|
+        puts filename
+        result = fido_result[filename]
+        result = result[0] if result
+        puts result
+        # noinspection RubyResolve
+        expect(result).to include filelist[filename]
       end
     end
+
+    it 'should identify dir of test documents' do
+      filelist = formatlist.keys.map {|file| File.join(dir, file)}
+      dir = File.join(File.dirname(__FILE__), 'test')
+      fido_result = ::Libis::Format::Fido.instance.run_dir(dir)
+      puts fido_result
+      filelist.each do |filename|
+        puts filename
+        result = fido_result[filename]
+        result = result[0] if result
+        puts result
+        # noinspection RubyResolve
+        expect(result).to include filelist[filename]
+      end
+    end
+
+  end
 
 end
