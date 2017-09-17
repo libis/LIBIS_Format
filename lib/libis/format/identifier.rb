@@ -3,13 +3,17 @@
 require 'singleton'
 
 require 'libis-tools'
+require 'libis/tools/extend/hash'
 require 'libis/tools/extend/string'
 require 'libis/tools/extend/empty'
 
 require 'libis/format/type_database'
 
+require_relative 'config'
 require_relative 'fido'
 require_relative 'droid'
+require_relative 'file_tool'
+require_relative 'extension_identification'
 
 module Libis
   module Format
@@ -18,38 +22,7 @@ module Libis
       include ::Libis::Tools::Logger
       include Singleton
 
-      RETRY_MIMETYPES = %w(application/zip) + ::Libis::Format::Fido::BAD_MIMETYPES
-      FIDO_FAILURES = %w(application/vnd.oasis.opendocument.text application/vnd.oasis.opendocument.spreadsheet)
-
-      attr_reader :xml_validations
-
-      protected
-
-      def initialize
-        data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
-        @fido_formats = [(File.join(data_dir, 'lias_formats.xml'))]
-        # noinspection RubyStringKeysInHashInspection
-        @xml_validations = {'archive/ead' => File.join(data_dir, 'ead.xsd')}
-      end
-
-      def result_ok?(result, who_is_asking = nil)
-        result = ::Libis::Format::TypeDatabase.enrich(result, PUID: :puid, MIME: :mimetype)
-        return false if result.empty?
-        return true unless result[:TYPE].empty?
-        return false if RETRY_MIMETYPES.include? result[:mimetype]
-        return false if FIDO_FAILURES.include? result[:mimetype] and who_is_asking == :DROID
-        !(result[:mimetype].empty? and result[:puid].empty?)
-      end
-
-      def get_puid(mimetype)
-        ::Libis::Format::TypeDatabase.mime_infos(mimetype).first[:PUID].first rescue nil
-      end
-
       public
-
-      def self.add_fido_format(f)
-        ::Libis::Format::Fido.add_format f
-      end
 
       def self.add_xml_validation(mimetype, xsd_file)
         instance.xml_validations[mimetype] = xsd_file
@@ -59,134 +32,173 @@ module Libis
         instance.xml_validations
       end
 
-      def self.get(file_path, options = nil)
-        instance.get file_path, options
+      def self.get(file, options = {})
+        instance.get file, options
       end
 
-      def get(file, options = nil)
+      attr_reader :xml_validations
 
-        unless File.exists? file
-          error 'File %s cannot be found.', file
-          return nil
+      def get(file, options = {})
+
+        options[:droid] = true unless options[:tool] and options[:tool] != :droid
+        options[:fido] = true unless options[:tool] and options[:tool] != :fido
+        options[:file] = true unless options[:tool] and options[:tool] != :file
+
+        result = {messages: [], output: {}, formats: {}}
+
+        begin
+          get_droid_identification(file, options[:recursive], result) if options[:droid]
+        rescue => e
+          log_msg(result, :error, "Error running Droid: #{e.message} @ #{e.backtrace.first}")
         end
-        if File.directory? file
-          error '%s is a directory.', file
-          return nil
+
+        begin
+          get_fido_identification(file, options[:recursive], result) if options[:fido]
+        rescue => e
+          log_msg(result, :error, "Error running Fido: #{e.message} @ #{e.backtrace.first}")
         end
 
-        options ||= {}
+        begin
+          get_file_identification(file, options[:recursive], result) if options[:file]
+        rescue => e
+          log_msg(result, :error, "Error running File: #{e.message} @ #{e.backtrace.first}")
+        end
 
-        result = {messages: []}
-
-        # use FIDO
-        # Note: FIDO does not always do a good job, mainly due to lacking container inspection.
-        # FIDO misses should be registered in
-        result = get_fido_identification(file, result, options[:formats]) unless options[:droid]
-
-        # use DROID
-        result = get_droid_identification file, result
-
-        # use FILE
-        result = get_file_identification(file, result)
-
-        # Try file extension
-        result = get_extension_identification(file, result)
+        # get_extension_identification(file, options[:recursive], result)
 
         # determine XML type. Add custom types at runtime with
         # Libis::Tools::Format::Identifier.add_xml_validation('my_type', '/path/to/my_type.xsd')
-        result = validate_against_xml_schema(file, result)
+        validate_against_xml_schema(result)
 
-        result[:mimetype] ?
-            log_msg(result, :info, "Identification of '#{file}': '#{result}'") :
-            log_msg(result, :warn, "Could not identify MIME type of '#{file}'")
+        process_results(result)
+
+        # result[:mimetype] ?
+        #     log_msg(result, :info, "Identification of '#{file}': '#{result}'") :
+        #     log_msg(result, :warn, "Could not identify MIME type of '#{file}'")
+
+        result
+
       end
 
-      def get_fido_identification(file, result = {}, xtra_formats = nil)
-        return result if result_ok? result
+      protected
 
-        fido_result = ::Libis::Format::Fido.run(file, xtra_formats)
-
-        return result unless fido_result.is_a? Hash
-
-        result.merge! fido_result
-        result[:method] = 'fido'
-
-        log_msg(result, :debug, "Fido MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})")
+      def initialize
+        @xml_validations = Libis::Format::Config[:xml_validations].to_h
       end
 
-      def get_droid_identification(file, result = {})
-        return result if result_ok? result, :DROID
-        droid_output = ::Libis::Format::Droid.run file
-        result[:messages] << [:debug, "DROID: #{droid_output}"]
-        warn 'Droid found multiple matches; using first match only' if droid_output.size > 1
-        result.clear
-        droid_output = droid_output.first
-        result[:mimetype] = droid_output[:mime_type].to_s.split(/[\s,]+/).find { |x| x =~ /.*\/.*/ }
-        result[:matchtype] = droid_output[:method]
-        result[:puid] = droid_output[:puid]
-        result[:format_name] = droid_output[:format_name]
-        result[:format_version] = droid_output[:format_version]
-        result[:method] = 'droid'
-
-        log_msg(result, :debug, "Droid MIME-type: #{result[:mimetype]} (PRONOM UID: #{result[:puid]})")
+      def get_file_identification(file, recursive, result)
+        output = ::Libis::Format::FileTool.run(file, recursive)
+        process_tool_output(output, result)
+        output
       end
 
-      def get_file_identification(file, result = nil)
-        return result if result_ok? result
-        begin
-          output = ::Libis::Tools::Command.run('file', '-b', '--mime-type', "\"#{file.escape_for_string}\"")[:err]
-          mimetype = output.strip.split
-          if mimetype
-            log_msg(result, :debug, "File result: '#{mimetype}'")
-            result[:mimetype] = mimetype
-            result[:puid] = get_puid(mimetype)
+      def get_fido_identification(file, recursive, result)
+        output = ::Libis::Format::Fido.run(file, recursive)
+        process_tool_output(output, result)
+        output
+      end
+
+      def get_droid_identification(file, recursive, result)
+        output = ::Libis::Format::Droid.run(file, recursive)
+        process_tool_output(output, result)
+        output
+      end
+
+      def get_extension_identification(file, recursive, result)
+        output = ::Libis::Format::ExtensionIdentification.run(file, recursive)
+        process_tool_output(output, result)
+        output
+      end
+
+      def validate_against_xml_schema(result)
+        result[:output].each do |file, file_results|
+          file_results.each do |file_result|
+            xml_validate(file, file_result, result)
           end
-          result[:method] = 'file'
-        rescue Exception
-          # ignored
         end
-        result
       end
 
-      def get_extension_identification(file, result = nil)
-        return result if result_ok? result
-        info = ::Libis::Format::TypeDatabase.ext_infos(File.extname(file)).first
-        log_msg result, :debug, "File extension info: #{info}"
-        if info
-          result[:mimetype] = info[:MIME].first rescue nil
-          result[:puid] = info[:PUID].first rescue nil
-        end
-        result[:method] = 'extension'
-        result
-      end
-
-      def validate_against_xml_schema(file, result)
-        return result unless result[:mimetype] =~ /^(text|application)\/xml$/
+      def xml_validate(file, file_result, result)
+        return unless file_result[:mimetype] =~ /^(text|application)\/xml$/
         doc = ::Libis::Tools::XmlDocument.open file
         xml_validations.each do |mime, xsd_file|
           next unless xsd_file
           begin
             if doc.validates_against?(xsd_file)
               log_msg result, :debug, "XML file validated against XML Schema: #{xsd_file}"
-              result[:mimetype] = mime
-              result[:puid] = nil
-              result = ::Libis::Format::TypeDatabase.enrich(result, PUID: :puid, MIME: :mimetype)
+              info = {mimetype: mime, tool: file_result[:source], source: :xsd_validation, match_type: 'xsd_validation', format_version: '', }
+              file_result.merge! Libis::Format::TypeDatabase.enrich(info, PUID: :puid, MIME: :mimetype, NAME: :format_name)
             end
-          rescue
-            # Do nothing - probably Nokogiri chrashed during validation.
-            # Could have many causes (remote schema: firewall, network, link rot, ...; schema syntax error; ...)
-            # so we just ignore and continue.
+          rescue => e
+            # Do nothing - probably Nokogiri chrashed during validation. Could have many causes
+            # (remote schema (firewall, network, link rot, ...), schema syntax error, corrupt XML,...)
+            # so we log and continue.
+            log_msg(result, :warn, "Error during XML validation: #{e.message}")
           end
         end
-        result
+      end
+
+      def process_results(result)
+        result[:output].map do |file, output|
+          file_result = result[:formats][file] = {}
+          if output.empty?
+            file_result = {
+                mimetype: 'application/octet-stream',
+                puid: 'fmt/unknown',
+                score: 0,
+                source: nil
+            }
+          else
+            format_matches = output.group_by {|x| [x[:mimetype], x[:puid]]}
+            format_matches.each do |match, group|
+              format_matches[match] = group.group_by {|x| x[:score]}.sort.reverse.to_h
+            end
+            case format_matches.count
+              when 0
+                # No this really cannot happen. If there are not hits, there will be at least a format [nil,nil]
+              when 1
+                # only one match, that's easy. The first of the highest score will be used
+                file_result.merge!(get_best_result(output))
+              else
+                process_multiple_formats(file_result, format_matches, output)
+            end
+          end
+        end
+      end
+
+      def process_multiple_formats(file_result, format_matches, output)
+        # multiple matches. Let's select the highest score matches
+        file_result.merge!(get_best_result(output))
+        file_result[:alternatives] = []
+        format_matches.keys.each do |mime, puid|
+          next if file_result[:mimetype] == mime && puid.nil?
+              selection = output.select {|x| x[:mimetype] == mime && x[:puid] == puid}
+          file_result[:alternatives] << get_best_result(selection)
+        end
+        file_result[:alternatives] = file_result[:alternatives].sort_by {|x| x[:score]}.reverse
+        file_result.delete(:alternatives) if file_result[:alternatives].size <= 1
       end
 
       private
 
+      def process_tool_output(output, result)
+        output.each do |file, file_output|
+          result[:output][file] ||= []
+          result[:output][file] += file_output
+        end
+      end
+
       def log_msg(result, severity, text)
-        return {} unless result.is_a?(Hash)
-        (result[:messages] ||= []) << [severity, text]
-        result
+        result[:messages] << [severity, text]
+      end
+
+      def get_mimetype(puid)
+        ::Libis::Format::TypeDatabase.puid_typeinfo(puid)[:MIME].first rescue nil
+      end
+
+      def get_best_result(results)
+        score = results.map {|x| x[:score]}.max
+        results.select {|x| x[:score] == score}.reduce(:apply_defaults)
       end
 
     end

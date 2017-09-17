@@ -20,26 +20,35 @@ module Libis
         self.instance.bad_mimetype(mimetype)
       end
 
-      def self.run(file)
-        self.instance.run file
+      def self.run(file, recursive = false)
+        if file.is_a?(Array)
+          return run_list file
+        elsif file.is_a?(String) && File.exists?(file) && File.readable?(file)
+          if File.directory?(file)
+            return run_dir(file, recursive)
+          elsif File.file?(file)
+            return self.instance.run(file)
+          end
+        end
+        raise ArgumentError,
+              'IdentificationTool: file argument should be a path to an existing file or directory or a list of those'
       end
 
       def self.run_dir(file, recursive = true)
         self.instance.run_dir file, recursive
       end
 
-      def self.run_list(file)
-        self.instance.run_dir file
+      def self.run_list(filelist)
+        self.instance.run_list filelist
       end
 
       protected
 
       def create_list_file(filelist)
-        list_file = Dir::Tmpname.create('file_list', Dir.tmpdir, 5) do |tmpfile, _, _|
-          File.open(tmpfile, 'w') do |f|
-            filelist.each do |fname|
-              f.write "#{fname}\n"
-            end
+        list_file = Dir::Tmpname.make_tmpname(%w'file .list', nil)
+        File.open(list_file, 'w') do |f|
+          filelist.each do |fname|
+            f.write "#{fname}\n"
           end
         end
         yield(list_file)
@@ -60,34 +69,36 @@ module Libis
       end
 
       # Reformat output to make it easier to post-process and decide on the preferred format
-      # final format:
-      #   { <filename} =>
-      #     { <score> => [<result>, ...]
-      #       ...
-      #     },
-      #     ...
-      #   }
       #
-      # <result> is the Hash output of the identification tool:
-      #   {filepath: <filepath>, mimetype: <mimetype>, puid: <puid>, }
+      # input format:
+      # [
+      #   { filepath: <filename>, mimetype: <mimetype>, matchtype: <matchtype>, ... }
+      # ]
+      #
+      # output format:
+      #   { <filename> => [<result>, ...], ... }
+      #
+      # <result> is the enchanced Hash output of the identification tool:
+      #   { mimetype: <mimetype>, puid: <puid>, matchtype: <matchtype>, score: <score>, ...}
+      #
       def process_output(output)
-        results = {}
-
-        output.each do |x|
-          results[x[:filepath]] ||= []
-          results[x[:filepath]] << annotate(x)
+        output.reduce({}) do |results, x|
+          filepath = x.delete(:filepath)
+          results[filepath] ||= []
+          results[filepath.freeze] << annotate(x)
+          results
         end
-
-        results.each_with_object({}) do |pair, hash|
-          hash[pair[0]] = group_results(pair[1])
-        end
-
       end
 
       # Enhance the output with mimetype and score
       def annotate(result)
         # Enhance result with mimetype if needed
-        result[:mimetype] = get_mimetype(result[:puid]) if result[:mimetype] == 'None' && result[:puid] != nil
+        if bad_mimetypes.include?(result[:mimetype]) && !bad_puids.include?(result[:puid])
+          result[:mimetype] = get_mimetype(result[:puid])
+        end
+
+        # Normalize the mimetype
+        Libis::Format::TypeDatabase.normalize(result, PUID: :puid, MIME: :mimetype)
 
         # Default score is 5
         result[:score] = 5
@@ -95,19 +106,34 @@ module Libis
         # Weak detection score is 1
         result[:score] = 1 if bad_mimetypes.include? result[:mimetype]
 
+        # freeze all strings
+        result.each {|_, v| v.freeze if v.is_a?(String)}
+
         # Adapt score based on matchtype
         result[:matchtype] = result[:matchtype].to_s.downcase
         case result[:matchtype]
 
-          # Signature match increases score with 5
+          # Signature match increases score with 2
           when 'signature'
-            result[:score] += 3
+            result[:score] += 2
+          # typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(result[:puid])
+          # ext = File.extname(result[:filename])
+          # result[:score] += 1 if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
 
-          # Container match increases score with 2 if extension matches type database
+          # Container match increases score with 4
           when 'container'
-            typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(result[:puid])
-            ext = File.extname(result[:filename])
-            result[:score] += 5 if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
+            result[:score] += 4
+          # typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(result[:puid])
+          # ext = File.extname(result[:filename])
+          # result[:score] += 1 if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
+
+          # Extension match is the weakest identification; score is lowered by 2 points
+          when 'extension'
+            result[:score] -= 2
+
+          # Magic code (file tool) is to be trused even less
+          when 'magic'
+            result[:score] -= 3
 
           # Or no change otherwise
           else
@@ -124,22 +150,23 @@ module Libis
         result
       end
 
-      def group_results(results)
-        results.group_by {|x| x[:score]}.sort.reverse.to_h
-      end
-
       def get_mimetype(puid)
         ::Libis::Format::TypeDatabase.puid_typeinfo(puid)[:MIME].first rescue nil
       end
 
-      attr_accessor :bad_mimetypes
+      def get_puid(mimetype)
+        ::Libis::Format::TypeDatabase.mime_infos(mimetype).first[:PUID].first rescue nil
+      end
+
+      attr_accessor :bad_mimetypes, :bad_puids
 
       def initialize
         @bad_mimetypes = [nil, '', 'None', 'application/octet-stream']
+        @bad_puids = [nil, 'fmt/unknown']
       end
 
       def bad_mimetype(mimetype)
-        bad_mimetypes << mimetype
+        @bad_mimetypes << mimetype
       end
     end
 

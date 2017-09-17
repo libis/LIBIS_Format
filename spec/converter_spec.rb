@@ -116,7 +116,7 @@ describe 'Converters' do
       expect(result).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
-      compare.metric << 'AE'
+      compare.metric << 'MAE'
       compare.fuzz << '1%'
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
@@ -134,7 +134,7 @@ describe 'Converters' do
       expect(result).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
-      compare.metric << 'AE'
+      compare.metric << 'MAE'
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
@@ -169,7 +169,7 @@ describe 'Converters' do
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
       compare.metric << 'AE'
-      compare.fuzz << '1%'
+      compare.fuzz << '100%'
       compare << diff_file
       compare.call do |_stdin, _stdout, status|
         expect(status).to be 0
@@ -191,7 +191,7 @@ describe 'Converters' do
       expect(File.exist?(tgt_file)).to be_truthy
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
-      compare.metric << 'AE'
+      compare.metric << 'MAE'
       compare.fuzz << '10%'
       compare << diff_file
       compare.call {|_,_,status| expect(status).to be 0}

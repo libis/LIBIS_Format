@@ -8,6 +8,12 @@ require 'fileutils'
 
 MiniMagick.logger.level = ::Logger::ERROR
 
+MiniMagick.configure do |config|
+  # config.cli = :graphicsmagick
+  config.validate_on_create = false
+  config.validate_on_write = false
+end
+
 module Libis
   module Format
     module Converter

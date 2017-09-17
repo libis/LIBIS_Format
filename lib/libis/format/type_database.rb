@@ -7,6 +7,8 @@ require 'backports/rails/hash'
 require 'libis/tools/logger'
 require 'libis/tools/extend/string'
 
+require_relative 'config'
+
 module Libis
   module Format
 
@@ -23,18 +25,48 @@ module Libis
         mapper = Hash.new {|hash,key| hash[key] = key}
         mapper.merge! map_keys
         unless (puid = info[mapper[:PUID]]).blank?
+          info[mapper[:TYPE]] ||= puid_infos(puid).first[:TYPE] rescue nil
+        end
+        unless (mime = info[mapper[:MIME]]).blank?
+          info[mapper[:TYPE]] ||= mime_infos(mime).first[:TYPE] rescue nil
+        end
+        unless (type_name = info[mapper[:TYPE]]).nil?
+          mapper.keys.each do |key|
+            info[mapper[key]] = get(type_name, key) || info[mapper[key]]
+          end
+          info[mapper[:GROUP]] = self.type_group(type_name)
+        end
+        info
+      end
+
+      def self.normalize(info, map_keys = {})
+        return {} unless info.is_a? Hash
+        mapper = Hash.new {|hash,key| hash[key] = key}
+        mapper.merge! map_keys
+        unless (puid = info[mapper[:PUID]]).blank?
           info[mapper[:TYPE]] ||= self.puid_infos(puid).first[:TYPE] rescue nil
         end
         unless (mime = info[mapper[:MIME]]).blank?
           info[mapper[:TYPE]] ||= self.mime_infos(mime).first[:TYPE] rescue nil
         end
         unless (type_name = info[mapper[:TYPE]]).nil?
-          info[mapper[:MIME]] = self.type_mimetypes(type_name).first if info[mapper[:MIME]].blank?
-          info[mapper[:PUID]] = self.type_puids(type_name).first if info[mapper[:PUID]].blank?
-          info[mapper[:EXTENSIONS]] = self.type_extentions(type_name)
+          info[mapper[:MIME]] = self.type_mimetypes(type_name).first if self.type_mimetypes(type_name).first
           info[mapper[:GROUP]] = self.type_group(type_name)
         end
         info
+      end
+
+      def self.get(type_name, key)
+        case key
+          when :MIME
+            type_mimetypes(type_name).first
+          when :PUID
+            type_puids(type_name).first
+          when :EXTENSION
+            type_extentions(type_name).first
+          else
+            self.typeinfo(type_name)[key]
+        end
       end
 
       def self.type_group(t)
@@ -159,8 +191,7 @@ module Libis
 
       def initialize
         @types = Hash.new
-        data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
-        type_database = File.join(data_dir, 'types.yml')
+        type_database = Libis::Format::Config[:type_database]
         load_types(type_database)
       end
 

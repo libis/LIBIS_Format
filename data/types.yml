@@ -10,53 +10,62 @@
 IMAGE:
   TIFF:
     NAME: Tagged Image File Format (TIFF)
-    MIME: image/tiff
+    MIME: image/tiff image/x-tiff image/tif image/x-tif application/tiff application/x-tiff application/tif application/x-tif
     PUID: fmt/353 fmt/154 fmt/153 fmt/156 fmt/155 fmt/152 x-fmt/399 x-fmt/388 x-fmt/387 fmt/202
     EXTENSIONS: tif,TIF,tiff,tifx,dng,nef
 
   JP2:
     NAME: Joint Photographic Experts Group 2000 (JPEG 2000)
-    MIME: image/jp2
-    PUID: fmt/406
+    MIME: image/jp2, image/jpeg2000, image/jpeg2000-image, image/x-jpeg2000-image, image/jpx
+    PUID: fmt/463, fmt/151, x-fmt/392
     EXTENSIONS: jp2
 
   JPG:
     NAME: Joint Photographic Experts Group (JPEG)
-    MIME: image/jpeg
+    MIME: image/jpeg, image/jpg, image/jp_, application/jpg, application/x-jpg, image/pjpeg, image/pipeg, image/vnd.swiftview-jpeg
     PUID: fmt/42 fmt/43 fmt/44 fmt/41 x-fmt/398 x-fmt/390 x-fmt/391 fmt/645
     EXTENSIONS: jpg,jpe,jpeg
 
   PNG:
     NAME: Portable Network Graphics (PNG)
-    MIME: image/png
+    MIME: image/png, application/png, application/x-png
+    PUID: fmt/11, fmt/12, fmt/13,
     EXTENSIONS: png
+
+  APNG:
+    NAME: Animate Portable Network Graphics
+    MIME: image/vnd.mozilla.apng
+    PUID: fmt/935
+    EXTENSIONS: apng, png
 
   BMP:
     NAME: Device Independent Bitmap (DIP/BMP)
-    MIME: image/bmp,image/x-ms-bmp
+    MIME: image/bmp, image/x-bmp, image/x-bitmap, image/x-xbitmap, image/x-win-bitmap, image/x-windows-bmp, image/ms-bmp, image/x-ms-bmp, application/bmp, application/x-bmp, application/x-win-bitmap
+    PUID: fmt/115, fmt/118, fmt/119, fmt/114, fmt/116, fmt/117, x-fmt/270
     EXTENSIONS: bmp
 
   GIF:
     NAME: Graphics Interchange Format (GIF)
     MIME: image/gif
+    PUID: fmt/3, fmt/4
     EXTENSIONS: gif
 
   PBM:
     NAME: Portable Bitmap Format (PBM)
-    PUID: fmt/409
-    MIME: image/x‑portable‑bitmap
+    MIME: image/x-portable-bitmap, image/pbm, image/x-pbm
+    PUID: fmt/409, x-fmt/164
     EXTENSIONS: pbm
 
   PGM:
     NAME: Portable GrayMap Format (PGM)
-    PUID: fmt/406
-    MIME: image/x‑portable‑graymap
+    PUID: fmt/406, fmt/407
+    MIME: image/x-portable-graymap, image/pgm, image/x-pgm
     EXTENSIONS: pgm
 
   PPM:
     NAME: Portable Pixel Map (PPM)
-    PUID: fmt/408
-    MIME: image/x‑portable‑pixmap
+    PUID: fmt/408, x-fmt/178
+    MIME: image/x-portable-pixmap, application/ppm, application/x-ppm, image/ppm, image/x-ppm
     EXTENSIONS: ppm
 
 AUDIO:
@@ -133,7 +142,7 @@ TEXT:
   RTF:
     NAME: Rich Text Format (RTF)
     PUID: fmt/45
-    MIME: text/rtf application/rtf
+    MIME: application/rtf text/rtf
     EXTENSIONS: rtf
 
   HTML:
@@ -143,8 +152,8 @@ TEXT:
 
   MSDOC:
     NAME: Microsoft Word Document (DOC)
-    PUID: fmt/609 fmt/39 x-fmt/2 x-fmt/129 x-fmt/273 x-fmt/274 x-fmt/275 x-fmt/276 fmt/37 fmt/38 fmt/40
-    MIME: application/vnd.ms-word application/msword
+    PUID: fmt/609 fmt/39 x-fmt/273 x-fmt/274 x-fmt/275 x-fmt/276 fmt/37 fmt/38 fmt/40 fmt/754
+    MIME: application/msword application/doc appl/text application/vnd.msword application/vnd.ms-word application/winword application/word application/x-msw6 application/x-msword
     EXTENSIONS: doc
 
   MSDOCX:
@@ -171,9 +180,14 @@ TEXT:
     MIME: application/vnd.wordperfect
     EXTENSIONS: wpd
 
+  OO_WRITER:
+    NAME: OpenDocument Text
+    MIME: application/vnd.oasis.opendocument.text, application/x-vnd.oasis.opendocument.text
+    PUID: fmt/136, fmt/290, fmt/291
+
   XML:
     NAME: Extensible Markup Language (XML)
-    MIME: text/xml application/xml
+    MIME: text/xml application/xml application/x-xml
     PUID: fmt/101
     EXTENSIONS: xml
 

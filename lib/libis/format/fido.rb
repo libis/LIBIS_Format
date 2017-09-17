@@ -21,16 +21,6 @@ module Libis
 
       attr_reader :formats
 
-      protected
-
-      def initialize
-        @formats = Libis::Format::Config[:fido_formats].dup
-        bad_mimetype('application/vnd.oasis.opendocument.text')
-        bad_mimetype('application/vnd.oasis.opendocument.spreadsheet')
-      end
-
-      attr_writer :formats
-
       def run_list(filelist)
         create_list_file(filelist) do |list_file|
           output = runner(nil, '-input', list_file.escape_for_string)
@@ -40,7 +30,7 @@ module Libis
 
       def run_dir(dir, recursive = true)
         args = []
-        args << '-recursive' if recursive
+        args << '-recurse' if recursive
         output = runner(dir, *args)
         process_output(output)
       end
@@ -50,22 +40,41 @@ module Libis
         process_output(output)
       end
 
+      protected
+
+      def initialize
+        super
+        @formats = Libis::Format::Config[:fido_formats].dup
+        bad_mimetype('application/vnd.oasis.opendocument.text')
+        bad_mimetype('application/vnd.oasis.opendocument.spreadsheet')
+      end
+
+      attr_writer :formats
+
       def runner(filename, *args)
         # Load custome format definitions if present
         args << '-loadformats' << "#{formats.join(',')}" unless formats.empty?
 
+        # Workaround for Fido performance bug
+        args << '-bufsize' << '1000'
+
         # Add filename to argument list (optional)
         args << "#{filename.escape_for_string}" if filename
+
+        # No header output
+        args << '-q'
 
         # Run command and capture results
         fido = ::Libis::Tools::Command.run(Libis::Format::Config[:fido_path], *args)
 
         # Log warning if needed
-        warn "Fido errors: #{fido[:err].join("\n")}" unless fido[:err].empty?
+        raise RuntimeError, "Fido errors: #{fido[:err].join("\n")}" unless fido[:err].empty?
 
         # Parse output (CSV) text into array and return result
-        keys = [:status, :time, :puid, :format_name, :signature_name, :filesize, :filepath, :mimetype, :matchtype]
-        result = CSV.parse(fido[:out].join("\n")).map {|a| Hash[keys.zip(a.values)]}.select {|a| a[:status] == 'OK'}
+        keys = [:status, :time, :puid, :format_name, :format_version, :filesize, :filepath, :mimetype, :matchtype]
+        result = CSV.parse(fido[:out].join("\n"))
+                     .map {|a| Hash[keys.zip(a)]}
+                     .select {|a| a[:status] == 'OK'}
         result.each do |r|
           r.delete(:time)
           r.delete(:status)

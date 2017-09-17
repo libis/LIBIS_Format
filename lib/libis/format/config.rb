@@ -17,7 +17,9 @@ module Libis
     Config[:fido_path] = '/usr/local/bin/fido'
     data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
     Config[:fido_formats] = [(File.join(data_dir, 'lias_formats.xml'))]
-    Config[:xml_validations] = {'archive/ead' => File.join(data_dir, 'ead.xsd')}
+    # noinspection RubyStringKeysInHashInspection
+    Config[:xml_validations] = [['archive/ead', File.join(data_dir, 'ead.xsd')]]
+    Config[:type_database] = File.join(data_dir, 'types.yml')
 
   end
 end

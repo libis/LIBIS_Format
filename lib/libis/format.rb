@@ -5,9 +5,12 @@ module Libis
     autoload :Config, 'libis/format/config'
     autoload :TypeDatabase, 'libis/format/type_database'
     autoload :Identifier, 'libis/format/identifier'
+    autoload :Identifier, 'libis/format/identifier'
 
+    autoload :FileTool, 'libis/format/file_tool'
     autoload :Fido, 'libis/format/fido'
     autoload :Droid, 'libis/format/droid'
+    autoload :ExtensionIdentification, 'libis/format/extension_identification'
 
     autoload :OfficeToPdf, 'libis/format/office_to_pdf'
     autoload :PdfCopy, 'libis/format/pdf_copy'
