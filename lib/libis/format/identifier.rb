@@ -40,9 +40,9 @@ module Libis
 
       def get(file, options = {})
 
-        options[:droid] = true unless options[:tool] and options[:tool] != :droid
-        options[:fido] = true unless options[:tool] and options[:tool] != :fido
-        options[:file] = true unless options[:tool] and options[:tool] != :file
+        options[:droid] = true unless options.keys.include?(:droid) and options[:tool] and options[:tool] != :droid
+        options[:fido] = true unless options.keys.include?(:fido) and options[:tool] and options[:tool] != :fido
+        options[:file] = true unless options.keys.include?(:file) and options[:tool] and options[:tool] != :file
 
         result = {messages: [], output: {}, formats: {}}
 

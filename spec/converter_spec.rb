@@ -181,11 +181,54 @@ describe 'Converters' do
       src_file = File.join(file_dir, 'data', 'multipage.tif')
       ref_file = File.join(file_dir, 'data', 'multipage.tif.jp2')
       tgt_file = File.join('', 'tmp', 'test.jp2')
-      diff_file = File.join('', 'tmp', 'diff.jpg')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       converter.quiet(true)
       converter.page(0)
+      result = converter.convert(src_file, tgt_file, :JP2)
+      expect(result).to eq tgt_file
+      expect(File.exist?(tgt_file)).to be_truthy
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'MAE'
+      compare.fuzz << '10%'
+      compare << diff_file
+      compare.call {|_,_,status| expect(status).to be 0}
+      FileUtils.rm tgt_file, force: true
+    end
+
+    it 'converts TIFF to JP2' do
+      src_file = File.join(file_dir, 'data', 'test.tif')
+      tgt_file = File.join('', 'tmp', 'test.jp2')
+      FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.delete_date
+      result = converter.convert(src_file, tgt_file, :JP2)
+      expect(result).to eq tgt_file
+      expect(File.exist?(tgt_file)).to be_truthy
+    end
+
+
+  end
+
+  context 'JP2 Converter' do
+
+    let(:converter) {Libis::Format::Converter::Jp2Converter.new}
+    let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}
+
+    it 'converts TIFF to JP2' do
+      src_file = File.join(file_dir, 'data', 'test.tif')
+      tgt_file = File.join('', 'tmp', 'test.jp2')
+      FileUtils.mkdir_p File.dirname(tgt_file)
+      result = converter.convert(src_file, tgt_file, :JP2)
+      expect(result).to eq tgt_file
+      expect(File.exist?(tgt_file)).to be_truthy
+    end
+
+    it 'converts only first page of multipage TIFF to JP2' do
+      src_file = File.join(file_dir, 'data', 'multipage.tif')
+      ref_file = File.join(file_dir, 'data', 'multipage.tif.jp2')
+      tgt_file = File.join('', 'tmp', 'test.jp2')
+      FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :JP2)
       expect(result).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
