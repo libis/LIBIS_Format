@@ -72,10 +72,6 @@ module Libis
 
         process_results(result)
 
-        # result[:mimetype] ?
-        #     log_msg(result, :info, "Identification of '#{file}': '#{result}'") :
-        #     log_msg(result, :warn, "Could not identify MIME type of '#{file}'")
-
         result
 
       end
@@ -139,9 +135,11 @@ module Libis
       end
 
       def process_results(result)
-        result[:output].map do |file, output|
+        result[:output].keys.each do |file|
+          output = result[:output].delete(file)
           file_result = result[:formats][file] = {}
           if output.empty?
+            log_msg(result, :warn, "Could not identify format of '#{file}'.")
             file_result = {
                 mimetype: 'application/octet-stream',
                 puid: 'fmt/unknown',
@@ -164,6 +162,7 @@ module Libis
             end
           end
         end
+        result.delete(:output)
       end
 
       def process_multiple_formats(file_result, format_matches, output)
