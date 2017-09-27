@@ -43,6 +43,7 @@ module Libis
         options[:droid] = true unless options.keys.include?(:droid) and options[:tool] and options[:tool] != :droid
         options[:fido] = true unless options.keys.include?(:fido) and options[:tool] and options[:tool] != :fido
         options[:file] = true unless options.keys.include?(:file) and options[:tool] and options[:tool] != :file
+        options[:xml_validation] = true unless options.keys.include?(:xml_validation) and !options[:xml_validation]
 
         result = {messages: [], output: {}, formats: {}}
 
@@ -64,11 +65,16 @@ module Libis
           log_msg(result, :error, "Error running File: #{e.message} @ #{e.backtrace.first}")
         end
 
+        # Let's not waiste time on this. If not standard, it will fail in Rosetta anyway.
         # get_extension_identification(file, options[:recursive], result)
 
         # determine XML type. Add custom types at runtime with
         # Libis::Tools::Format::Identifier.add_xml_validation('my_type', '/path/to/my_type.xsd')
-        validate_against_xml_schema(result)
+        begin
+          validate_against_xml_schema(result) if options[:xml_validation]
+        rescue => e
+          log_msg(result, :error, "Error validating XML files: #{e.message} @ #{e.backtrace.first}")
+        end
 
         process_results(result)
 
@@ -129,9 +135,15 @@ module Libis
             # Do nothing - probably Nokogiri chrashed during validation. Could have many causes
             # (remote schema (firewall, network, link rot, ...), schema syntax error, corrupt XML,...)
             # so we log and continue.
-            log_msg(result, :warn, "Error during XML validation: #{e.message}")
+            log_msg(result, :warn,
+                    "Error during XML validation of file #{file} against #{File.basename(xsd_file)}: #{e.message}")
           end
         end
+      rescue => e
+        # Not much we can do. probably Nokogiri chrashed opening the XML file. What caused this?
+        # (XML not parsable, false XML identification, ???)
+        # so we log and continue.
+        log_msg(result, :warn, "Error paring XML file #{file}: #{e.message} @ #{e.backtrace.first}")
       end
 
       def process_results(result)
@@ -171,7 +183,7 @@ module Libis
         file_result[:alternatives] = []
         format_matches.keys.each do |mime, puid|
           next if file_result[:mimetype] == mime && puid.nil?
-              selection = output.select {|x| x[:mimetype] == mime && x[:puid] == puid}
+          selection = output.select {|x| x[:mimetype] == mime && x[:puid] == puid}
           file_result[:alternatives] << get_best_result(selection)
         end
         file_result[:alternatives] = file_result[:alternatives].sort_by {|x| x[:score]}.reverse
