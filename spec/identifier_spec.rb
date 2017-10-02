@@ -65,10 +65,6 @@ fidolist =
 
 describe 'Identfier' do
 
-  dir = File.join File.absolute_path(File.dirname(__FILE__)), 'data'
-
-  let (:identifier) { ::Libis::Format::Identifier }
-
   before :all do
     ::Libis::Tools::Config.logger.appenders =
         ::Logging::Appenders.string_io('StringIO', layout: ::Libis::Tools::Config.get_log_formatter)
@@ -77,7 +73,21 @@ describe 'Identfier' do
     ::Libis::Format::Config[:fido_path] = '/usr/local/bin/fido'
   end
 
-  let(:logoutput) {::Libis::Tools::Config.logger.appenders.last.sio}
+  let (:identifier) { ::Libis::Format::Identifier }
+  let (:logoutput) {::Libis::Tools::Config.logger.appenders.last.sio}
+  let (:dir) {File.join File.absolute_path(File.dirname(__FILE__)), 'data'}
+
+  # context 'bug test' do
+  #
+  #   let (:dir) {'/nas/vol03/lbs/alma/etd-kul/sap/FIIW/out/0623689_17450'}
+  #
+  #   it 'just works' do
+  #     result = identifier.get(dir)
+  #     ap result
+  #     expect(result).not_to be_nil
+  #   end
+  #
+  # end
 
   it 'should initialize correctly' do
     expect(identifier.xml_validations.size).to be 1

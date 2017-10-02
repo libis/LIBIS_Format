@@ -143,7 +143,7 @@ module Libis
         # Not much we can do. probably Nokogiri chrashed opening the XML file. What caused this?
         # (XML not parsable, false XML identification, ???)
         # so we log and continue.
-        log_msg(result, :warn, "Error paring XML file #{file}: #{e.message} @ #{e.backtrace.first}")
+        log_msg(result, :warn, "Error parsing XML file #{file}: #{e.message} @ #{e.backtrace.first}")
       end
 
       def process_results(result)
