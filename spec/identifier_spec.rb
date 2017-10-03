@@ -70,10 +70,10 @@ describe 'Identfier' do
         ::Logging::Appenders.string_io('StringIO', layout: ::Libis::Tools::Config.get_log_formatter)
     ::Libis::Tools::Config.logger.level = :all
     ::Libis::Format::Config[:droid_path] = '/opt/droid/droid.sh'
-    ::Libis::Format::Config[:fido_path] = '/usr/local/bin/fido'
+    ::Libis::Format::Config[:fido_path] = File.join(ENV['HOME'], 'bin', 'fido')
   end
 
-  let (:identifier) { ::Libis::Format::Identifier }
+  let (:identifier) {::Libis::Format::Identifier}
   let (:logoutput) {::Libis::Tools::Config.logger.appenders.last.sio}
   let (:dir) {File.join File.absolute_path(File.dirname(__FILE__)), 'data'}
 
@@ -114,12 +114,29 @@ describe 'Identfier' do
     end
   end
 
+  it 'should identify all files in a folder with base_dir option' do
+    result = identifier.get(dir, base_dir: dir)
+    expect(result[:formats].size).to be >= formatlist.size
+    formatlist.each do |file, format|
+      expect(result[:formats][file]).to include format
+    end
+  end
+
   it 'should identify all files in a list at once' do
     filelist = fidolist.keys.map {|file| File.join(dir, file)}
     result = identifier.get (filelist)
     expect(result[:formats].size).to be >= formatlist.size
     formatlist.each do |file, format|
       expect(result[:formats][File.join(dir, file)]).to include format
+    end
+  end
+
+  it 'should identify all files in a list with base_dir option' do
+    filelist = fidolist.keys.map {|file| File.join(dir, file)}
+    result = identifier.get(filelist, base_dir: dir)
+    expect(result[:formats].size).to be >= formatlist.size
+    formatlist.each do |file, format|
+      expect(result[:formats][file]).to include format
     end
   end
 

@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'singleton'
+require 'pathname'
 
 require 'libis-tools'
 require 'libis/tools/extend/hash'
@@ -48,19 +49,19 @@ module Libis
         result = {messages: [], output: {}, formats: {}}
 
         begin
-          get_droid_identification(file, options[:recursive], result) if options[:droid]
+          get_droid_identification(file, result, options) if options[:droid]
         rescue => e
           log_msg(result, :error, "Error running Droid: #{e.message} @ #{e.backtrace.first}")
         end
 
         begin
-          get_fido_identification(file, options[:recursive], result) if options[:fido]
+          get_fido_identification(file, result, options) if options[:fido]
         rescue => e
           log_msg(result, :error, "Error running Fido: #{e.message} @ #{e.backtrace.first}")
         end
 
         begin
-          get_file_identification(file, options[:recursive], result) if options[:file]
+          get_file_identification(file, result, options) if options[:file]
         rescue => e
           log_msg(result, :error, "Error running File: #{e.message} @ #{e.backtrace.first}")
         end
@@ -71,7 +72,7 @@ module Libis
         # determine XML type. Add custom types at runtime with
         # Libis::Tools::Format::Identifier.add_xml_validation('my_type', '/path/to/my_type.xsd')
         begin
-          validate_against_xml_schema(result) if options[:xml_validation]
+          validate_against_xml_schema(result, options[:base_dir]) if options[:xml_validation]
         rescue => e
           log_msg(result, :error, "Error validating XML files: #{e.message} @ #{e.backtrace.first}")
         end
@@ -88,41 +89,42 @@ module Libis
         @xml_validations = Libis::Format::Config[:xml_validations].to_h
       end
 
-      def get_file_identification(file, recursive, result)
-        output = ::Libis::Format::FileTool.run(file, recursive)
-        process_tool_output(output, result)
+      def get_file_identification(file, result, options)
+        output = ::Libis::Format::FileTool.run(file, options[:recursive])
+        process_tool_output(output, result, options[:base_dir])
         output
       end
 
-      def get_fido_identification(file, recursive, result)
-        output = ::Libis::Format::Fido.run(file, recursive)
-        process_tool_output(output, result)
+      def get_fido_identification(file, result, options)
+        output = ::Libis::Format::Fido.run(file, options[:recursive])
+        process_tool_output(output, result, options[:base_dir])
         output
       end
 
-      def get_droid_identification(file, recursive, result)
-        output = ::Libis::Format::Droid.run(file, recursive)
-        process_tool_output(output, result)
+      def get_droid_identification(file, result, options)
+        output = ::Libis::Format::Droid.run(file, options[:recursive])
+        process_tool_output(output, result, options[:base_dir])
         output
       end
 
-      def get_extension_identification(file, recursive, result)
-        output = ::Libis::Format::ExtensionIdentification.run(file, recursive)
-        process_tool_output(output, result)
+      def get_extension_identification(file, result, options)
+        output = ::Libis::Format::ExtensionIdentification.run(file, options[:recursive])
+        process_tool_output(output, result, options[:base_dir])
         output
       end
 
-      def validate_against_xml_schema(result)
+      def validate_against_xml_schema(result, base_dir)
         result[:output].each do |file, file_results|
           file_results.each do |file_result|
-            xml_validate(file, file_result, result)
+            xml_validate(file, file_result, result, base_dir)
           end
         end
       end
 
-      def xml_validate(file, file_result, result)
+      def xml_validate(file, file_result, result, base_dir)
         return unless file_result[:mimetype] =~ /^(text|application)\/xml$/
-        doc = ::Libis::Tools::XmlDocument.open file
+        filepath = base_dir ? File.join(base_dir, file) : file
+        doc = ::Libis::Tools::XmlDocument.open filepath
         xml_validations.each do |mime, xsd_file|
           next unless xsd_file
           begin
@@ -165,7 +167,7 @@ module Libis
             end
             case format_matches.count
               when 0
-                # No this really cannot happen. If there are not hits, there will be at least a format [nil,nil]
+                # No this really cannot happen. If there are no hits, there will be at least a format [nil,nil]
               when 1
                 # only one match, that's easy. The first of the highest score will be used
                 file_result.merge!(get_best_result(output))
@@ -192,8 +194,9 @@ module Libis
 
       private
 
-      def process_tool_output(output, result)
+      def process_tool_output(output, result, base_dir)
         output.each do |file, file_output|
+          file = Pathname.new(file).relative_path_from(Pathname(base_dir)).to_s.freeze if base_dir
           result[:output][file] ||= []
           result[:output][file] += file_output
         end
