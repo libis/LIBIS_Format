@@ -14,7 +14,7 @@ describe 'Converters' do
   let(:file_dir) {File.dirname(__FILE__)}
 
   before(:all) {
-    Libis::Tools::Config.logger.level = :WARN
+    Libis::Tools::Config.logger.level = 'off'
     ::Libis::Format::Config[:droid_path] = '/opt/droid/droid.sh'
     ::Libis::Format::Config[:fido_path] = '/usr/local/bin/fido'
   }
@@ -209,49 +209,57 @@ describe 'Converters' do
 
   context 'JP2 Converter' do
 
-    let(:converter) {Libis::Format::Converter::Jp2Converter.new}
-    let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}
+    if Libis::Format::Config[:j2kdriver] && File.exists?(Libis::Format::Config[:j2kdriver])
 
-    it 'converts TIFF to JP2' do
-      src_file = File.join(file_dir, 'data', 'test.tif')
-      tgt_file = File.join('', 'tmp', 'test.jp2')
-      FileUtils.mkdir_p File.dirname(tgt_file)
-      result = converter.convert(src_file, tgt_file, :JP2)
-      expect(result).to eq tgt_file
-      expect(File.exist?(tgt_file)).to be_truthy
-      FileUtils.rm tgt_file, force: true
-    end
+      let(:converter) {Libis::Format::Converter::Jp2Converter.new}
+      let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}
 
-    it 'converts only first page of multipage TIFF to JP2' do
-      src_file = File.join(file_dir, 'data', 'multipage.tif')
-      ref_file = File.join(file_dir, 'data', 'multipage.tif.jp2')
-      tgt_file = File.join('', 'tmp', 'test.jp2')
-      FileUtils.mkdir_p File.dirname(tgt_file)
-      result = converter.convert(src_file, tgt_file, :JP2)
-      expect(result).to eq tgt_file
-      expect(File.exist?(tgt_file)).to be_truthy
-      compare = MiniMagick::Tool::Compare.new
-      compare << ref_file << tgt_file
-      compare.metric << 'MAE'
-      compare.fuzz << '10%'
-      compare << diff_file
-      compare.call {|_, _, status| expect(status).to be 0}
-      FileUtils.rm tgt_file, force: true
+      it 'converts TIFF to JP2' do
+        src_file = File.join(file_dir, 'data', 'test.tif')
+        tgt_file = File.join('', 'tmp', 'test.jp2')
+        FileUtils.mkdir_p File.dirname(tgt_file)
+        result = converter.convert(src_file, tgt_file, :JP2)
+        expect(result).to eq tgt_file
+        expect(File.exist?(tgt_file)).to be_truthy
+        FileUtils.rm tgt_file, force: true
+      end
+
+      it 'converts only first page of multipage TIFF to JP2' do
+        src_file = File.join(file_dir, 'data', 'multipage.tif')
+        ref_file = File.join(file_dir, 'data', 'multipage.tif.jp2')
+        tgt_file = File.join('', 'tmp', 'test.jp2')
+        FileUtils.mkdir_p File.dirname(tgt_file)
+        result = converter.convert(src_file, tgt_file, :JP2)
+        expect(result).to eq tgt_file
+        expect(File.exist?(tgt_file)).to be_truthy
+        compare = MiniMagick::Tool::Compare.new
+        compare << ref_file << tgt_file
+        compare.metric << 'MAE'
+        compare.fuzz << '10%'
+        compare << diff_file
+        compare.call {|_, _, status| expect(status).to be 0}
+        FileUtils.rm tgt_file, force: true
+      end
+
     end
 
   end
 
   context 'Pdf Converter' do
 
-    let(:converter) {Libis::Format::Converter::PdfConverter.new}
+    if Libis::Format::Config[:ghostscript_path] && File.exists?(Libis::Format::Config[:ghostscript_path])
 
-    it 'converts PDF to PDF/A' do
-      src_file = File.join(file_dir, 'data', 'test.pdf')
-      tgt_file = File.join('', 'tmp', 'test_pdfa.pdf')
-      FileUtils.mkdir_p File.dirname(tgt_file)
-      result = converter.convert(src_file, tgt_file, :PDFA)
-      expect(result).to eq tgt_file
-      FileUtils.rm tgt_file, force: true
+      let(:converter) {Libis::Format::Converter::PdfConverter.new}
+
+      it 'converts PDF to PDF/A' do
+        src_file = File.join(file_dir, 'data', 'test.pdf')
+        tgt_file = File.join('', 'tmp', 'test_pdfa.pdf')
+        FileUtils.mkdir_p File.dirname(tgt_file)
+        result = converter.convert(src_file, tgt_file, :PDFA)
+        expect(result).to eq tgt_file
+        FileUtils.rm tgt_file, force: true
+      end
+
     end
 
   end
@@ -355,21 +363,21 @@ describe 'Converters' do
 
     context 'converts' do
       sources.each do |source|
-      extensions.each do |ext|
-        next unless (File.exists?(File.join(File.dirname(__FILE__), 'data', 'audio', "#{source}.#{ext}")))
-        (targets - [ext]).each do |tgt|
-          it "#{source} #{ext} to #{tgt}" do
-            src_file = File.join(data_dir, "#{source}.#{ext}")
-            ref_file = File.join(data_dir, "#{source}.#{tgt}")
-            tgt_file = File.join('', 'tmp', "test.#{source}.#{ext}.#{tgt}")
-            FileUtils.remove tgt_file, force: true
-            FileUtils.mkdir_p File.dirname(tgt_file)
-            result = converter.convert(src_file, tgt_file, tgt.upcase.to_sym)
-            expect(result).to eq tgt_file
-            expect(result).to sound_like ref_file, confidence[ext.to_sym] * quality[source.to_sym], 11025, 1
+        extensions.each do |ext|
+          next unless (File.exists?(File.join(File.dirname(__FILE__), 'data', 'audio', "#{source}.#{ext}")))
+          (targets - [ext]).each do |tgt|
+            it "#{source} #{ext} to #{tgt}" do
+              src_file = File.join(data_dir, "#{source}.#{ext}")
+              ref_file = File.join(data_dir, "#{source}.#{tgt}")
+              tgt_file = File.join('', 'tmp', "test.#{source}.#{ext}.#{tgt}")
+              FileUtils.remove tgt_file, force: true
+              FileUtils.mkdir_p File.dirname(tgt_file)
+              result = converter.convert(src_file, tgt_file, tgt.upcase.to_sym)
+              expect(result).to eq tgt_file
+              expect(result).to sound_like ref_file, confidence[ext.to_sym] * quality[source.to_sym], 11025, 1
+            end
           end
         end
-      end
       end
     end
 
