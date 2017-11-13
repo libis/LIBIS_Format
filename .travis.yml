@@ -44,7 +44,6 @@ addons:
       - imagemagick
       - libreoffice
       - ghostscript
-      - ffmpeg
       - sox
       - libsox-dev
       - libsox-fmt-all
