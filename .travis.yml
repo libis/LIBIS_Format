@@ -39,3 +39,9 @@ addons:
       - imagemagick
       - libreoffice
       - ghostscript
+      - ffmpeg
+      - sox
+      - libsox-dev
+      - libsox-fmt-all
+      - libchromaprint-dev
+      - libchromaprint-tools

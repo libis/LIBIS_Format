@@ -5,16 +5,8 @@ require 'libis/format/converter/image_converter'
 require 'libis/format/converter/pdf_converter'
 require 'libis/format/converter/office_converter'
 require 'libis/format/converter/jp2_converter'
-
-RSpec::Matchers.define(:be_same_file_as) do |exected_file_path|
-  match do |actual_file_path|
-    expect(md5_hash(actual_file_path)).to eq md5_hash(exected_file_path)
-  end
-
-  def md5_hash(file_path)
-    Digest::MD5.hexdigest(File.read(file_path))
-  end
-end
+require 'libis/format/converter/audio_converter'
+require 'libis/format/converter/video_converter'
 
 describe 'Converters' do
 
@@ -30,7 +22,7 @@ describe 'Converters' do
   context 'Repository' do
 
     it 'loads all converters' do
-      expect(repository.get_converters.size).to eq 4
+      expect(repository.get_converters.size).to eq 6
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::ImageConverter'
       # noinspection RubyResolve
@@ -39,6 +31,10 @@ describe 'Converters' do
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::PdfConverter'
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::Jp2Converter'
+      # noinspection RubyResolve
+      expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::AudioConverter'
+      # noinspection RubyResolve
+      expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::VideoConverter'
     end
 
     it 'creates simple converter chain' do
@@ -120,7 +116,7 @@ describe 'Converters' do
       compare.fuzz << '1%'
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
-      # FileUtils.rm tgt_file, force: true
+      FileUtils.rm tgt_file, force: true
     end
 
     it 'converts TIFF to PNG' do
@@ -153,7 +149,7 @@ describe 'Converters' do
       compare.metric << 'AE'
       compare.fuzz << '100%'
       compare << diff_file
-      compare.call {|_,_,status|expect(status).to be 0}
+      compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
     end
 
@@ -193,7 +189,7 @@ describe 'Converters' do
       compare.metric << 'MAE'
       compare.fuzz << '10%'
       compare << diff_file
-      compare.call {|_,_,status| expect(status).to be 0}
+      compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
     end
 
@@ -205,6 +201,7 @@ describe 'Converters' do
       result = converter.convert(src_file, tgt_file, :JP2)
       expect(result).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
+      FileUtils.rm tgt_file, force: true
     end
 
 
@@ -222,6 +219,7 @@ describe 'Converters' do
       result = converter.convert(src_file, tgt_file, :JP2)
       expect(result).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
+      FileUtils.rm tgt_file, force: true
     end
 
     it 'converts only first page of multipage TIFF to JP2' do
@@ -237,7 +235,7 @@ describe 'Converters' do
       compare.metric << 'MAE'
       compare.fuzz << '10%'
       compare << diff_file
-      compare.call {|_,_,status| expect(status).to be 0}
+      compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
     end
 
@@ -323,6 +321,105 @@ describe 'Converters' do
       result = converter.convert(src_file, tgt_file, :PDF)
       expect(result).to eq tgt_file
       FileUtils.rm tgt_file, force: true
+    end
+
+  end
+
+  context 'Audio Converter' do
+
+    let(:converter) {Libis::Format::Converter::AudioConverter.new}
+    extensions = %w'aac aiff au flac m4a mka mp3 ra voc wav wma'
+    confidence = {
+        aac: 0.86,
+        aiff: 0.99,
+        au: 0.99,
+        flac: 0.99,
+        m4a: 0.93,
+        mka: 0.94,
+        mp3: 0.95,
+        ra: 0.92,
+        voc: 0.99,
+        wav: 0.99,
+        wma: 0.9
+    }
+    targets = %w'mp3 flac wav'
+    sources = %w'carlin_disappointed greensleeves king_nonviolence top_gun_secret'
+    quality = {
+        carlin_disappointed: 1.0,
+        greensleeves: 0.95,
+        king_nonviolence: 1.0,
+        top_gun_secret: 0.95
+    }
+
+    let(:data_dir) {File.join(file_dir, 'data', 'audio')}
+
+    context 'converts' do
+      sources.each do |source|
+      extensions.each do |ext|
+        next unless (File.exists?(File.join(File.dirname(__FILE__), 'data', 'audio', "#{source}.#{ext}")))
+        (targets - [ext]).each do |tgt|
+          it "#{source} #{ext} to #{tgt}" do
+            src_file = File.join(data_dir, "#{source}.#{ext}")
+            ref_file = File.join(data_dir, "#{source}.#{tgt}")
+            tgt_file = File.join('', 'tmp', "test.#{source}.#{ext}.#{tgt}")
+            FileUtils.remove tgt_file, force: true
+            FileUtils.mkdir_p File.dirname(tgt_file)
+            result = converter.convert(src_file, tgt_file, tgt.upcase.to_sym)
+            expect(result).to eq tgt_file
+            expect(result).to sound_like ref_file, confidence[ext.to_sym] * quality[source.to_sym], 11025, 1
+          end
+        end
+      end
+      end
+    end
+
+  end
+
+  context 'Video Converter' do
+
+    let(:converter) {Libis::Format::Converter::VideoConverter.new}
+    extensions = %w'3gp avi flv mkv mov mp4 mpg swf webm wmv'
+    targets = %w'avi flv mkv mov mp4 swf webm wmv gif'
+    # noinspection RubyLiteralArrayInspection
+    sources = [
+        'SampleVideo_176x144_2mb',
+        'SampleVideo_320x240_2mb',
+        'SampleVideo_360x240_2mb',
+        'SampleVideo_1080x720_2mb'
+    ]
+    bad_converts = [
+    ]
+    let(:data_dir) {File.join(file_dir, 'data', 'video')}
+
+
+    context 'converts' do
+      sources.each do |source|
+        context source do
+          extensions.each do |ext|
+            next unless (File.exists?(File.join(File.dirname(__FILE__), 'data', 'video', "#{source}.#{ext}")))
+            (targets - [ext]).each do |tgt|
+              next if bad_converts.include? [ext, tgt]
+              it "#{ext} to #{tgt}" do
+                src_file = File.join(data_dir, "#{source}.#{ext}")
+                tgt_file = File.join('', 'tmp', "test.#{source}.#{ext}.#{tgt}")
+                FileUtils.remove tgt_file, force: true
+                FileUtils.mkdir_p File.dirname(tgt_file)
+                converter.audio_channels(2) if %w'swf wmv'.include?(tgt)
+                # converter.constant_rate_factor(24) if %w'swf wmv'.include?(tgt)
+                converter.sampling_freq(44100) if tgt == 'swf'
+                if tgt == 'gif'
+                  converter.start(1)
+                  converter.duration(3)
+                end
+                result = converter.convert(src_file, tgt_file, tgt.upcase.to_sym)
+                expect(result).to eq tgt_file
+                expect(File.size(result)).to be > 2000
+                FileUtils.remove tgt_file, force: true
+              end
+            end
+          end
+        end
+      end
     end
 
   end

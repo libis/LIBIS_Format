@@ -19,6 +19,7 @@ module Libis
     autoload :PdfSplit, 'libis/format/pdf_split'
     autoload :PdfToPdfa, 'libis/format/pdf_to_pdfa'
     autoload :PdfaValidator, 'libis/format/pdfa_validator'
+    autoload :FFMpeg, 'libis/format/ffmpeg'
 
     autoload :Converter, 'libis/format/converter'
 

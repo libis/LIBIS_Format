@@ -15,6 +15,7 @@ module Libis
     Config[:ghostscript_path] = 'gs'
     Config[:droid_path] = '/opt/droid/droid.sh'
     Config[:fido_path] = '/usr/local/bin/fido'
+    Config[:ffmpeg_path] = 'ffmpeg'
     data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
     Config[:fido_formats] = [(File.join(data_dir, 'lias_formats.xml'))]
     # noinspection RubyStringKeysInHashInspection

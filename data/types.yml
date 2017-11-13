@@ -70,66 +70,142 @@ IMAGE:
 
 AUDIO:
 
-  WAV:
-    NAME: Waveform Audio File Format (WAVE)
-    MIME: audio/x-wav
-    EXTENSIONS: wav
-
   MP3:
     NAME: MPEG-1 or MPEG-2 Audio Layer III (MP3)
     MIME: audio/mpeg
+    PUID: fmt/134
     EXTENSIONS: mp3
 
   FLAC:
     NAME: Free Lossless Audio Codec (FLAC)
     MIME: audio/flac
+    PUID: fmt/279
     EXTENSIONS: flac
+
+  AC3:
+    NAME: Dolby Digital AC-3
+    MIME: audio/ac3
+    PUID: fmt/735
+    EXTENSIONS: ac3
+
+  AAC:
+    NAME: Advanced Audio Coding (AAC)
+    MIME: audio/aac
+    EXTENSIONS: aac
+
+  WMA:
+    NAME: Windows Media Audio (WMA)
+    MIME: audio/x-ms-wma
+    PUID: fmt/132
+    EXTENSIONS: wma
+
+  ALAC:
+    NAME: Apple Lossless Audio Codec (ALAC)
+    MIME: audio/alac
+    EXTENSIONS: alac
+
+  WAV:
+    NAME: Waveform Audio File Format (WAVE)
+    MIME: audio/x-wav
+    PUID: fmt/6, fmt/141, fmt/142, fmt/143, fmt/1, fmt/703, fmt/706, fmt/709, fmt/2, fmt/704, fmt/707, fmt/710, fmt/527, fmt/705, fmt/708, fmt/711, x-fmt/397, x-fmt/389, x-fmt/396, fmt/712, fmt/713
+    EXTENSIONS: wav
+
+  AIFF:
+    NAME: Audio Interchange File Format (AIFF)
+    MIME: audio/aiff
+    PUID: fmt/414, x-fmt/135, x-fmt/136
+    EXTENSIONS: aif aiff aifc
+
+  AMR:
+    NAME: Adaptive Multi-Rate Audio (AMR)
+    MIME: audio/amr
+    PUID: fmt/954
+    EXTENSIONS: amr
+
+  AU:
+    NAME: NeXT/Sun sound (AU)
+    MIME: audio/basic
+    PUID: x-fmt/139
+    EXTENSIONS: au
+
+  M4A:
+    NAME: MPEG-4 Media File (M4A)
+    MIME: audio/mp4
+    PUID: fmt/199, fmt/596
+    EXTENSIONS: m4a f4a
 
 VIDEO:
 
-  MPEG:
+  MPG:
     NAME: Moving Picture Experts Group (MPEG-1/MPEG-2)
     MIME: video/mpeg
+    PUID: x-fmt/385 x-fmt/386 fmt/425 fmt/649 fmt/640
     EXTENSIONS: mpg mpeg mp1 mp2 mp3 m1v m1a m2a mpa mpv
 
-  MPEG4:
+  MP4:
     NAME: Moving Picture Experts Group (MPEG-4)
-    MIME: video/mp4
-    EXTENSIONS: mp4,mpeg4
+    MIME: video/mp4, application/mp4
+    PUID: fmt/199
+    EXTENSIONS: mp4,m4v,mpeg4
+
+  WEBM:
+    NAME: Webm
+    PUID:  fmt/573
+    MIME:  video/webm
+    EXTENSIONS: webm
+
+  FLASH:
+    NAME: Macromedia Flash
+    MIME: application/x-shockwave-flash
+    PUID: fmt/104 fmt/105 fmt/106 fmt/107 fmt/108 fmt/109 fmt/110
+    EXTENSIONS: swf
+
+  MKV:
+    NAME: Matroska Multimedia Container (MKV)
+    MIME: video/x-matroska
+    PUID: fmt/569
+    EXTENSIONS: mkv, mk3d, mka, mks
 
   MJP2:
     NAME: Motion JPEG 2000 (MJP2)
     MIME: video/mj2
+    PUID: fmt/337
     EXTENSIONS: mj2, mjp2
 
   QTFF:
     NAME: QuickTime File Format (QTFF)
     MIME: video/quicktime
+    PUID: x-fmt/384
     EXTENSIONS: mov, qt
 
   AVI:
     NAME: Audio Video Interleave (AVI)
     MIME: video/x-msvideo
+    PUID: fmt/5
     EXTENSIONS: avi
 
   OGGV:
     NAME: OGG Video (OGGV)
     MIME: video/ogg
+    PUID:  fmt/945
     EXTENSIONS: ogv
 
   WMV:
     NAME: Windows Media Video (WMV)
     MIME: video/x-ms-wmv
+    PUID: fmt/133 fmt/441
     EXTENSIONS: wmv
 
   DV:
     NAME: Digital Video (DV)
     MIME: video/dv
+    PUID: x-fmt/152
     EXTENSIONS: dv
 
   FLASH:
     NAME: Flash video (FLV)
     MIME: video/x-flv
+    PUID: x-fmt/382
     EXTENSIONS: flv
 
 TEXT:

@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'simplecov', '~> 0.9'
   spec.add_development_dependency 'awesome_print'
+  spec.add_development_dependency 'chromaprint', '~> 0.0.2'
 
   spec.add_runtime_dependency 'libis-tools', '~> 0.9.52'
   spec.add_runtime_dependency 'os', '= 0.9.6'
