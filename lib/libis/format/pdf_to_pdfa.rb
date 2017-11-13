@@ -22,12 +22,10 @@ module Libis
 
         target ||= File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname([File.basename(source, '.*'), '.pdf']))
 
-        data_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'data'))
-
         icc_info = icc_options(options[:colorspace])
 
         icc_file = File.join(Dir.tmpdir, "#{icc_info[:icc_name]}#{Random.new.bytes(12).unpack('H*').first}.icc")
-        FileUtils.cp(File.join(data_dir, "#{icc_info[:icc_name]}.icc"), icc_file)
+        FileUtils.cp(File.join(Libis::Format::DATA_DIR, "#{icc_info[:icc_name]}.icc"), icc_file)
 
         def_filename = File.join(Dir.tmpdir, "PDFA_def_#{Random.new.bytes(12).unpack('H*').first}.ps")
         File.open(def_filename, 'w') do |f|

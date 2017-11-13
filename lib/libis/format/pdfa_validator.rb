@@ -41,7 +41,7 @@ module Libis
             return false
           end
         else
-          jar = File.join(ROOT_DIR, 'tools', 'pdfbox', 'preflight-app-1.8.10.jar')
+          jar = File.join(Libis::Format::ROOT_DIR, 'tools', 'pdfbox', 'preflight-app-1.8.10.jar')
           result = Libis::Tools::Command.run(
               Libis::Format::Config[:java_path],
               '-jar', jar,
