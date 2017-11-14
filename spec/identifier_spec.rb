@@ -106,8 +106,10 @@ describe 'Identfier' do
     end).to be_truthy
   end
 
-  if Libis::Format::Config[:droid_path] && File.exists?(Libis::Format::Config[:droid_path]) &&
-      Libis::Format::Config[:fido_path] && File.exists?(Libis::Format::Config[:fido_path])
+  context 'Fido and Droid', if: (Libis::Format::Config[:droid_path] &&
+      File.exists?(Libis::Format::Config[:droid_path]) &&
+      Libis::Format::Config[:fido_path] &&
+      File.exists?(Libis::Format::Config[:fido_path])) do
 
     it 'should identify all files in a folder at once' do
       result = identifier.get (dir)
@@ -155,11 +157,8 @@ describe 'Identfier' do
       end
     end
 
-  end
-
-  if Libis::Format::Config[:fido_path] && File.exists?(Libis::Format::Config[:fido_path])
-
-    context 'Fido' do
+    context 'Fido', if: (Libis::Format::Config[:fido_path] &&
+        File.exists?(Libis::Format::Config[:fido_path])) do
 
       # expect(identifier.fido_formats.size).to be 1
       # expect(File.basename(identifier.fido_formats.first)).to eq 'lias_formats.xml'
