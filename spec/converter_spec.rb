@@ -207,8 +207,7 @@ describe 'Converters' do
 
   end
 
-  context 'JP2 Converter', if: (Libis::Format::Config[:j2kdriver] &&
-      File.exists?(Libis::Format::Config[:j2kdriver])) do
+  context 'JP2 Converter', if: File.exists?(Libis::Format::Config[:j2kdriver]) do
 
     let(:converter) {Libis::Format::Converter::Jp2Converter.new}
     let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}
@@ -242,8 +241,7 @@ describe 'Converters' do
 
   end
 
-  context 'Pdf Converter', if: (Libis::Format::Config[:ghostscript_path] &&
-      File.exists?(Libis::Format::Config[:ghostscript_path])) do
+  context 'Pdf Converter', if: File.exists?(Libis::Format::Config[:ghostscript_path]) do
 
     let(:converter) {Libis::Format::Converter::PdfConverter.new}
 

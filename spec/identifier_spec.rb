@@ -106,9 +106,7 @@ describe 'Identfier' do
     end).to be_truthy
   end
 
-  context 'Fido and Droid', if: (Libis::Format::Config[:droid_path] &&
-      File.exists?(Libis::Format::Config[:droid_path]) &&
-      Libis::Format::Config[:fido_path] &&
+  context 'Fido and Droid', if: (File.exists?(Libis::Format::Config[:droid_path]) &&
       File.exists?(Libis::Format::Config[:fido_path])) do
 
     it 'should identify all files in a folder at once' do
@@ -147,45 +145,31 @@ describe 'Identfier' do
 
   end
 
-  context 'individual files' do
+  context 'Fido', if: File.exists?(Libis::Format::Config[:fido_path]) do
 
-    formatlist.each do |file, format|
-      it "should identify test document '#{file}'" do
-        result = identifier.get (File.join(dir, file))
-        expect(result[:formats].size).to be 1
-        expect(result[:formats][File.join(dir, file)]).to include format
+    # expect(identifier.fido_formats.size).to be 1
+    # expect(File.basename(identifier.fido_formats.first)).to eq 'lias_formats.xml'
+    it 'should identify list of test documents' do
+      filelist = formatlist.keys.map {|file| File.join(dir, file)}
+      fido_result = ::Libis::Format::Fido.instance.run_list(filelist)
+      filelist.each do |filename|
+        result = fido_result[filename]
+        result = result[0] if result
+        # noinspection RubyResolve
+        expect(result).to include fidolist[File.basename(filename)]
       end
     end
 
-    context 'Fido', if: (Libis::Format::Config[:fido_path] &&
-        File.exists?(Libis::Format::Config[:fido_path])) do
-
-      # expect(identifier.fido_formats.size).to be 1
-      # expect(File.basename(identifier.fido_formats.first)).to eq 'lias_formats.xml'
-      it 'should identify list of test documents' do
-        filelist = formatlist.keys.map {|file| File.join(dir, file)}
-        fido_result = ::Libis::Format::Fido.instance.run_list(filelist)
-        filelist.each do |filename|
-          result = fido_result[filename]
-          result = result[0] if result
-          # noinspection RubyResolve
-          expect(result).to include fidolist[File.basename(filename)]
-        end
+    it 'should identify dir of test documents' do
+      filelist = fidolist.keys.map {|file| File.join(dir, file)}
+      fido_result = ::Libis::Format::Fido.instance.run_dir(dir, false)
+      filelist.each do |filename|
+        result = fido_result[filename]
+        result = result[0] if result
+        # noinspection RubyResolve
+        expect(result).to include fidolist[File.basename(filename)]
       end
-
-      it 'should identify dir of test documents' do
-        filelist = fidolist.keys.map {|file| File.join(dir, file)}
-        fido_result = ::Libis::Format::Fido.instance.run_dir(dir)
-        filelist.each do |filename|
-          result = fido_result[filename]
-          result = result[0] if result
-          # noinspection RubyResolve
-          expect(result).to include fidolist[File.basename(filename)]
-        end
-      end
-
     end
 
   end
-
 end
