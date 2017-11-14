@@ -15,8 +15,6 @@ describe 'Converters' do
 
   before(:all) {
     Libis::Tools::Config.logger.level = 'off'
-    ::Libis::Format::Config[:droid_path] = '/opt/droid/droid.sh'
-    ::Libis::Format::Config[:fido_path] = '/usr/local/bin/fido'
   }
 
   context 'Repository' do

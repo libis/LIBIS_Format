@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'libis/format/identifier'
+require 'chromaprint'
 
 require 'fileutils'
 
@@ -109,6 +110,45 @@ module Libis
             target = convert_file(f.to_path, target)
           end
           target
+        end
+
+        def sounds_like(file1, file2, threshold, rate, channels)
+          rate ||= 96000
+          channels ||= 2
+          threshold ||= 0.85
+
+          if File.exists?(file1) && File.exists?(file2)
+            # Convert input files into raw 16-bit signed audio (WAV) to process with Chramaprint
+            file1_raw = File.join('', 'tmp', File.basename(file1) + '.wav')
+            file2_raw = File.join('', 'tmp', File.basename(file2) + '.wav')
+            FileUtils.rm(file1_raw, force: true)
+            FileUtils.rm(file2_raw, force: true)
+            cvt_cmd = Libis::Format::Config[:raw_audio_convert_cmd]
+            %x"#{cvt_cmd % [file1, file1_raw, rate, channels]}"
+            %x"#{cvt_cmd % [file2, file2_raw, rate, channels]}"
+            file1_audio = File.binread(file1_raw)
+            file2_audio = File.binread(file2_raw)
+
+            # Get audio fingerprints
+            chromaprint = Chromaprint::Context.new(rate, channels, Chromaprint::ALGORITHM_TEST3)
+            file1_fp = chromaprint.get_fingerprint(file1_audio)
+            file2_fp = chromaprint.get_fingerprint(file2_audio)
+
+            # Cleanup files
+            FileUtils.rm(file1_raw, force: true)
+            FileUtils.rm(file2_raw, force: true)
+
+            # Compare fingerprints and compare result against threshold
+            cmp = file1_fp.compare(file2_fp)
+            # puts "Threshold[#{File.basename(exp_file)},#{File.basename(tgt_file)}: #{cmp}"
+            cmp > threshold
+          else
+            false
+          end
+
+        rescue Exception => e
+          error "Error comparing sound file #{file1} and #{file2}: #{e.message} @ #{e.backtrace.first}"
+          false
         end
 
         protected

@@ -69,8 +69,6 @@ describe 'Identfier' do
     ::Libis::Tools::Config.logger.appenders =
         ::Logging::Appenders.string_io('StringIO', layout: ::Libis::Tools::Config.get_log_formatter)
     ::Libis::Tools::Config.logger.level = :all
-    ::Libis::Format::Config[:droid_path] = '/opt/droid/droid.sh'
-    ::Libis::Format::Config[:fido_path] = File.join(ENV['HOME'], 'bin', 'fido')
   end
 
   let (:identifier) {::Libis::Format::Identifier}
