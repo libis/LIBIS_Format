@@ -409,11 +409,12 @@ describe 'Converters' do
                 if tgt == 'gif'
                   converter.start(1)
                   converter.duration(3)
+                  converter.scale('100x100')
                 end
                 result = converter.convert(src_file, tgt_file, tgt.upcase.to_sym)
                 expect(result).to eq tgt_file
                 expect(File.size(result)).to be > 2000
-                FileUtils.remove tgt_file, force: true
+                # FileUtils.remove tgt_file, force: true
               end
             end
           end

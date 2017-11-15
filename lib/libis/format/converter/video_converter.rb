@@ -178,6 +178,12 @@ module Libis
           opts[:output] << '-q:a' << @options[:audio_quality] if @options[:audio_quality]
           opts[:output] << '-r' << @options[:frame_rate] if @options[:frame_rate]
           opts[:output] << '-ar' << @options[:sampling_freq] if @options[:sampling_freq]
+          if @options[:scale]
+            scale = @options[:scale].split('x')
+            width = scale[0]
+            height = scale[1]
+            opts[:output] << '-vf' << "scale=w=#{width}:h=#{height}:force_original_aspect_ratio=decrease"
+          end
           opts[:output] << '-f' << @options[:format] if @options[:format]
           opts[:output] << '-pre' << @options[:preset] if @options[:preset]
           opts[:output] << '-apre' << @options[:audio_preset] if @options[:audio_preset]
