@@ -365,6 +365,7 @@ describe 'Converters' do
               result = converter.convert(src_file, tgt_file, tgt.upcase.to_sym)
               expect(result).to eq tgt_file
               expect(result).to sound_like ref_file, confidence[ext.to_sym] * quality[source.to_sym], 11025, 1
+              FileUtils.remove tgt_file, force: true
             end
           end
         end
