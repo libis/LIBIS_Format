@@ -414,7 +414,7 @@ describe 'Converters' do
                 result = converter.convert(src_file, tgt_file, tgt.upcase.to_sym)
                 expect(result).to eq tgt_file
                 expect(File.size(result)).to be > 2000
-                # FileUtils.remove tgt_file, force: true
+                FileUtils.remove tgt_file, force: true
               end
             end
           end
