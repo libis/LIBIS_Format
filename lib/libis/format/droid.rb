@@ -67,6 +67,7 @@ module Libis
           r.delete(:format_count)
           r[:source] = :droid
         end
+        File.delete report
         process_output(result)
       end
 

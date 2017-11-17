@@ -115,6 +115,7 @@ describe 'Converters' do
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
     end
 
     it 'converts TIFF to PNG' do
@@ -132,6 +133,7 @@ describe 'Converters' do
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
     end
 
     it 'converts PDF to TIFF' do
@@ -149,6 +151,7 @@ describe 'Converters' do
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
     end
 
     it 'converts TIFF to PNG with many options' do
@@ -169,6 +172,7 @@ describe 'Converters' do
         expect(status).to be 0
       end
       FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
     end
 
     it 'converts only first page of multipage TIFF to JP2' do
@@ -189,6 +193,7 @@ describe 'Converters' do
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
     end
 
     it 'converts TIFF to JP2' do
@@ -235,6 +240,7 @@ describe 'Converters' do
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
     end
 
   end
