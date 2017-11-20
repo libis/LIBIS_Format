@@ -1,5 +1,5 @@
 require_relative 'base'
-require 'libis/format/ffmpeg'
+require 'libis/format/tool/ffmpeg'
 
 require 'fileutils'
 

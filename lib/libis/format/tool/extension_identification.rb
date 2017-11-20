@@ -2,51 +2,54 @@ require_relative 'identification_tool'
 
 module Libis
   module Format
+    module Tool
 
-    class ExtensionIdentification < Libis::Format::Tool::IdentificationTool
+      class ExtensionIdentification < Libis::Format::Tool::IdentificationTool
 
-      def run_list(filelist)
+        def run_list(filelist)
 
-        output = runner(nil, filelist)
+          output = runner(nil, filelist)
 
-        process_output(output)
+          process_output(output)
 
-      end
+        end
 
-      def run_dir(dir, recursive = true)
+        def run_dir(dir, recursive = true)
 
-        filelist = find_files(dir, recursive)
+          filelist = find_files(dir, recursive)
 
-        output = runner(nil, filelist)
+          output = runner(nil, filelist)
 
-        process_output(output)
+          process_output(output)
 
-      end
+        end
 
-      def run(file)
+        def run(file)
 
-        output = runner(file)
+          output = runner(file)
 
-        process_output(output)
+          process_output(output)
 
-      end
+        end
 
-      protected
+        protected
 
-      def runner(*args)
+        def runner(*args)
 
-        args.map do |file|
-          info = ::Libis::Format::TypeDatabase.ext_infos(File.extname(file)).first
-          if info
-            {
-                filepath: file,
-                mimetype: (info[:MIME].first rescue nil),
-                puid: (info[:PUID].first rescue nil),
-                matchtype: 'extension',
-                source: :type_database
-            }
-          end
-        end.cleanup
+          args.map do |file|
+            info = ::Libis::Format::TypeDatabase.ext_infos(File.extname(file)).first
+            if info
+              {
+                  filepath: file,
+                  mimetype: (info[:MIME].first rescue nil),
+                  puid: (info[:PUID].first rescue nil),
+                  matchtype: 'extension',
+                  source: :type_database
+              }
+            end
+          end.cleanup
+
+        end
 
       end
 

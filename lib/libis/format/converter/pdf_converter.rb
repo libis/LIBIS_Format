@@ -3,9 +3,9 @@
 require_relative 'base'
 
 require 'libis/tools/extend/hash'
-require 'libis/format/pdf_copy'
-require 'libis/format/pdf_to_pdfa'
-require 'libis/format/pdf_optimizer'
+require 'libis/format/tool/pdf_copy'
+require 'libis/format/tool/pdf_to_pdfa'
+require 'libis/format/tool/pdf_optimizer'
 
 module Libis
   module Format
