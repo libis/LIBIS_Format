@@ -22,6 +22,7 @@ module Libis
     Config[:xml_validations] = [['archive/ead', File.join(data_dir, 'ead.xsd')]]
     Config[:type_database] = File.join(data_dir, 'types.yml')
     Config[:raw_audio_convert_cmd] = 'sox %s -e signed -b 16 -t wav %s rate %d channels %d'
+    Config[:watermark_font] = '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
 
   end
 end
