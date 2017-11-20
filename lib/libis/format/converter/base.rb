@@ -3,6 +3,7 @@
 ### require 'tools/string'
 require 'tmpdir'
 require 'libis/tools/logger'
+require 'libis/tools/temp_file'
 require 'libis/format/type_database'
 
 require_relative 'repository'
@@ -43,7 +44,7 @@ module Libis
         end
 
         def Base.using_temp(target)
-          tempfile = File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname(['convert', File.extname(target)], File.basename(target, '.*').gsub(/\s/, '_')))
+          tempfile = Tools::TempFile.name("convert-#{File.basename(target, '.*').gsub(/\s/, '_')}", File.extname(target))
           result = yield tempfile
           return nil unless result
           FileUtils.move result, target

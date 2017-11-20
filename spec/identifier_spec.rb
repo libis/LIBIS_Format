@@ -75,18 +75,6 @@ describe 'Identfier' do
   let (:logoutput) {::Libis::Tools::Config.logger.appenders.last.sio}
   let (:dir) {File.join File.absolute_path(File.dirname(__FILE__)), 'data'}
 
-  # context 'bug test' do
-  #
-  #   let (:dir) {'/nas/vol03/lbs/alma/etd-kul/sap/FIIW/out/0623689_17450'}
-  #
-  #   it 'just works' do
-  #     result = identifier.get(dir)
-  #     ap result
-  #     expect(result).not_to be_nil
-  #   end
-  #
-  # end
-
   it 'should initialize correctly' do
     expect(identifier.xml_validations.size).to be 1
     expect(File.basename identifier.xml_validations['archive/ead']).to eq 'ead.xsd'
@@ -116,7 +104,7 @@ describe 'Identfier' do
     end
 
     it 'should identify all files in a folder with base_dir option' do
-      result = identifier.get(dir, base_dir: dir)
+      result = identifier.get(dir, base_dir: dir, keep_output: true)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
         expect(result[:formats][file]).to include format
@@ -149,7 +137,7 @@ describe 'Identfier' do
     # expect(File.basename(identifier.fido_formats.first)).to eq 'lias_formats.xml'
     it 'should identify list of test documents' do
       filelist = formatlist.keys.map {|file| File.join(dir, file)}
-      fido_result = ::Libis::Format::Fido.instance.run_list(filelist)
+      fido_result = ::Libis::Format::Tool::Fido.instance.run_list(filelist)
       filelist.each do |filename|
         result = fido_result[filename]
         result = result[0] if result
@@ -160,7 +148,7 @@ describe 'Identfier' do
 
     it 'should identify dir of test documents' do
       filelist = fidolist.keys.map {|file| File.join(dir, file)}
-      fido_result = ::Libis::Format::Fido.instance.run_dir(dir, false)
+      fido_result = ::Libis::Format::Tool::Fido.instance.run_dir(dir, false)
       filelist.each do |filename|
         result = fido_result[filename]
         result = result[0] if result

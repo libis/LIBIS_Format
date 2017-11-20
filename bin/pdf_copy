@@ -9,5 +9,5 @@ source = ARGV.shift
 target = ARGV.shift
 options = ARGV
 
-::Libis::Format::PdfCopy.run source, target, options
+::Libis::Format::Tool::PdfCopy.run source, target, options
 

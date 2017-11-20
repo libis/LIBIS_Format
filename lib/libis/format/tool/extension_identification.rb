@@ -3,7 +3,7 @@ require_relative 'identification_tool'
 module Libis
   module Format
 
-    class ExtensionIdentification < Libis::Format::IdentificationTool
+    class ExtensionIdentification < Libis::Format::Tool::IdentificationTool
 
       def run_list(filelist)
 

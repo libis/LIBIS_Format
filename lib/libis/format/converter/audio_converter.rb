@@ -168,7 +168,7 @@ module Libis
           opts[:output] << '-ar' << @options[:sampling_freq] if @options[:sampling_freq]
           opts[:output] << '-ac' << @options[:channels] if @options[:channels]
           opts[:output] << '-f' << @options[:format] if @options[:format]
-          result = Libis::Format::FFMpeg.run(source, target, opts)
+          result = Libis::Format::Tool::FFMpeg.run(source, target, opts)
           info "FFMpeg output: #{result}"
           result
           target

@@ -126,7 +126,7 @@ module Libis
         def optimize_pdf(source, target, quality)
 
           using_temp(target) do |tmpname|
-            result = Libis::Format::PdfOptimizer.run(source, tmpname, quality)
+            result = Libis::Format::Tool::PdfOptimizer.run(source, tmpname, quality)
             unless result[:status] == 0
               error("Pdf optimization encountered errors:\n%s", (result[:err] + result[:out]).join('\n'))
               next nil
@@ -138,7 +138,7 @@ module Libis
         def convert_pdf(source, target)
 
           using_temp(target) do |tmpname|
-            result = Libis::Format::PdfCopy.run(
+            result = Libis::Format::Tool::PdfCopy.run(
                 source, tmpname,
                 @options.map { |k, v|
                   if v.nil?
@@ -159,7 +159,7 @@ module Libis
         def pdf_to_pdfa(source, target)
 
           using_temp(target) do |tmpname|
-            result = Libis::Format::PdfToPdfa.run source, tmpname
+            result = Libis::Format::Tool::PdfToPdfa.run source, tmpname
             unless result[:status] == 0
               error("Pdf/A conversion encountered errors:\n%s", result[:err].join('\n'))
               next nil

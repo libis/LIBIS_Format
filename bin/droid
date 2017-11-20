@@ -5,7 +5,7 @@ require 'libis-tools'
 
 ::Libis::Tools::Config.logger.level = :WARN
 
-result = ::Libis::Format::Droid.run ARGV[0]
+result = ::Libis::Format::Tool::Droid.run ARGV[0]
 
 result.each do |r|
   r.each do |key, value|

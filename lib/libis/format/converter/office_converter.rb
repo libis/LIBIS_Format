@@ -2,7 +2,7 @@
 
 require_relative 'base'
 
-require 'libis/format/office_to_pdf'
+require 'libis/format/tool/office_to_pdf'
 require 'libis/format/type_database'
 
 module Libis
@@ -38,7 +38,7 @@ module Libis
         def convert(source, target, format, opts = {})
           super
 
-          return nil unless OfficeToPdf.run(source, target)
+          return nil unless Format::Tool::OfficeToPdf.run(source, target)
 
           target
 

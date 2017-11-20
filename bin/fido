@@ -5,7 +5,7 @@ require 'libis-tools'
 
 ::Libis::Tools::Config.logger.level = :WARN
 
-result = ::Libis::Format::Fido.run ARGV[0]
+result = ::Libis::Format::Tool::Fido.run ARGV[0]
 
 result.each do |key, value|
   puts "#{key}: #{value}"

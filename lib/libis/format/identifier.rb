@@ -12,10 +12,10 @@ require 'nori/core_ext/object'
 require 'libis/format/type_database'
 
 require_relative 'config'
-require_relative 'fido'
-require_relative 'droid'
-require_relative 'file_tool'
-require_relative 'extension_identification'
+require_relative 'tool/fido'
+require_relative 'tool/droid'
+require_relative 'tool/file_tool'
+require_relative 'tool/extension_identification'
 
 module Libis
   module Format
@@ -78,7 +78,7 @@ module Libis
           log_msg(result, :error, "Error validating XML files: #{e.message} @ #{e.backtrace.first}")
         end
 
-        process_results(result)
+        process_results(result, !options[:keep_output])
 
         result
 
@@ -91,25 +91,25 @@ module Libis
       end
 
       def get_file_identification(file, result, options)
-        output = ::Libis::Format::FileTool.run(file, options[:recursive])
+        output = ::Libis::Format::Tool::FileTool.run(file, options[:recursive])
         process_tool_output(output, result, options[:base_dir])
         output
       end
 
       def get_fido_identification(file, result, options)
-        output = ::Libis::Format::Fido.run(file, options[:recursive])
+        output = ::Libis::Format::Tool::Fido.run(file, options[:recursive])
         process_tool_output(output, result, options[:base_dir])
         output
       end
 
       def get_droid_identification(file, result, options)
-        output = ::Libis::Format::Droid.run(file, options[:recursive])
+        output = ::Libis::Format::Tool::Droid.run(file, options[:recursive])
         process_tool_output(output, result, options[:base_dir])
         output
       end
 
       def get_extension_identification(file, result, options)
-        output = ::Libis::Format::ExtensionIdentification.run(file, options[:recursive])
+        output = ::Libis::Format::Tool::ExtensionIdentification.run(file, options[:recursive])
         process_tool_output(output, result, options[:base_dir])
         output
       end
@@ -149,9 +149,9 @@ module Libis
         log_msg(result, :warn, "Error parsing XML file #{file}: #{e.message} @ #{e.backtrace.first}")
       end
 
-      def process_results(result)
+      def process_results(result, delete_output = true)
         result[:output].keys.each do |file|
-          output = result[:output].delete(file)
+          output = result[:output][file]
           file_result = result[:formats][file] = {}
           if output.empty?
             log_msg(result, :warn, "Could not identify format of '#{file}'.")
@@ -177,7 +177,7 @@ module Libis
             end
           end
         end
-        result.delete(:output)
+        result.delete(:output) if delete_output
       end
 
       def process_multiple_formats(file_result, format_matches, output)

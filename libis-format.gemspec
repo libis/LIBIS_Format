@@ -25,10 +25,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.6'
   spec.add_development_dependency 'rake', '~> 10.3'
   spec.add_development_dependency 'rspec', '~> 3.1'
-  spec.add_development_dependency 'simplecov', '~> 0.9'
   spec.add_development_dependency 'awesome_print'
 
-  spec.add_runtime_dependency 'libis-tools', '~> 0.9.52'
+  spec.add_runtime_dependency 'libis-tools', '~> 0.9.57'
   spec.add_runtime_dependency 'os', '= 0.9.6'
   spec.add_runtime_dependency 'mini_magick', '~> 4.3'
   spec.add_runtime_dependency 'deep_dive', '~> 0.3'

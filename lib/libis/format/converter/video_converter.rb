@@ -82,6 +82,20 @@ module Libis
           @options[:scale] = width_x_height
         end
 
+        def watermark_image(file)
+          @options[:watermark_image] = file
+        end
+
+        def watermark_text(value)
+          @options[:watermark_text] = value
+        end
+
+        #
+        # @param [String] value one of 'bottom_left', 'top_left', 'bottom_right', 'top_right'
+        def watermark_position(value)
+          @options[:watermark_position] = value
+        end
+
         def web_stream(value)
           if value
             @options[:video_codec] = 'h264'
@@ -188,7 +202,7 @@ module Libis
           opts[:output] << '-pre' << @options[:preset] if @options[:preset]
           opts[:output] << '-apre' << @options[:audio_preset] if @options[:audio_preset]
           opts[:output] << '-vpre' << @options[:video_preset] if @options[:video_preset]
-          result = Libis::Format::FFMpeg.run(source, target, opts)
+          result = Libis::Format::Tool::FFMpeg.run(source, target, opts)
           info "FFMpeg output: #{result}"
           target
         end
