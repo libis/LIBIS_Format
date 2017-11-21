@@ -131,7 +131,7 @@ AUDIO:
   M4A:
     NAME: MPEG-4 Media File (M4A)
     MIME: audio/mp4
-    PUID: fmt/199, fmt/596
+    PUID: fmt/596
     EXTENSIONS: m4a f4a
 
 VIDEO:

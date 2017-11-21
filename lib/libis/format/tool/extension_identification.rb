@@ -6,7 +6,7 @@ module Libis
 
       class ExtensionIdentification < Libis::Format::Tool::IdentificationTool
 
-        def run_list(filelist)
+        def run_list(filelist, _options = {})
 
           output = runner(nil, filelist)
 
@@ -14,7 +14,7 @@ module Libis
 
         end
 
-        def run_dir(dir, recursive = true)
+        def run_dir(dir, recursive = true, _options = {})
 
           filelist = find_files(dir, recursive)
 
@@ -24,7 +24,7 @@ module Libis
 
         end
 
-        def run(file)
+        def run(file, _options)
 
           output = runner(file)
 

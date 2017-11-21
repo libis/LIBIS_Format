@@ -22,22 +22,23 @@ module Libis
 
         attr_reader :formats
 
-        def run_list(filelist)
+        def run_list(filelist, options = {})
           create_list_file(filelist) do |list_file|
-            output = runner(nil, '-input', list_file.escape_for_string)
+            output = runner(nil, '-input', list_file.escape_for_string, options)
             process_output(output)
           end
         end
 
-        def run_dir(dir, recursive = true)
+        def run_dir(dir, recursive = true, options = {})
           args = []
           args << '-recurse' if recursive
+          args << options
           output = runner(dir, *args)
           process_output(output)
         end
 
-        def run(file)
-          output = runner(file)
+        def run(file, options = {})
+          output = runner(file, options)
           process_output(output)
         end
 
@@ -53,11 +54,18 @@ module Libis
         attr_writer :formats
 
         def runner(filename, *args)
+          options = {}
+          options = args.pop if args.last.is_a?(Hash)
           # Load custome format definitions if present
           args << '-loadformats' << "#{formats.join(',')}" unless formats.empty?
 
           # Workaround for Fido performance bug
-          args << '-bufsize' << '1000'
+          args << '-bufsize' << (options[:bufsize] || 1000).to_s
+
+          # Other options
+          args << '-container_bufsize' << options[:container_bufsize].to_s if options[:container_bufsize]
+          args << '-pronom_only' if options[:pronom_only]
+          args << '-nocontainer' if options[:nocontainer]
 
           # Add filename to argument list (optional)
           args << "#{filename.escape_for_string}" if filename

@@ -21,26 +21,27 @@ module Libis
           self.instance.bad_mimetype(mimetype)
         end
 
-        def self.run(file, recursive = false)
+        def self.run(file, recursive = false, options = {})
+          options ||= {}
           if file.is_a?(Array)
-            return run_list file
+            return run_list file, options
           elsif file.is_a?(String) && File.exists?(file) && File.readable?(file)
             if File.directory?(file)
-              return run_dir(file, recursive)
+              return run_dir(file, recursive, options)
             elsif File.file?(file)
-              return self.instance.run(file)
+              return self.instance.run(file, options)
             end
           end
           raise ArgumentError,
                 'IdentificationTool: file argument should be a path to an existing file or directory or a list of those'
         end
 
-        def self.run_dir(file, recursive = true)
-          self.instance.run_dir file, recursive
+        def self.run_dir(file, recursive = true, options = {})
+          self.instance.run_dir file, recursive, options
         end
 
-        def self.run_list(filelist)
-          self.instance.run_list filelist
+        def self.run_list(filelist , options = {})
+          self.instance.run_list filelist, options
         end
 
         protected
@@ -83,9 +84,9 @@ module Libis
         #
         def process_output(output)
           output.reduce({}) do |results, x|
-            filepath = x.delete(:filepath)
+            filepath = File.absolute_path(x.delete(:filepath)).freeze
             results[filepath] ||= []
-            results[filepath.freeze] << annotate(x)
+            results[filepath] << annotate(x)
             results
           end
         end

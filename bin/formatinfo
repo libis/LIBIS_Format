@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'libis-format'
+require 'libis-tools'
+require 'awesome_print'
+
+::Libis::Tools::Config.logger.level = :WARN
+
+result = ::Libis::Format::Identifier.get ARGV[0]
+
+puts '--- messages ---'
+result[:messages].each do |message|
+  puts "#{message[0]} : #{message[1]}"
+end
+
+puts '--- formats ---'
+result[:formats].each do |file, info|
+  puts "#{file}:"
+  ap info
+end

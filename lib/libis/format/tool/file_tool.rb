@@ -6,7 +6,7 @@ module Libis
 
       class FileTool < Libis::Format::Tool::IdentificationTool
 
-        def run_list(filelist)
+        def run_list(filelist, _options = {})
 
           create_list_file(filelist) do |list_file|
 
@@ -18,7 +18,7 @@ module Libis
 
         end
 
-        def run_dir(dir, recursive = true)
+        def run_dir(dir, recursive = true, _options = {})
 
           filelist = find_files(dir, recursive)
 
@@ -32,7 +32,7 @@ module Libis
 
         end
 
-        def run(file)
+        def run(file, _options = {})
 
           output = runner(file)
 

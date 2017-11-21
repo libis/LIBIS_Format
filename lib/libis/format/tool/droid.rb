@@ -20,28 +20,24 @@ module Libis
 
       class Droid < Libis::Format::Tool::IdentificationTool
 
-        def run_list(filelist)
+        def run_list(filelist, _options = {})
           runner(filelist)
         end
 
-        def run_dir(dir, recursive = true)
-          profile = profile_file_name
-          report = result_file_name
-          create_profile(dir, profile, recursive)
-          create_report(profile, report)
-          parse_report(report)
+        def run_dir(dir, recursive = true, _options = {})
+          runner(dir, recursive)
         end
 
-        def run(file)
+        def run(file, _options = {})
           runner(file)
         end
 
         protected
 
-        def runner(file_or_list)
+        def runner(file_or_list, recursive = false)
           profile = profile_file_name
           report = result_file_name
-          create_profile(file_or_list, profile)
+          create_profile(file_or_list, profile, recursive)
           create_report(profile, report)
           parse_report(report)
         end

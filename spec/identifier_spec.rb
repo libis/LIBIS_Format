@@ -96,7 +96,7 @@ describe 'Identfier' do
       File.exists?(Libis::Format::Config[:fido_path])) do
 
     it 'should identify all files in a folder at once' do
-      result = identifier.get (dir)
+      result = identifier.get(dir)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
         expect(result[:formats][File.join(dir, file)]).to include format

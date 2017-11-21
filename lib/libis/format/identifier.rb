@@ -97,7 +97,7 @@ module Libis
       end
 
       def get_fido_identification(file, result, options)
-        output = ::Libis::Format::Tool::Fido.run(file, options[:recursive])
+        output = ::Libis::Format::Tool::Fido.run(file, options[:recursive], options[:fido_options])
         process_tool_output(output, result, options[:base_dir])
         output
       end
@@ -197,7 +197,7 @@ module Libis
 
       def process_tool_output(output, result, base_dir)
         output.each do |file, file_output|
-          file = Pathname.new(file).relative_path_from(Pathname(base_dir)).to_s.freeze if base_dir
+          file = Pathname.new(file).relative_path_from(Pathname(File.absolute_path(base_dir))).to_s.freeze if base_dir
           result[:output][file] ||= []
           result[:output][file] += file_output
         end
