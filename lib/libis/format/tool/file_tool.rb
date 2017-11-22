@@ -67,7 +67,7 @@ module Libis
           # Parse output text into array and return result
           file_tool[:out].map do |line|
             r = line.split(/:\s+/)
-            {filepath: r[0], mimetype: r[1], matchtype: 'magic', source: :file}
+            {filepath: r[0], mimetype: r[1], matchtype: 'magic', tool: :file}
           end
         end
 

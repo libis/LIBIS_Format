@@ -128,7 +128,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                       :mimetype => "image/bmp",
                    :format_name => "Windows Bitmap",
                 :format_version => "3.0",
-                        :source => :droid,
+                          :tool => :droid,
                           :TYPE => :BMP,
                          :GROUP => :IMAGE,
                          :score => 7
@@ -139,7 +139,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                 :format_version => "Windows Bitmap 3.0",
                       :mimetype => "image/bmp",
                      :matchtype => "signature",
-                        :source => :fido,
+                          :tool => :fido,
                           :TYPE => :BMP,
                          :GROUP => :IMAGE,
                          :score => 7
@@ -147,7 +147,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
             [2] {
                  :mimetype => "image/bmp",
                 :matchtype => "magic",
-                   :source => :file,
+                     :tool => :file,
                      :TYPE => :BMP,
                     :GROUP => :IMAGE,
                     :score => 2
@@ -161,7 +161,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                       :mimetype => "image/jp2",
                    :format_name => "JP2 (JPEG 2000 part 1)",
                 :format_version => "",
-                        :source => :droid,
+                          :tool => :droid,
                           :TYPE => :JP2,
                          :GROUP => :IMAGE,
                          :score => 7
@@ -172,7 +172,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                 :format_version => "JPEG2000",
                       :mimetype => "image/jp2",
                      :matchtype => "signature",
-                        :source => :fido,
+                          :tool => :fido,
                           :TYPE => :JP2,
                          :GROUP => :IMAGE,
                          :score => 7
@@ -180,7 +180,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
             [2] {
                  :mimetype => "image/jp2",
                 :matchtype => "magic",
-                   :source => :file,
+                     :tool => :file,
                      :TYPE => :JP2,
                     :GROUP => :IMAGE,
                     :score => 2
@@ -196,7 +196,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "image/bmp",
                :format_name => "Windows Bitmap",
             :format_version => "3.0",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :BMP,
                      :GROUP => :IMAGE,
                      :score => 7
@@ -208,7 +208,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "image/jp2",
                :format_name => "JP2 (JPEG 2000 part 1)",
             :format_version => "JPEG2000",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :JP2,
                      :GROUP => :IMAGE,
                      :score => 7
@@ -220,7 +220,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "image/tiff",
                :format_name => "Tagged Image File Format",
             :format_version => "TIFF generic (little-endian)",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :TIFF,
                      :GROUP => :IMAGE,
                      :score => 7
@@ -232,7 +232,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "image/tiff",
                :format_name => "Exchangeable Image File Format (Uncompressed)",
             :format_version => "2.2",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :TIFF,
                      :GROUP => :IMAGE,
                      :score => 7,
@@ -243,7 +243,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                     :format_version => "TIFF generic (little-endian)",
                           :mimetype => "image/tiff",
                          :matchtype => "signature",
-                            :source => :fido,
+                              :tool => :fido,
                               :TYPE => :TIFF,
                              :GROUP => :IMAGE,
                              :score => 7
@@ -255,7 +255,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                           :mimetype => "image/tiff",
                        :format_name => "Exchangeable Image File Format (Uncompressed)",
                     :format_version => "2.2",
-                            :source => :droid,
+                              :tool => :droid,
                               :TYPE => :TIFF,
                              :GROUP => :IMAGE,
                              :score => 7
@@ -269,7 +269,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "archive/ead",
                :format_name => "Encoded Archival Description (EAD)",
             :format_version => "",
-                    :source => :xsd_validation,
+                      :tool => :xsd_validation,
                       :TYPE => :EAD,
                      :GROUP => :ARCHIVE,
                      :score => 7,
@@ -283,7 +283,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "application/msword",
                :format_name => "Microsoft Word Document",
             :format_version => "97-2003",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :MSDOC,
                      :GROUP => :TEXT,
                      :score => 9,
@@ -295,7 +295,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                           :mimetype => "application/msword",
                        :format_name => "Microsoft Word Document",
                     :format_version => "97-2003",
-                            :source => :droid,
+                              :tool => :droid,
                               :TYPE => :MSDOC,
                              :GROUP => :TEXT,
                              :score => 9
@@ -306,7 +306,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                     :format_version => "OLE2 Compound Document Format",
                           :mimetype => nil,
                          :matchtype => "signature",
-                            :source => :fido,
+                              :tool => :fido,
                              :score => 3
                 }
             ]
@@ -318,7 +318,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                :format_name => "Microsoft Word for Windows",
             :format_version => "2007 onwards",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :MSDOCX,
                      :GROUP => :TEXT,
                      :score => 9
@@ -330,7 +330,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                :format_name => "Microsoft Excel for Windows",
             :format_version => "2007 onwards",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :MSXLSX,
                      :GROUP => :TABULAR,
                      :score => 9,
@@ -342,7 +342,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                           :mimetype => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                        :format_name => "Microsoft Excel for Windows",
                     :format_version => "2007 onwards",
-                            :source => :droid,
+                              :tool => :droid,
                               :TYPE => :MSXLSX,
                              :GROUP => :TABULAR,
                              :score => 9
@@ -350,7 +350,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                 [1] {
                      :mimetype => "application/octet-stream",
                     :matchtype => "magic",
-                       :source => :file,
+                         :tool => :file,
                         :score => -2
                 }
             ]
@@ -362,7 +362,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                   :mimetype => "application/pdf",
                :format_name => "Acrobat PDF/A - Portable Document Format",
             :format_version => "1b",
-                    :source => :droid,
+                      :tool => :droid,
                       :TYPE => :PDFA,
                      :GROUP => :TEXT,
                      :score => 7,
@@ -373,7 +373,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                     :format_version => "PDF 1.5",
                           :mimetype => "application/pdf",
                          :matchtype => "signature",
-                            :source => :fido,
+                              :tool => :fido,
                               :TYPE => :PDF,
                              :GROUP => :TEXT,
                              :score => 7
@@ -385,7 +385,7 @@ XML type you should add an entry to your Type Database with the same MIME-type.
                           :mimetype => "application/pdf",
                        :format_name => "Acrobat PDF/A - Portable Document Format",
                     :format_version => "1b",
-                            :source => :droid,
+                              :tool => :droid,
                               :TYPE => :PDFA,
                              :GROUP => :TEXT,
                              :score => 7

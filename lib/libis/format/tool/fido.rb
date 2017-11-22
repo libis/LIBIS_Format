@@ -88,7 +88,7 @@ module Libis
             r.delete(:time)
             r.delete(:status)
             r.delete(:filesize)
-            r[:source] = :fido
+            r[:tool] = :fido
           end
         end
 

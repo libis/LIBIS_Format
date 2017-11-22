@@ -154,12 +154,6 @@ VIDEO:
     MIME:  video/webm
     EXTENSIONS: webm
 
-  FLASH:
-    NAME: Macromedia Flash
-    MIME: application/x-shockwave-flash
-    PUID: fmt/104 fmt/105 fmt/106 fmt/107 fmt/108 fmt/109 fmt/110
-    EXTENSIONS: swf
-
   MKV:
     NAME: Matroska Multimedia Container (MKV)
     MIME: video/x-matroska
@@ -202,11 +196,17 @@ VIDEO:
     PUID: x-fmt/152
     EXTENSIONS: dv
 
-  FLASH:
+  FLV:
     NAME: Flash video (FLV)
     MIME: video/x-flv
     PUID: x-fmt/382
     EXTENSIONS: flv
+
+  SWF:
+    NAME: Macromedia Flash
+    MIME: application/x-shockwave-flash
+    PUID: fmt/104 fmt/105 fmt/106 fmt/107 fmt/108 fmt/109 fmt/110
+    EXTENSIONS: swf
 
 TEXT:
 

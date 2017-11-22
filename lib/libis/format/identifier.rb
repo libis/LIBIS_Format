@@ -131,7 +131,7 @@ module Libis
           begin
             if doc.validates_against?(xsd_file)
               log_msg result, :debug, "XML file validated against XML Schema: #{xsd_file}"
-              info = {mimetype: mime, tool: file_result[:source], source: :xsd_validation, match_type: 'xsd_validation', format_version: '', }
+              info = {mimetype: mime, tool_raw: file_result[:tool], tool: :xsd_validation, match_type: 'xsd_validation', format_version: '', }
               file_result.merge! Libis::Format::TypeDatabase.enrich(info, PUID: :puid, MIME: :mimetype, NAME: :format_name)
             end
           rescue => e
@@ -159,7 +159,7 @@ module Libis
                 mimetype: 'application/octet-stream',
                 puid: 'fmt/unknown',
                 score: 0,
-                source: nil
+                tool: nil
             }
           else
             format_matches = output.group_by {|x| [x[:mimetype], x[:puid]]}

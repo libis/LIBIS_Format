@@ -62,7 +62,7 @@ module Libis
             r.delete(:mod_time)
             r.delete(:hash)
             r.delete(:format_count)
-            r[:source] = :droid
+            r[:tool] = :droid
           end
           File.delete report
           process_output(result)

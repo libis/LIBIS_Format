@@ -10,12 +10,12 @@ module Libis
       class VideoConverter < Libis::Format::Converter::Base
 
         def self.input_types
-          [:WEBM, :M4V, :MPEG, :MJP2, :QTFF, :AVI, :OGGV, :WMV, :DV, :FLASH]
+          [:WEBM, :MP4, :MPG, :MKV, :MJP2, :QTFF, :AVI, :OGGV, :WMV, :DV, :FLV, :SWF]
         end
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format)
-          [:GIF, :AVI, :FLV, :MKV, :MOV, :MP4, :MPG, :OGGV, :SWF, :WEBM, :WMV]
+          [:GIF, :WEBM, :MP4, :MPG, :MKV, :MJP2, :QTFF, :AVI, :OGGV, :WMV, :DV, :FLV, :SWF]
         end
 
         def initialize

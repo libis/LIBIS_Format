@@ -44,7 +44,7 @@ module Libis
                   mimetype: (info[:MIME].first rescue nil),
                   puid: (info[:PUID].first rescue nil),
                   matchtype: 'extension',
-                  source: :type_database
+                  tool: :type_database
               }
             end
           end.cleanup
