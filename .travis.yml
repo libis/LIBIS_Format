@@ -3,21 +3,32 @@ sudo: false
 dist: trusty
 cache: bundler
 rvm:
-  - 2.1.0
-  - 2.2.0
+  - 2.1.10
+  - 2.2.8
+  - 2.3.5
+  - 2.4.2
   - ruby-head
-  - jruby-9.0.1.0
+  - jruby-9.0.5.0
+  - jruby-9.1.9.0
+  - jruby-head
 jdk:
   - openjdk8
   - oraclejdk8
 matrix:
   exclude:
-    - rvm: 2.1.0
+    - rvm: 2.1.10
       jdk: oraclejdk8
-    - rvm: 2.2.0
+    - rvm: 2.2.8
+      jdk: oraclejdk8
+    - rvm: 2.3.5
+      jdk: oraclejdk8
+    - rvm: 2.4.2
       jdk: oraclejdk8
     - rvm: ruby-head
       jdk: oraclejdk8
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
 branches:
   only:
       - master
