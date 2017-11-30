@@ -18,8 +18,6 @@ module Libis
         end
 
         def run(source, target, options = [])
-          tool_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'tools'))
-          jar_file = File.join(tool_dir, 'PdfTool.jar')
           source = [source] unless source.is_a?(Array)
 
           if OS.java?
@@ -28,7 +26,7 @@ module Libis
 
           Libis::Tools::Command.run(
               Libis::Format::Config[:java_path],
-              '-cp', jar_file,
+              '-cp', Libis::Format::Config[:pdf_tool],
               'MergePdf',
               '--file_output', target,
               *options,

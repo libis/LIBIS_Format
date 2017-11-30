@@ -18,8 +18,6 @@ module Libis
         end
 
         def run(source, target, options = [])
-          tool_dir = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..', '..', 'tools'))
-          jar_file = File.join(tool_dir, 'PdfTool.jar')
 
           if OS.java?
             # TODO: import library and execute in current VM. For now do exactly as in MRI.
@@ -27,7 +25,7 @@ module Libis
 
           Libis::Tools::Command.run(
               Libis::Format::Config[:java_path],
-              '-cp', jar_file,
+              '-cp', Libis::Format::Config[:pdf_tool],
               'CopyPdf',
               '--file_input', source,
               '--file_output', target,
