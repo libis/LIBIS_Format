@@ -17,7 +17,7 @@ module Libis
     Config[:fido_path] = '/usr/local/bin/fido'
     Config[:ffmpeg_path] = 'ffmpeg'
     Config[:fido_formats] = [(File.join(Libis::Format::DATA_DIR, 'lias_formats.xml'))]
-    Config[:pdf_tool] = [(File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar'))]
+    Config[:pdf_tool] = File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar')
     # noinspection RubyStringKeysInHashInspection
     Config[:xml_validations] = [['archive/ead', File.join(Libis::Format::DATA_DIR, 'ead.xsd')]]
     Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
