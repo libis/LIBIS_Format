@@ -11,6 +11,7 @@ module Libis
 
       autoload :OfficeToPdf, 'libis/format/tool/office_to_pdf'
       autoload :FFMpeg, 'libis/format/tool/ffmpeg'
+      autoload :FopPdf, 'libis/format/tool/fop_pdf'
       autoload :PdfCopy, 'libis/format/tool/pdf_copy'
       autoload :PdfMerge, 'libis/format/tool/pdf_merge'
       autoload :PdfOptimizer, 'libis/format/tool/pdf_optimizer'

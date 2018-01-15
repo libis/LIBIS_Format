@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="pages" page-width="21cm" page-height="29.7cm" margin-top="1cm" margin-bottom="1cm" margin-left="3cm" margin-right="1cm">
+      <fo:region-body region-name="main" margin-bottom="2cm" margin-top="2cm"/>
+      <fo:region-before region-name="header-main" extent="2cm"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="cover" page-width="21cm" page-height="29.7cm" margin-top="1cm" margin-bottom="1cm" margin-left="1cm" margin-right="1cm">
+      <fo:region-body margin="2cm"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="toc" page-width="21cm" page-height="29.7cm" margin-top="1cm" margin-bottom="1cm" margin-left="3cm" margin-right="1cm">
+      <fo:region-body margin-bottom="2cm" margin-top="2cm"/>
+      <fo:region-before region-name="toc_header-main" extent="2cm"/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="cover">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block font-family="Times" space-before="0.5in" text-align="left">
+        <fo:external-graphic content-height="40" content-width="90" src="url('http://www.lias.be/themes/LIAS/images/lias.jpg')"/>
+      </fo:block>
+      <fo:block space-before="0.1in" font-size="18pt" font-family="Times" font-weight="bold" text-align="center">Plaatsingslijst van het archief Katholieke Arbeiders Vrouwenbeweging (KAV) afdeling Sint-Elisabeth Borgerhout</fo:block>
+      <fo:block font-size="10pt" font-family="Times" space-before="1.0in" text-align="left">Deze EAD-export werd op 23 januari  2014 automatisch gegenereerd.<fo:block/>LIAS bevat voor sommige beschrijvingen meer gegevens, en laat toe om digitale objecten die aanwezig zijn in het digitale depot rechtstreeks te raadplegen.<fo:block/>U kan het beschreven archief raadplegen via <fo:basic-link font-weight="bold" external-destination="http://abs.lias.be/Query/detail.aspx?ID=134476">LIAS</fo:basic-link><fo:block font-family="Times"><fo:leader leader-length="100%" leader-pattern="rule"/></fo:block></fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+  <fo:page-sequence master-reference="toc">
+    <fo:static-content flow-name="toc_header-main">
+      <fo:block text-align-last="justify" font-size="10pt" font-family="Times">Plaatsingslijst van het archief Katholieke Arbeiders Vrouwenbeweging (KAV) afdeling Sint-Elisabeth Borgerhout<fo:leader/>Pagina: <fo:page-number/></fo:block>
+      <fo:block font-family="Times">
+        <fo:leader leader-length="100%" leader-pattern="rule"/>
+      </fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block font-weight="bold" font-size="15pt" font-family="Times" space-before="0.1in" text-align="left" id="toc_gv">Inhoudstafel</fo:block>
+      <fo:block font-weight="bold" font-size="14pt" font-family="Times" space-before="0.1in" text-align="left" id="dummy">Inleiding</fo:block>
+      <fo:block font-size="12pt" font-family="Times" space-before="0.1in" text-align="right">
+        <fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_1">
+            <fo:inline font-weight="bold">• IDENTIFICATIE</fo:inline>
+          </fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_1"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_1_1">Referentie</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_1_1"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_1_2">Titel</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_1_2"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_1_3">Datering</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_1_3"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_1_4">Omvang en medium</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_1_4"/>
+        </fo:block>
+      </fo:block>
+      <fo:block font-size="12pt" font-family="Times" space-before="0.1in" text-align="right">
+        <fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_2">
+            <fo:inline font-weight="bold">• CONTEXT</fo:inline>
+          </fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_2"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_2_1">Naam van de archiefvormer(s)</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_2_1"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_2_4">Verwerving</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_2_4"/>
+        </fo:block>
+      </fo:block>
+      <fo:block font-size="12pt" font-family="Times" space-before="0.1in" text-align="right">
+        <fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_3">
+            <fo:inline font-weight="bold">• INHOUD EN STRUCTUUR</fo:inline>
+          </fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_3"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_3_1">Bereik en inhoud</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_3_1"/>
+        </fo:block>
+      </fo:block>
+      <fo:block font-size="12pt" font-family="Times" space-before="0.1in" text-align="right">
+        <fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_4">
+            <fo:inline font-weight="bold">• VOORWAARDEN VOOR RAADPLEGING EN GEBRUIK</fo:inline>
+          </fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_4"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_4_1">Voorwaarden voor raadpleging</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_4_1"/>
+        </fo:block>
+      </fo:block>
+      <fo:block font-size="12pt" font-family="Times" space-before="0.1in" text-align="right">
+        <fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_5">
+            <fo:inline font-weight="bold">• VERWANT MATERIAAL</fo:inline>
+          </fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_5"/>
+        </fo:block>
+        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_5_3">Verwante beschrijvingseenheden</fo:basic-link>
+          <fo:leader leader-pattern="dots"/>
+          <fo:page-number-citation ref-id="DISP_TITEL_5_3"/>
+        </fo:block>
+      </fo:block>
+      <fo:block font-size="14pt" font-family="Times" space-before="0.1in" text-align-last="justify">
+        <fo:basic-link internal-destination="DISP_TITEL_8">
+          <fo:inline font-weight="bold">Inhoud van het archief</fo:inline>
+        </fo:basic-link>
+        <fo:leader leader-pattern="dots"/>
+        <fo:page-number-citation ref-id="DISP_TITEL_8"/>
+      </fo:block>
+      <fo:block font-size="12pt" font-family="Times" text-align="left"/>
+    </fo:flow>
+  </fo:page-sequence>
+  <fo:page-sequence master-reference="pages">
+    <fo:static-content flow-name="header-main">
+      <fo:block text-align-last="justify" font-size="10pt" font-family="Times">Plaatsingslijst van het archief Katholieke Arbeiders Vrouwenbeweging (KAV) afdeling Sint-Elisabeth Borgerhout<fo:leader/>Pagina: <fo:page-number/></fo:block>
+      <fo:block font-family="Times">
+        <fo:leader leader-length="100%" leader-pattern="rule"/>
+      </fo:block>
+    </fo:static-content>
+    <fo:flow flow-name="main">
+      <fo:block font-size="14pt" font-weight="bold" font-family="Times" space-before="0.1in" text-align="left">Inleiding</fo:block>
+      <fo:block font-family="Times" font-size="12pt">
+        <fo:block keep-together.within-page="42">
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1">• IDENTIFICATIE</fo:block>
+          <fo:block/>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_1">Referentie</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">BE/942855/1572 of<fo:block/>KADOC KU Leuven, Leuven, Archief Katholieke Arbeiders Vrouwenbeweging (KAV) afdeling Sint-Elisabeth Borgerhout<fo:block/></fo:block>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_2">Titel</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">Archief Katholieke Arbeiders Vrouwenbeweging (KAV) afdeling Sint-Elisabeth Borgerhout</fo:block>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_3">Datering</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">
+            <fo:block font-family="Times">1917-1970; 1990</fo:block>
+          </fo:block>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_4">Omvang en medium</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">
+            <fo:block font-family="Times">0,4 strekkende meter</fo:block>
+          </fo:block>
+        </fo:block>
+      </fo:block>
+      <fo:block font-family="Times" font-size="12pt">
+        <fo:block keep-together.within-page="42">
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_2">• CONTEXT</fo:block>
+          <fo:block/>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_2_1">Naam van de archiefvormer(s)</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">KAV-afdeling Parochie van Sint-Jan, Borgerhout. (1917-heden)</fo:block>
+          <fo:block font-family="Times" font-style="italic">Deze archiefvormer wordt systematisch beschreven in de databank ODIS (http://www.odis.be)</fo:block>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_2_4">Verwerving</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">
+            <fo:block font-family="Times">In het archief van het KAV-verbond Antwerpen zoals het in 2008 werd overgemaakt aan KADOC bevond zich ook een afzonderlijke en zeer boeiend afdelingsarchief, namelijk dit van de Sint-Elisabethgilde, de KAV-afdeling van de Parochie van Sint-Jan, Borgerhout. (1917-1980). Dit archief werd in KADOC uit het archief van de KAV-verbond Antwerpen gelicht en als een afzonderlijk archief behandeld.</fo:block>
+          </fo:block>
+        </fo:block>
+      </fo:block>
+      <fo:block font-family="Times" font-size="12pt">
+        <fo:block keep-together.within-page="42">
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_3">• INHOUD EN STRUCTUUR</fo:block>
+          <fo:block/>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_3_1">Bereik en inhoud</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">
+            <fo:block font-family="Times">Het archief van de de Sint-Elisabethgilde bevat 4 handgeschreven verslagboeken van deze KAV-afdeling betrefende de periode van 1917-1927 en 1937-1980. Verder is er een album met foto's van de jaren 1926 tot 1944. Tenslotte zijn er ook een 11-tal gebedenboeken uit de periode 1928 tot 1934. "Deze stukken belichten nauwgezet de werking van de gilde in al haar aspecten: inspiratie en bestuur, leden en activiteiten, propaganda en verwevenheid met het lokale parochiale, sociale en politieke weefsel. Ze tonen een vooroorlogs (katholiek) Borgerhout van processies, gilde- en koffiefeesten, bedevaarten, religieuze vieringen, studiekringen, spaarkassen en vakbonden voor vrouwen. Uit de documenten blijkt de verbazingwekkende schaal (600 tot 700 leden) en intensiteit van de werking van de Sint-Elisabethgilde. De archivalia wachten op een onderzoeker die zijn/haar tanden zet in dit merkwaardige stukje vrouwengeschiedenis op microniveau." Citaat uit "Voor de  'stoffelijke, zedelijke en god, sdienstige belangen der vrouw'. Archief katholieke vrouwengilde Sint-Elisabeth Borgerhout" KADOC-e-nieuwsbrief, 5de jg., nr. 11, november 2008.</fo:block>
+          </fo:block>
+        </fo:block>
+      </fo:block>
+      <fo:block font-family="Times" font-size="12pt">
+        <fo:block keep-together.within-page="42">
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_4">• VOORWAARDEN VOOR RAADPLEGING EN GEBRUIK</fo:block>
+          <fo:block/>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_4_1">Voorwaarden voor raadpleging</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">
+            <fo:block font-family="Times">Raadpleegbaar na toestemming van de archivaris</fo:block>
+          </fo:block>
+        </fo:block>
+      </fo:block>
+      <fo:block font-family="Times" font-size="12pt">
+        <fo:block keep-together.within-page="42">
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_5">• VERWANT MATERIAAL</fo:block>
+          <fo:block/>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_5_3">Verwante beschrijvingseenheden</fo:block>
+          <fo:block/>
+          <fo:block font-family="Times">
+            <fo:block font-family="Times">Bij het archief bevond zich een fotoalbum die werd overgedragen aan de Audiovisuele Afdeling.</fo:block>
+          </fo:block>
+        </fo:block>
+      </fo:block>
+      <fo:block break-after="page"/>
+      <fo:block/>
+      <fo:block font-weight="bold" font-size="14pt" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_8">Inhoud van het archief</fo:block>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+      <fo:block font-family="Times" keep-together.within-page="42" font-size="10pt">
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="19mm"/>
+          <fo:table-column column-width="proportional-column-width(1)"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times" wrap-option="no-wrap">
+                  <fo:basic-link external-destination="http://abs.lias.be/Query/detail.aspx?ID=209275">
+                    <fo:inline font-weight="bold">1. </fo:inline>
+                  </fo:basic-link>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">KAV-afdeling Parochie van Sint- Jan, Borgerhout. Verslagboeken.</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">1917-1927. </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">1 stuk</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block>
+      <fo:block/>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+      <fo:block font-family="Times" keep-together.within-page="42" font-size="10pt">
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="19mm"/>
+          <fo:table-column column-width="proportional-column-width(1)"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times" wrap-option="no-wrap">
+                  <fo:basic-link external-destination="http://abs.lias.be/Query/detail.aspx?ID=209276">
+                    <fo:inline font-weight="bold">2. </fo:inline>
+                  </fo:basic-link>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">KAV-afdeling Parochie van Sint- Jan, Borgerhout. Verslagboeken.</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">1937-1980. </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">3 stukken</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block>
+      <fo:block/>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+      <fo:block font-family="Times" keep-together.within-page="42" font-size="10pt">
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="19mm"/>
+          <fo:table-column column-width="proportional-column-width(1)"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times" wrap-option="no-wrap">
+                  <fo:basic-link external-destination="http://abs.lias.be/Query/detail.aspx?ID=209277">
+                    <fo:inline font-weight="bold">3. </fo:inline>
+                  </fo:basic-link>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">KAV-afdeling Parochie van Sint- Jan, Borgerhout. Fotoalbum.</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">1926-1944. </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">Overgedragen aan de Afdeling Audiovisuele Documentatie</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">1 stuk</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block>
+      <fo:block/>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+      <fo:block font-family="Times" keep-together.within-page="42" font-size="10pt">
+        <fo:table table-layout="fixed" width="100%">
+          <fo:table-column column-width="19mm"/>
+          <fo:table-column column-width="proportional-column-width(1)"/>
+          <fo:table-body>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times" wrap-option="no-wrap">
+                  <fo:basic-link external-destination="http://abs.lias.be/Query/detail.aspx?ID=209278">
+                    <fo:inline font-weight="bold">4. </fo:inline>
+                  </fo:basic-link>
+                </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">KAV-afdeling Parochie van Sint- Jan, Borgerhout. Gebedenboeken.</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">1928-1934. </fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+            <fo:table-row>
+              <fo:table-cell>
+                <fo:block font-family="Times"> </fo:block>
+              </fo:table-cell>
+              <fo:table-cell>
+                <fo:block font-family="Times">11 stukken</fo:block>
+              </fo:table-cell>
+            </fo:table-row>
+          </fo:table-body>
+        </fo:table>
+      </fo:block>
+      <fo:block/>
+      <fo:block font-family="Times" space-before="0.08cm" space-after="0.08cm"/>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

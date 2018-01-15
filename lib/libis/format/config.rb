@@ -15,6 +15,7 @@ module Libis
     Config[:ghostscript_path] = 'gs'
     Config[:droid_path] = '/opt/droid/droid.sh'
     Config[:fido_path] = '/usr/local/bin/fido'
+    Config[:fop_jar] = '/opt/fop/current/fop/build/fop.jar'
     Config[:ffmpeg_path] = 'ffmpeg'
     Config[:fido_formats] = [(File.join(Libis::Format::DATA_DIR, 'lias_formats.xml'))]
     Config[:pdf_tool] = File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar')

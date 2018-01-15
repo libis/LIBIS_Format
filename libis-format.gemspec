@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.3'
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'awesome_print'
+  spec.add_development_dependency 'equivalent-xml', '~> 0.5'
 
   spec.add_runtime_dependency 'libis-tools', '~> 0.9.57'
   spec.add_runtime_dependency 'os', '= 0.9.6'
