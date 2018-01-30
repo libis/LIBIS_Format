@@ -79,7 +79,7 @@ module Libis
             error "Error transforming '#{source}' with '#{file}': #{e.message} @ #{e.backtrace[0]}"
             return nil
           ensure
-            fp.close
+            fp.close unless fp.nil? or fp.closed?
           end
 
           target
