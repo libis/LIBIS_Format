@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" 
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
     xmlns:ead="urn:isbn:1-931666-22-9"
     xmlns:ns2="http://www.w3.org/1999/xlink">
     <xsl:strip-space elements="*"/>

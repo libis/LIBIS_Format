@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format">
 	<xsl:strip-space elements="*"/>
 	<xsl:output method="xml" encoding="UTF-8" indent="yes"/>
 	<xsl:include href="header_nolink_pdf.xsl"/>
 	<!-- Creates the body of the finding aid.-->
 	<xsl:template match="/ead">
-		<fo:root>
+		<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 			<fo:layout-master-set>
 				<fo:simple-page-master master-name="pages" page-width="21cm" page-height="29.7cm" 
 					margin-top="1cm" margin-bottom="1cm"
@@ -437,10 +437,10 @@
 			<fo:list-item-label end-indent="label-end()">
 				<fo:block font-family="Times">
 					<xsl:variable name="value-attr">
-					<xsl:choose>
-						<xsl:when test="../@start"><xsl:number value="position() + ../@start - 1"/></xsl:when>
-						<xsl:otherwise><xsl:number value="position()"/></xsl:otherwise>
-					</xsl:choose>
+						<xsl:choose>
+							<xsl:when test="../@start"><xsl:number value="position() + ../@start - 1"/></xsl:when>
+							<xsl:otherwise><xsl:number value="position()"/></xsl:otherwise>
+						</xsl:choose>
 					</xsl:variable>
 				</fo:block>
 			</fo:list-item-label>

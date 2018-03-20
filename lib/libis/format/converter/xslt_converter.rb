@@ -1,5 +1,3 @@
-require 'nokogiri'
-
 require_relative 'base'
 
 module Libis
@@ -29,60 +27,70 @@ module Libis
             return nil
           end
 
-          doc = nil
-          begin
-            doc = Nokogiri::XML(File.read(source)) do |config|
-              config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOBLANKS
-            end
-          rescue Nokogiri::XML::SyntaxError => e
-            if e.fatal? || e.error?
-              error "Error parsing XML input '#{source}': #{e.messsage} @ #{e.backtrace[0]}"
-              return nil
-            end
-          end
-
           unless @options[:xsl_file]
             error 'No xsl_file supplied'
             return nil
           end
 
-          file = @options[:xsl_file]
-
-          unless File.file?(file) && File.exist?(file) && File.readable?(file)
-            error "XSL file '#{@options[:xsl_file]}' does not exist or is not readable"
-            return nil
-          end
-
           FileUtils.mkpath(File.dirname(target))
 
-          xsl = nil
+          if RUBY_PLATFORM == "java"
+            require 'saxon-xslt'
+            xsl = Saxon.XSLT(File.open(@options[:xsl_file]))
+            xml = Saxon.XML(File.open(source))
+            result = xsl.transform(xml)
+            File.open(target, 'w') {|f| f.write(result.to_s)}
+          else
+            require 'nokogiri'
 
-          begin
-            fp = File.open(file, 'r')
-            xsl = Nokogiri::XSLT(fp) do |config|
-              config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOBLANKS
+            doc = nil
+            begin
+              doc = Nokogiri::XML(File.read(source)) do |config|
+                config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOBLANKS
+              end
+            rescue Nokogiri::XML::SyntaxError => e
+              if e.fatal? || e.error?
+                error "Error parsing XML input '#{source}': #{e.messsage} @ #{e.backtrace[0]}"
+                return nil
+              end
             end
-          rescue Nokogiri::XML::SyntaxError => e
-            if e.fatal? || e.error?
-              error "Error parsing XSL input '#{file}': #{e.message} @ #{e.backtrace[0]}"
+
+            file = @options[:xsl_file]
+
+            unless File.file?(file) && File.exist?(file) && File.readable?(file)
+              error "XSL file '#{@options[:xsl_file]}' does not exist or is not readable"
               return nil
             end
-          ensure
-            fp.close
-          end
 
-          begin
-            target_xml = xsl.transform(doc)
-            fp = File.open(target, 'w')
-            fp.write(target_xml)
-          rescue Exception => e
-            error "Error transforming '#{source}' with '#{file}': #{e.message} @ #{e.backtrace[0]}"
-            return nil
-          ensure
-            fp.close unless fp.nil? or fp.closed?
-          end
+            xsl = nil
 
-          target
+            begin
+              fp = File.open(file, 'r')
+              xsl = Nokogiri::XSLT(fp) do |config|
+                config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOBLANKS
+              end
+            rescue Nokogiri::XML::SyntaxError => e
+              if e.fatal? || e.error?
+                error "Error parsing XSL input '#{file}': #{e.message} @ #{e.backtrace[0]}"
+                return nil
+              end
+            ensure
+              fp.close
+            end
+
+            begin
+              target_xml = xsl.transform(doc)
+              fp = File.open(target, 'w')
+              fp.write(target_xml)
+            rescue Exception => e
+              error "Error transforming '#{source}' with '#{file}': #{e.message} @ #{e.backtrace[0]}"
+              return nil
+            ensure
+              fp.close unless fp.nil? or fp.closed?
+            end
+
+            target
+          end
 
         end
 

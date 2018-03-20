@@ -74,8 +74,16 @@ module Libis
               '-p', profile,
               '-q'
           ]
-          result = Libis::Tools::Command.run(Libis::Format::Config[:droid_path], *args)
-          raise RuntimeError, "DROID report errors: #{result[:err].join("\n")}" unless result[:status] == 0
+          timeout = Libis::Format::Config[:timeouts][:droid]
+          result = Libis::Tools::Command.run(
+              Libis::Format::Config[:droid_path], *args,
+              timeout: timeout,
+              kill_after: timeout * 2
+          )
+          result[:err].select! {|x| x =~ /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR /}
+          raise RuntimeError, "#{self.class} report took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} report errors: #{result[:err].join("\n")}" unless result[:err].empty?
+
           File.delete profile
         end
 
@@ -83,10 +91,18 @@ module Libis
           args = []
           files = (file_or_list.is_a?(Array)) ? file_or_list.map(&:escape_for_string) : [file_or_list.escape_for_string]
           files.each {|file| args << '-a' << file}
-          args << '-p' << profile << '-q'
+          args << '-q'
+          args << '-p' << profile
           args << '-R' if recursive
-          result = Libis::Tools::Command.run(Libis::Format::Config[:droid_path], *args)
-          raise RuntimeError, "DROID profile errors: #{result[:err].join("\n")}" unless result[:status] == 0
+          timeout = Libis::Format::Config[:timeouts][:droid]
+          result = Libis::Tools::Command.run(
+              Libis::Format::Config[:droid_path], *args,
+              timeout: timeout,
+              kill_after: timeout * 2
+          )
+          result[:err].select! {|x| x =~ /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} ERROR /}
+          raise RuntimeError, "#{self.class} profile took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} profile errors: #{result[:err].join("\n")}" unless result[:err].empty?
         end
 
         def profile_file_name

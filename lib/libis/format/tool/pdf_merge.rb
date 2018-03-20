@@ -24,14 +24,20 @@ module Libis
             # TODO: import library and execute in current VM. For now do exactly as in MRI.
           end
 
-          Libis::Tools::Command.run(
+          timeout = Libis::Format::Config[:timeouts][:pdf_merge]
+          result = Libis::Tools::Command.run(
               Libis::Format::Config[:java_path],
               '-cp', Libis::Format::Config[:pdf_tool],
               'MergePdf',
               '--file_output', target,
               *options,
               *source,
+              timeout: timeout,
+              kill_after: timeout * 2
           )
+
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
         end
       end

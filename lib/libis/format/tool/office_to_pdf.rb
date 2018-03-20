@@ -31,19 +31,22 @@ module Libis
 
           export_filter = options[:export_filter] || 'pdf'
 
+          timeout = Libis::Format::Config[:timeouts][:office_to_pdf]
           result = Libis::Tools::Command.run(
               Libis::Format::Config[:soffice_path], '--headless',
               '--convert-to', export_filter,
-              '--outdir', workdir, src_file
+              '--outdir', workdir, src_file,
+              timeout: timeout,
+              kill_after: timeout * 2
           )
 
-          unless result[:status] == 0
-            warn "PdfConvert errors: #{(result[:err] + result[:out]).join("\n")}"
-            return false
-          end
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
           FileUtils.copy tgt_file, target, preserve: true
-          FileUtils.rmtree workdir
+
+        ensure
+          FileUtils.rmtree workdir rescue nil
 
           result[:out]
         end

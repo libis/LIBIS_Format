@@ -59,13 +59,18 @@ module Libis
           opts << filename.escape_for_string if filename
 
           # Run the UNIX file command and capture the results
-          file_tool = ::Libis::Tools::Command.run('file', *opts)
+          timeout = Libis::Format::Config[:timeouts][:file_tool]
+          result = ::Libis::Tools::Command.run(
+              'file', *opts,
+              timeout: timeout,
+              kill_after: timeout * 2
+          )
 
-          raise RuntimeError, "File command errors: #{file_tool[:err].join("\n")}" unless file_tool[:err].empty?
-
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
           # Parse output text into array and return result
-          file_tool[:out].map do |line|
+          result[:out].map do |line|
             r = line.split(/:\s+/)
             {filepath: r[0], mimetype: r[1], matchtype: 'magic', tool: :file}
           end

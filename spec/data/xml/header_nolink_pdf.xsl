@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
 <xsl:variable name="REC_ID" select="ead/eadheader/eadid/@identifier"/>
 <xsl:variable name="TITLE_HEADER" select="ead/eadheader[1]/filedesc[1]/titlestmt[1]/titleproper[1]"/>	

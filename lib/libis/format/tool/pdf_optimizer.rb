@@ -19,7 +19,8 @@ module Libis
 
         def run(source, target, quality)
 
-          Libis::Tools::Command.run(
+          timeout = Libis::Format::Config[:timeouts][:pdf_optimizer]
+          result = Libis::Tools::Command.run(
               'gs',
               '-sDEVICE=pdfwrite',
               '-dCompatibilityLevel=1.4',
@@ -27,8 +28,13 @@ module Libis
               '-dNOPAUSE',
               '-dBATCH',
               "-sOutputFile=#{target}",
-              "#{source}"
+              "#{source}",
+              timeout: timeout,
+              kill_after: timeout * 2
           )
+
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
         end
       end

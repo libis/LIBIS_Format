@@ -23,13 +23,19 @@ module Libis
             # TODO: import library and execute in current VM. For now do exactly as in MRI.
           end
 
-          Libis::Tools::Command.run(
+          timeout = Libis::Format::Config[:timeouts][:fop]
+          result = Libis::Tools::Command.run(
               Libis::Format::Config[:java_path],
               "-Dfop.home=#{File.dirname(Libis::Format::Config[:fop_jar])}",
               '-jar', Libis::Format::Config[:fop_jar],
               '-fo', xml,
-              '-pdf', target
+              '-pdf', target,
+              timeout: timeout,
+              kill_after: timeout * 2
           )
+
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0
 
         end
       end

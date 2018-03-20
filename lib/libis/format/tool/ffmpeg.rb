@@ -25,12 +25,17 @@ module Libis
           opts += options[:filter] unless options[:filter].empty?
           opts += options[:output] unless options[:output].empty?
           opts << target
-          result = Libis::Tools::Command.run(Libis::Format::Config[:ffmpeg_path], *opts)
 
-          unless result[:status] == 0
-            error "FFMpeg errors: #{(result[:err] + result[:out]).join("\n")}"
-            return false
-          end
+          timeout = Libis::Format::Config[:timeouts][:ffmpeg]
+          result = Libis::Tools::Command.run(
+              Libis::Format::Config[:ffmpeg_path], *opts,
+              timeout: timeout,
+              kill_after: timeout * 2
+          )
+
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0
+
           warn "FFMpeg warnings: #{(result[:err] + result[:out]).join("\n")}" unless result[:err].empty?
 
           result[:out]

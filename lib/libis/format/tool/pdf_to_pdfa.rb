@@ -37,6 +37,7 @@ module Libis
                 gsub('[** Fill in ICC reference name **]', icc_info[:icc_ref])
           end
 
+          timeout = Libis::Format::Config[:timeouts][:pdf_to_pdfa]
           result = Libis::Tools::Command.run(
               Libis::Format::Config[:ghostscript_path],
               '-dBATCH', '-dNOPAUSE', '-dNOOUTERSAVE',
@@ -46,8 +47,13 @@ module Libis
               "-sOutputICCProfile=#{icc_file}",
               '-o', File.absolute_path(target),
               def_filename,
-              source
+              source,
+              timeout: timeout,
+              kill_after: timeout * 2
           )
+
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
           FileUtils.rm [icc_file, def_filename].compact, force: true
 

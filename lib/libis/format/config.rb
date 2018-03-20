@@ -24,6 +24,21 @@ module Libis
     Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
     Config[:raw_audio_convert_cmd] = 'sox %s -e signed -b 16 -t wav %s rate %d channels %d'
     Config[:watermark_font] = '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
+    Config[:timeouts] = {
+        droid: 5 * 60,
+        ffmpeg: 5 * 60,
+        fido: 5 * 60,
+        file_tool: 5 * 60,
+        fop: 5 * 60,
+        identification_tool: 5 * 60,
+        office_to_pdf: 5 * 60,
+        pdf_copy: 5 * 60,
+        pdf_merge: 5 * 60,
+        pdf_optimizer: 5 * 60,
+        pdf_split: 5 * 60,
+        pdf_to_pdfa: 5 * 60,
+        pdfa_validator: 5 * 60,
+    }
 
   end
 end

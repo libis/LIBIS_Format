@@ -74,17 +74,23 @@ module Libis
           args << '-q'
 
           # Run command and capture results
-          fido = ::Libis::Tools::Command.run(Libis::Format::Config[:fido_path], *args)
+          timeout = Libis::Format::Config[:timeouts][:fido]
+          result = ::Libis::Tools::Command.run(
+              Libis::Format::Config[:fido_path], *args,
+              timeout: timeout,
+              kill_after: timeout * 2
+          )
 
           # Log warning if needed
-          raise RuntimeError, "Fido errors: #{fido[:err].join("\n")}" unless fido[:err].empty?
+          raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
           # Parse output (CSV) text into array and return result
           keys = [:status, :time, :puid, :format_name, :format_version, :filesize, :filepath, :mimetype, :matchtype]
-          result = CSV.parse(fido[:out].join("\n"))
+          data = CSV.parse(result[:out].join("\n"))
                        .map {|a| Hash[keys.zip(a)]}
                        .select {|a| a[:status] == 'OK'}
-          result.each do |r|
+          data.each do |r|
             r.delete(:time)
             r.delete(:status)
             r.delete(:filesize)
