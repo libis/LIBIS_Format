@@ -228,15 +228,51 @@ TEXT:
 
   MSDOC:
     NAME: Microsoft Word Document (DOC)
-    PUID: fmt/609 fmt/39 x-fmt/273 x-fmt/274 x-fmt/275 x-fmt/276 fmt/37 fmt/38 fmt/40 fmt/754
+    PUID: fmt/609 fmt/39 x-fmt/273 x-fmt/274 x-fmt/275 x-fmt/276 fmt/37 fmt/38 fmt/40
     MIME: application/msword application/doc appl/text application/vnd.msword application/vnd.ms-word application/winword application/word application/x-msw6 application/x-msword
-    EXTENSIONS: doc
+    EXTENSIONS: doc wbk
+
+  MSDOCP:
+    NAME: Microsoft Word Document (Password Protected) (DOC)
+    PUID: fmt/754
+    MIME: application/msword
+    EXTENSIONS: doc wbk
+
+  MSDOT:
+    NAME: Microsoft Word Document Template (DOT)
+    PUID: x-fmt/45
+    MIME: application/msword
+    EXTENSIONS: dot
+
+  MSDOTP:
+    NAME: Microsoft Word Document Template (Password Protected) (DOT)
+    PUID: fmt/755
+    MIME: application/msword
+    EXTENSIONS: dot
 
   MSDOCX:
     NAME: Microsoft Word OpenXML Document (DOCX)
     PUID: fmt/412 fido-fmt/189.word lias-fmt/189.word
     MIME: application/vnd.openxmlformats-officedocument.wordprocessingml.document
     EXTENSIONS: docx
+
+  MSDOCM:
+    NAME: Microsoft Word OpenXML Document (DOCM)
+    PUID: fmt/523
+    MIME: application/vnd.ms-word.document.macroEnabled.12
+    EXTENSIONS: docm
+
+  MSDOTX:
+    NAME: Microsoft Word OpenXML Document Template (DOTX)
+    PUID: fmt/597
+    MIME: application/vnd.openxmlformats-officedocument.wordprocessingml.template
+    EXTENSIONS: dotx
+
+  MSDOTM:
+    NAME: Microsoft Word OpenXML Macro-Enabled Document Template (DOTM)
+    PUID: fmt/599
+    MIME: application/vnd.ms-word.template.macroEnabled.12
+    EXTENSIONS: dotm
 
   PDF:
     NAME: Adobe Portable Document Format (PDF)
