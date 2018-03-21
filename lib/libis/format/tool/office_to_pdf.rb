@@ -34,6 +34,7 @@ module Libis
           timeout = Libis::Format::Config[:timeouts][:office_to_pdf]
           result = Libis::Tools::Command.run(
               Libis::Format::Config[:soffice_path], '--headless',
+              "-env:UserInstallation=file://#{workdir}",
               '--convert-to', export_filter,
               '--outdir', workdir, src_file,
               timeout: timeout,
@@ -41,7 +42,8 @@ module Libis
           )
 
           raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
-          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
+          warn "OfficeToPdf conversion messages: \n\t#{result[:err].join("\n\t")}" unless result[:err].empty?
+          raise RuntimeError, "#{self.class} failed to generate target file #{target}" unless File.exist?(target)
 
           FileUtils.copy tgt_file, target, preserve: true
 
