@@ -43,7 +43,7 @@ module Libis
 
           raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
           warn "OfficeToPdf conversion messages: \n\t#{result[:err].join("\n\t")}" unless result[:err].empty?
-          raise RuntimeError, "#{self.class} failed to generate target file #{target}" unless File.exist?(target)
+          raise RuntimeError, "#{self.class} failed to generate target file #{tgt_file}" unless File.exist?(tgt_file)
 
           FileUtils.copy tgt_file, target, preserve: true
 
