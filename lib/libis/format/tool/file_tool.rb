@@ -10,7 +10,7 @@ module Libis
 
           create_list_file(filelist) do |list_file|
 
-            output = runnerIdentificationTool(nil, '--files-from', list_file)
+            output = runner(nil, '--files-from', list_file)
 
             process_output(output)
 
