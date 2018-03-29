@@ -36,6 +36,7 @@ module Libis
           raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
           raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
+          result
         end
       end
 
