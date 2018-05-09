@@ -25,9 +25,9 @@ module Libis
     Config[:raw_audio_convert_cmd] = 'sox %s -e signed -b 16 -t wav %s rate %d channels %d'
     Config[:watermark_font] = '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
     Config[:timeouts] = {
-        droid: 5 * 60,
+        droid: 20 * 60,
         ffmpeg: 5 * 60,
-        fido: 5 * 60,
+        fido: 20 * 60,
         file_tool: 5 * 60,
         fop: 5 * 60,
         identification_tool: 5 * 60,
