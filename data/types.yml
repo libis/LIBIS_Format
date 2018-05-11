@@ -350,3 +350,22 @@ ARCHIVE:
     MIME: application/zip
     PUID: x-fmt/263
     EXTENSIONS: zip,eip
+
+EMAIL:
+  MSG:
+    NAME: Outlook email message (MSG)
+    MIME: message/vnd.ms-outlook
+    PUID: x-fmt/430
+    EXTENSIONS: msg
+
+  EML:
+    NAME: Internet Message Format (EML)
+    MIME: message/rfc822
+    PUID: fmt/278 fmt/950
+    EXTENSIONS: eml
+
+  PST:
+    NAME: Microsoft Outlook Personal Folders
+    MIME: application/vnd.ms-outlook
+    PUID: x-fmt/248 x-fmt/249
+    EXTENSIONS: pst
