@@ -51,6 +51,6 @@ describe 'Converters' do
       expect(tgt.root).to be_equivalent_to(cmp.root).respecting_element_order
     end
 
-  end
+  end if RUBY_PLATFORM != 'java'
 
 end
