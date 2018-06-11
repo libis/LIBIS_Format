@@ -208,6 +208,12 @@ VIDEO:
     PUID: fmt/104 fmt/105 fmt/106 fmt/107 fmt/108 fmt/109 fmt/110
     EXTENSIONS: swf
 
+  OO_DRAW:
+    NAME: OpenDocument Graphics (ODG)
+    MIME: application/vnd.oasis.opendocument.graphics application/vnd.oasis.opendocument.graphics-template
+    PUID: fmt/139 fmt/296 fmt/297
+    EXTENSIONS: odg otg
+
 TEXT:
 
   TXT:
@@ -293,9 +299,10 @@ TEXT:
     EXTENSIONS: wpd
 
   OO_WRITER:
-    NAME: OpenDocument Text
-    MIME: application/vnd.oasis.opendocument.text, application/x-vnd.oasis.opendocument.text
+    NAME: OpenDocument Text (ODT)
+    MIME: application/vnd.oasis.opendocument.text, application/x-vnd.oasis.opendocument.text, application/vnd.oasis.opendocument.text-template, application/vnd.oasis.opendocument.text-web, application/vnd.oasis.opendocument.text-master, application/vnd.oasis.opendocument.text-master-template
     PUID: fmt/136, fmt/290, fmt/291
+    EXTENSIONS: odt ott oth odm otm
 
   XML:
     NAME: Extensible Markup Language (XML)
@@ -315,13 +322,32 @@ TABULAR:
   MSXLS:
     NAME: Microsoft Excel Spreadsheet (XLS)
     MIME: application/vnd.ms-excel,application/msexcel
+    PUID: fmt/55 fmt/56 fmt/57 fmt/175 fmt/176 fmt/177 fmt/61
     EXTENSIONS: xls
 
   MSXLSX:
     NAME: Microsoft Excel OpenXML Spreadheet (XSLX)
-    PUID: fido-fmt/189.xl
+    PUID: fmt/214 fido-fmt/189.xl
     MIME: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     EXTENSIONS: xslx
+
+  MSXLSB:
+    NAME: Microsoft Excel Non-XML Binary Workbook (XLSB)
+    MIME: application/vnd.ms-excel.sheet.binary.macroEnabled.12
+    PUID: fmt/595
+    EXTENSIONS: xlsb
+
+  MSXLSM:
+    NAME: Microsoft Excel Macro-Enabled (XLSM)
+    MIME: application/vnd.ms-excel.sheet.macroEnabled.12
+    PUID: fmt/445
+    EXTENSIONS: xlsm
+
+  OO_CALC:
+    NAME: OpenDocument Spreadsheet (ODS)
+    MIME: application/vnd.oasis.opendocument.spreadsheet application/vnd.oasis.opendocument.spreadsheet-template
+    PUID: fmt/137 fmt/294 fmt/295
+    EXTENSIONS: ods ots
 
 PRESENTATION:
 
@@ -335,6 +361,12 @@ PRESENTATION:
     PUID: fido-fmt/189.ppt
     MIME: application/vnd.openxmlformats-officedocument.presentationml.presentation
     EXTENSIONS: pptx
+
+  OO_IMPRESS:
+    NAME: OpenDocument Presentation (ODP)
+    PUIID: fmt/138 fmt/292 fmt/293
+    MIME: application/vnd.oasis.opendocument.presentation application/vnd.oasis.opendocument.presentation-template
+    EXTENSIONS: odp otp
 
 ARCHIVE:
 

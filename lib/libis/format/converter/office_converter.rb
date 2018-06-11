@@ -25,6 +25,9 @@ module Libis
               :MSXLSX,
               :MSPPTX,
               :WORDPERFECT,
+              :OO_WRITER,
+              :OO_IMPRESS,
+              :OO_CALC
           ]
         end
 
