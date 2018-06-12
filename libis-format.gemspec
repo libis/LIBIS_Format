@@ -39,4 +39,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'deep_dive', '~> 0.3'
   spec.add_runtime_dependency 'chromaprint', '~> 0.0.2'
   spec.add_runtime_dependency 'naturally', '~> 2.1'
+  spec.add_runtime_dependency 'fileutils'
 end
