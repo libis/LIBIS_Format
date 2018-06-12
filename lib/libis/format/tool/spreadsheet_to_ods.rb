@@ -10,7 +10,7 @@ module Libis
   module Format
     module Tool
 
-      class SpreadsheetToPdf
+      class SpreadsheetToOds
         include ::Libis::Tools::Logger
 
         def self.run(source, target, options = {})
