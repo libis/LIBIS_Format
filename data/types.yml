@@ -68,6 +68,12 @@ IMAGE:
     MIME: image/x-portable-pixmap, application/ppm, application/x-ppm, image/ppm, image/x-ppm
     EXTENSIONS: ppm
 
+  OO_DRAW:
+    NAME: OpenDocument Graphics (ODG)
+    MIME: application/vnd.oasis.opendocument.graphics application/vnd.oasis.opendocument.graphics-template
+    PUID: fmt/139 fmt/296 fmt/297
+    EXTENSIONS: odg otg
+
 AUDIO:
 
   MP3:
@@ -207,12 +213,6 @@ VIDEO:
     MIME: application/x-shockwave-flash
     PUID: fmt/104 fmt/105 fmt/106 fmt/107 fmt/108 fmt/109 fmt/110
     EXTENSIONS: swf
-
-  OO_DRAW:
-    NAME: OpenDocument Graphics (ODG)
-    MIME: application/vnd.oasis.opendocument.graphics application/vnd.oasis.opendocument.graphics-template
-    PUID: fmt/139 fmt/296 fmt/297
-    EXTENSIONS: odg otg
 
 TEXT:
 
