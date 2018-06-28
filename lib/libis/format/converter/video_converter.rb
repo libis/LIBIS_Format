@@ -201,7 +201,7 @@ module Libis
           format = (@options[:format] || File.extname(target)[1..-1]).to_s.downcase
           @options[:audio_codec] ||= 'aac' if %w'flv'.include?(format)
 
-          # FLV special: only supports aac and speex audio codecs
+          # SWF special: only supports mp3 audio codec
           format = (@options[:format] || File.extname(target)[1..-1]).to_s.downcase
           @options[:audio_codec] ||= 'mp3' if %w'swf'.include?(format)
 
