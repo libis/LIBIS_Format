@@ -1,5 +1,5 @@
 module Libis
   module Format
-    VERSION = '0.9.74'
+    VERSION = '1.0.0'
   end
 end
