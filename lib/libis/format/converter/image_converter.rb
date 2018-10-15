@@ -29,6 +29,10 @@ module Libis
           [:TIFF, :JPG, :PNG, :BMP, :GIF, :PDF, :JP2]
         end
 
+        def self.multipage?(format)
+          [:PDF, :TIFF, :GIF, :PBM, :PGM, :PPM].include?(format)
+        end
+
         def initialize
           @wm_image = nil
           super
@@ -142,24 +146,13 @@ module Libis
           FileUtils.mkpath(File.dirname(target))
 
           if source.is_a? Array
-            sources = source
 
-            unless [:PDF, :TIFF, :GIF, :PBM, :PGM, :PPM].include? format
-              error 'Can ony assemble multiple images into multi-page/layer format'
-              return nil
-            end
-
-            assemble_and_convert(sources, target, format)
+            assemble_and_convert(source, target, format)
 
           elsif File.directory?(source)
-            sources = Dir[File.join(source, '**', '*')].reject { |p| File.directory? p }
+            source_list = Dir[File.join(source, '**', '*')].reject { |p| File.directory? p }
 
-            unless [:TIFF, :PDF].include? format
-              error 'Can ony assemble multiple images into multi-page/layer format'
-              return nil
-            end
-
-            assemble_and_convert(sources, target, format)
+            assemble_and_convert(source_list, target, format)
 
           else
 
@@ -181,12 +174,15 @@ module Libis
         end
 
         def assemble_and_convert(sources, target, format)
+
+          warn 'Received multiple images as input and single page format as target.' unless self.class.multipage?(format)
           converted_pages = sources.inject([]) do |list, path|
             converted = Tempfile.new(['page-', ".#{Libis::Format::TypeDatabase.type_extentions(format).first}"])
             convert_image(path, converted.path, format)
             list << converted
           end
           MiniMagick::Tool::Convert.new do |b|
+            b.append unless self.class.multipage?(format)
             converted_pages.each { |page| b << page.path }
             b << target
           end
@@ -200,7 +196,8 @@ module Libis
 
         def convert_image(source, target, format)
 
-          image_info = MiniMagick::Image::Info.new(source)
+          image_info = nil
+          image_info = MiniMagick::Image::Info.new(source) if @wm_image
 
           MiniMagick::Tool::Convert.new do |convert|
             if @wm_image
