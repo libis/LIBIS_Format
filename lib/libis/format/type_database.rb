@@ -1,23 +1,18 @@
 # coding: utf-8
 
-require 'singleton'
 require 'yaml'
 
 require 'backports/rails/hash'
-require 'libis/tools/logger'
-require 'libis/tools/extend/string'
-
-require_relative 'config'
 
 module Libis
   module Format
 
+    # noinspection RubyClassVariableUsageInspection
     class TypeDatabase
-      include Singleton
-      include ::Libis::Tools::Logger
+      @implementation = Libis::Format::TypeDatabaseImpl.instance
 
-      def self.typeinfo(t)
-        self.instance.types[t.to_sym] || {}
+      def self.implementation(impl)
+        @implementation = impl
       end
 
       def self.enrich(info, map_keys = {})
@@ -34,7 +29,7 @@ module Libis
           mapper.keys.each do |key|
             info[mapper[key]] = get(type_name, key) || info[mapper[key]]
           end
-          info[mapper[:GROUP]] = self.type_group(type_name)
+          info[mapper[:GROUP]] = type_group(type_name)
         end
         info
       end
@@ -44,14 +39,14 @@ module Libis
         mapper = Hash.new {|hash,key| hash[key] = key}
         mapper.merge! map_keys
         unless (puid = info[mapper[:PUID]]).blank?
-          info[mapper[:TYPE]] ||= self.puid_infos(puid).first[:TYPE] rescue nil
+          info[mapper[:TYPE]] ||= puid_infos(puid).first[:TYPE] rescue nil
         end
         unless (mime = info[mapper[:MIME]]).blank?
-          info[mapper[:TYPE]] ||= self.mime_infos(mime).first[:TYPE] rescue nil
+          info[mapper[:TYPE]] ||= mime_infos(mime).first[:TYPE] rescue nil
         end
         unless (type_name = info[mapper[:TYPE]]).nil?
-          info[mapper[:MIME]] = self.type_mimetypes(type_name).first if self.type_mimetypes(type_name).first
-          info[mapper[:GROUP]] = self.type_group(type_name)
+          info[mapper[:MIME]] = type_mimetypes(type_name).first if type_mimetypes(type_name).first
+          info[mapper[:GROUP]] = type_group(type_name)
         end
         info
       end
@@ -65,7 +60,7 @@ module Libis
           when :EXTENSION
             type_extentions(type_name).first
           else
-            self.typeinfo(type_name)[key]
+            typeinfo(type_name)[key]
         end
       end
 
@@ -85,114 +80,52 @@ module Libis
         typeinfo(t)[:EXTENSIONS] || []
       end
 
+      def self.typeinfo(t)
+        @implementation.typeinfo(t)
+      end
+
       def self.group_types(group)
-        self.instance.types.select do |_, v|
-          v[:GROUP] == group.to_sym
-        end.keys
+        @implementation.group_types(group)
       end
 
       def self.puid_infos(puid)
-        self.instance.types.select do |_, v|
-          v[:PUID].include? puid rescue false
-        end.values
+        @implementation.puid_infos(puid)
       end
 
       def self.puid_types(puid)
-        self.instance.types.select do |_, v|
-          v[:PUID].include? puid rescue false
-        end.keys
+        @implementation.puid_types(puid)
       end
 
       def self.puid_groups(puid)
-        puid_types(puid).map do |t|
-          type_group t
-        end
+        puid_types(puid).map(&method(:type_group))
       end
 
       def self.mime_infos(mime)
-        self.instance.types.select do |_, v|
-          v[:MIME].include? mime rescue false
-        end.values
+        @implementation.mime_infos(mime)
       end
 
       def self.mime_types(mime)
-        self.instance.types.select do |_, v|
-          v[:MIME].include? mime rescue false
-        end.keys
+        @implementation.mime_types(mime)
       end
 
       def self.mime_groups(mime)
-        mime_types(mime).map do |t|
-          type_group t
-        end
+        mime_types(mime).map(&method(:type_group))
       end
 
       def self.ext_infos(ext)
-        ext = ext.gsub /^\./, ''
-        self.instance.types.select do |_, v|
-          v[:EXTENSIONS].include?(ext) rescue false
-        end.values
+        @implementation.ext_infos(ext)
       end
 
       def self.ext_types(ext)
-        ext = ext.gsub /^\./, ''
-        self.instance.types.select do |_, v|
-          v[:EXTENSIONS].include?(ext) rescue false
-        end.keys
+        @implementation.ext_types(ext)
       end
 
       def self.puid_typeinfo(puid)
-        self.instance.types.each do |_, v|
-          return v if v[:PUID] and v[:PUID].include?(puid)
-        end
-        nil
+        @implementation.puid_typeinfo(puid)
       end
 
       def self.known_mime?(mime)
-        self.instance.types.each do |_, v|
-          return true if v[:MIME].include? mime
-        end
-        false
-      end
-
-      attr_reader :types
-
-      def load_types(file_or_hash = {}, append = true)
-        hash = file_or_hash.is_a?(Hash) ? file_or_hash : YAML::load_file(file_or_hash)
-        # noinspection RubyResolve
-        hash.each do |group, type_info|
-          type_info.each do |type_name, info|
-            type_key = type_name.to_sym
-            info.symbolize_keys!
-            info[:TYPE] = type_key
-            info[:GROUP] = group.to_sym
-            info[:MIME] = info[:MIME].strip.split(/[\s,]+/).map { |v| v.strip } rescue []
-            info[:EXTENSIONS] = info[:EXTENSIONS].strip.split(/[\s,]+/).map { |v| v.strip } rescue []
-            info[:PUID] = info[:PUID].strip.split(/[\s,]+/).map { |v| v.strip } if info[:PUID]
-            if @types.has_key?(type_key)
-              warn 'Type %s already defined; merging with info from %s.', type_name.to_s, file_or_hash
-              info.merge!(@types[type_key]) do |_,v_new,v_old|
-                case v_old
-                  when Array
-                    append ? v_old + v_new : v_new + v_old
-                  when Hash
-                    append ? v_new.merge(v_old) : v_old.merge(v_new)
-                  else
-                    append ? v_old : v_new
-                end
-              end
-            end
-            @types[type_key] = info
-          end
-        end
-      end
-
-      protected
-
-      def initialize
-        @types = Hash.new
-        type_database = Libis::Format::Config[:type_database]
-        load_types(type_database)
+        @implementation.known_mime?(mime)
       end
 
     end

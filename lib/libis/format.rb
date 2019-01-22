@@ -4,6 +4,7 @@ module Libis
   module Format
     autoload :Config, 'libis/format/config'
     autoload :TypeDatabase, 'libis/format/type_database'
+    autoload :TypeDatabaseImpl, 'libis/format/type_database_impl'
     autoload :Identifier, 'libis/format/identifier'
 
     autoload :Tool, 'libis/format/tool'

@@ -42,10 +42,10 @@ module Libis
 
       def get(file, options = {})
 
-        options[:droid] = true unless options.keys.include?(:droid) and options[:tool] and options[:tool] != :droid
-        options[:fido] = true unless options.keys.include?(:fido) and options[:tool] and options[:tool] != :fido
-        options[:file] = true unless options.keys.include?(:file) and options[:tool] and options[:tool] != :file
-        options[:xml_validation] = true unless options.keys.include?(:xml_validation) and !options[:xml_validation]
+        options[:droid] = true unless options.keys.include?(:droid) or (options[:tool] and options[:tool] != :droid)
+        options[:fido] = true unless options.keys.include?(:fido) or (options[:tool] and options[:tool] != :fido)
+        options[:file] = true unless options.keys.include?(:file) or (options[:tool] and options[:tool] != :file)
+        options[:xml_validation] = true if options[:xml_validation].nil?
 
         result = {messages: [], output: {}, formats: {}}
 

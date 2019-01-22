@@ -4,7 +4,7 @@ require 'spec_helper'
 describe 'Type Databse' do
 
   before :all do
-    ::Libis::Format::TypeDatabase.instance.load_types File.join(File.dirname(__FILE__), 'test_types.yml')
+    ::Libis::Format::TypeDatabaseImpl.instance.load_types File.join(File.dirname(__FILE__), 'test_types.yml')
   end
 
   it 'should load types from file' do
@@ -93,7 +93,7 @@ describe 'Type Databse' do
 
   it 'should load types from hash' do
 
-    ::Libis::Format::TypeDatabase.instance.load_types TESTMEDIUM: {
+    ::Libis::Format::TypeDatabaseImpl.instance.load_types TESTMEDIUM: {
                                                           TESTREPORT: {
                                                               NAME: 'Test report format',
                                                               MIME: 'test/report application/test/report',
@@ -111,7 +111,7 @@ describe 'Type Databse' do
 
   it 'should merge types from hash' do
 
-    ::Libis::Format::TypeDatabase.instance.load_types TESTMEDIUM: {
+    ::Libis::Format::TypeDatabaseImpl.instance.load_types TESTMEDIUM: {
                                                           TESTREPORT: {
                                                               EXTENSIONS: 'rpt'
                                                           }
@@ -123,7 +123,7 @@ describe 'Type Databse' do
                                                                      MIME: %w'test/report application/test/report',
                                                                      EXTENSIONS: %w'rep rpt'
 
-    ::Libis::Format::TypeDatabase.instance.load_types({TESTMEDIUM: {
+    ::Libis::Format::TypeDatabaseImpl.instance.load_types({TESTMEDIUM: {
                                                           TESTREPORT: {
                                                               EXTENSIONS: 'report'
                                                           }
