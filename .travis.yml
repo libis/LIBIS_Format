@@ -36,7 +36,7 @@ before_install:
   - sudo add-apt-repository ppa:mc3man/trusty-media -y
   - sudo apt-get update -y
   - sudo apt-get install -y ffmpeg gstreamer0.10-ffmpeg
-  - sudo pip install opf-fido --upgrade --ignore-installed six
+  - sudo pip install --upgrade --ignore-installed opf-fido six
   - echo -e "y\ny\ny\n" | sudo /usr/local/bin/fido-update-signatures
 
 addons:
