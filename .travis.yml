@@ -42,7 +42,7 @@ before_install:
   - sudo mkdir -p /opt/droid
   - sudo unzip droid.zip -d /opt/droid
   - sudo chmod 755 /opt/droid/droid.sh
-  - echo "8\n9\n" | apt-get install tzdata
+  - echo "8\n9\n" | sudo apt-get install tzdata
 addons:
   apt:
     packages:
