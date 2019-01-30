@@ -128,7 +128,7 @@ module Libis
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfOptimizer.run(source, tmpname, quality)
             unless result[:status] == 0
-              error("Pdf optimization encountered errors:\n%s", (result[:err] + result[:out]).join('\n'))
+              error("Pdf optimization encountered errors:\n%s", (result[:err] + result[:out]).join("\n"))
               next nil
             end
             tmpname
@@ -148,7 +148,7 @@ module Libis
                   end}.flatten
             )
             unless result[:err].empty?
-              error("Pdf conversion encountered errors:\n%s", result[:err].join('\n'))
+              error("Pdf conversion encountered errors:\n%s", result[:err].join(join("\n")))
               next nil
             end
             tmpname
@@ -161,10 +161,10 @@ module Libis
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfToPdfa.run source, tmpname
             if result[:status] != 0
-              error("Pdf/A conversion encountered errors:\n%s", result[:err].join('\n'))
+              error("Pdf/A conversion encountered errors:\n%s", result[:err].join("\n"))
               next nil
             else
-              warn("Pdf/A conversion warnings:\n%s", result[:err].join('\n')) unless result[:err].empty?
+              warn("Pdf/A conversion warnings:\n%s", result[:err].join("\n")) unless result[:err].empty?
             end
             tmpname
           end
