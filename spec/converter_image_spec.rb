@@ -127,7 +127,7 @@ describe 'Converters' do
 
   end
 
-  context 'JP2 Converter' do
+  context 'JP2 Converter', unless: `which "#{Libis::Format::Config[:j2k_cmd]}"` do
 
     let(:converter) {Libis::Format::Converter::Jp2Converter.new}
     let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}

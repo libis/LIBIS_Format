@@ -34,10 +34,14 @@ branches:
       - master
 before_install:
   - sudo add-apt-repository ppa:mc3man/trusty-media -y
-  - sudo apt-get update -y
-  - sudo apt-get install -y ffmpeg gstreamer0.10-ffmpeg
+  - sudo apt-get update -y -q
+  - sudo apt-get install -y -q ffmpeg gstreamer0.10-ffmpeg
+  - sudo pip install --upgrade pip
   - sudo pip install --upgrade --ignore-installed opf-fido six
-
+  - sudo wget -o droid.zip http://www.nationalarchives.gov.uk/documents/information-management/droid-binary-6.4-bin.zip
+  - sudo mkdir -p /opt/droid
+  - sudo unzip droid.zip -d /opt/droid
+  - sudo chmod 755 /opt/droid/droid.sh
 addons:
   apt:
     packages:
