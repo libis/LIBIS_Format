@@ -76,7 +76,7 @@ module Libis
           # Run command and capture results
           timeout = Libis::Format::Config[:timeouts][:fido]
           result = ::Libis::Tools::Command.run(
-              Libis::Format::Config[:fido_path], *args,
+              Libis::Format::Config[:fido_cmd], *args,
               timeout: timeout,
               kill_after: timeout * 2
           )

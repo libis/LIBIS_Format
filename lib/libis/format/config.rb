@@ -9,20 +9,22 @@ module Libis
 
     Config[:converter_chain_max_level] = 8
 
-    Config[:java_path] = 'java'
-    Config[:j2kdriver] = 'j2kdriver'
-    Config[:soffice_path] = 'soffice'
-    Config[:ghostscript_path] = 'gs'
-    Config[:droid_path] = '/opt/droid/droid.sh'
-    Config[:fido_path] = '/usr/local/bin/fido'
-    Config[:fop_jar] = '/opt/fop/current/fop/build/fop.jar'
-    Config[:ffmpeg_path] = 'ffmpeg'
+    Config[:java_cmd] = 'java'
+    Config[:j2k_cmd] = 'j2kdriver'
+    Config[:soffice_cmd] = 'soffice'
+    Config[:ghostscript_cmd] = 'gs'
+    Config[:droid_cmd] = '/opt/droid/droid.sh'
+    Config[:droid_temp_path] = '/tmp'
+    Config[:fido_cmd] = '/usr/local/bin/fido'
+    Config[:fop_jar] = File.join(Libis::Format::TOOL_DIR, 'fop', 'build', 'fop.jar')
+    Config[:ffmpeg_cmd] = 'ffmpeg'
     Config[:fido_formats] = [(File.join(Libis::Format::DATA_DIR, 'lias_formats.xml'))]
     Config[:pdf_tool] = File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar')
+    Config[:preflight_jar] = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-2.0.13.jar')
     # noinspection RubyStringKeysInHashInspection
     Config[:xml_validations] = [['archive/ead', File.join(Libis::Format::DATA_DIR, 'ead.xsd')]]
     Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
-    Config[:raw_audio_convert_cmd] = 'sox %s -e signed -b 16 -t wav %s rate %d channels %d'
+    Config[:raw_audio_convert_cmd] = 'sox -V1 %s -e signed -b 16 -t wav %s rate %d channels %d'
     Config[:watermark_font] = '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
     Config[:timeouts] = {
         droid: 20 * 60,

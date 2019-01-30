@@ -28,7 +28,7 @@ module Libis
 
           timeout = Libis::Format::Config[:timeouts][:ffmpeg]
           result = Libis::Tools::Command.run(
-              Libis::Format::Config[:ffmpeg_path], *opts,
+              Libis::Format::Config[:ffmpeg_cmd], *opts,
               timeout: timeout,
               kill_after: timeout * 2
           )

@@ -76,7 +76,7 @@ module Libis
           ]
           timeout = Libis::Format::Config[:timeouts][:droid]
           result = Libis::Tools::Command.run(
-              Libis::Format::Config[:droid_path], *args,
+              Libis::Format::Config[:droid_cmd], *args,
               timeout: timeout,
               kill_after: timeout * 2
           )
@@ -96,7 +96,7 @@ module Libis
           args << '-R' if recursive
           timeout = Libis::Format::Config[:timeouts][:droid]
           result = Libis::Tools::Command.run(
-              Libis::Format::Config[:droid_path], *args,
+              Libis::Format::Config[:droid_cmd], *args,
               timeout: timeout,
               kill_after: timeout * 2
           )

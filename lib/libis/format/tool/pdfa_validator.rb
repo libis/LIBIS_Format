@@ -22,7 +22,7 @@ module Libis
           src_file = File.absolute_path(source)
 
           timeout = Libis::Format::Config[:timeouts][:pdfa_validator]
-          if (pdfa = Libis::Format::Config[:pdfa_path])
+          if (pdfa = Libis::Format::Config[:pdfa_cmd])
             # Keep it clean: tool generates fontconfig/ cache dir in current working dir
             previous_wd = Dir.getwd
             Dir.chdir(Dir.tmpdir)
@@ -48,9 +48,9 @@ module Libis
               return false
             end
           else
-            jar = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-1.8.10.jar')
+            jar = Libis::Format::Config[:preflight_jar]
             result = Libis::Tools::Command.run(
-                Libis::Format::Config[:java_path],
+                Libis::Format::Config[:java_cmd],
                 '-jar', jar,
                 src_file,
                 timeout: timeout,

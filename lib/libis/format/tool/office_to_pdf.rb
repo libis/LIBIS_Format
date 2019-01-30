@@ -33,7 +33,7 @@ module Libis
 
           timeout = Libis::Format::Config[:timeouts][:office_to_pdf]
           result = Libis::Tools::Command.run(
-              Libis::Format::Config[:soffice_path], '--headless',
+              Libis::Format::Config[:soffice_cmd], '--headless',
               "-env:UserInstallation=file://#{workdir}",
               '--convert-to', export_filter,
               '--outdir', workdir, src_file,

@@ -73,7 +73,6 @@ describe 'Identfier' do
 
   let (:identifier) {::Libis::Format::Identifier}
   let (:logoutput) {::Libis::Tools::Config.logger.appenders.last.sio}
-  let (:dir) {File.join File.absolute_path(File.dirname(__FILE__)), 'data'}
 
   it 'should initialize correctly' do
     expect(identifier.xml_validations.size).to be 1
@@ -82,7 +81,7 @@ describe 'Identfier' do
 
   # noinspection RubyResolve
   it 'should not attempt to identify a non-existing file or directory' do
-    result = identifier.get (File.join(dir, 'abcdef'))
+    result = identifier.get (File.join(data_dir, 'abcdef'))
     expect(result[:output]).to be_empty
     expect(result[:formats]).to be_empty
     expect(result[:messages]).not_to be_empty
@@ -92,19 +91,18 @@ describe 'Identfier' do
     end).to be_truthy
   end
 
-  context 'Fido and Droid', if: (File.exists?(Libis::Format::Config[:droid_path]) &&
-      File.exists?(Libis::Format::Config[:fido_path])) do
+  context 'Fido and Droid' do
 
     it 'should identify all files in a folder at once' do
-      result = identifier.get(dir)
+      result = identifier.get(data_dir)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
-        expect(result[:formats][File.join(dir, file)]).to include format
+        expect(result[:formats][File.join(data_dir, file)]).to include format
       end
     end
 
     it 'should identify all files in a folder with base_dir option' do
-      result = identifier.get(dir, base_dir: dir, keep_output: true)
+      result = identifier.get(data_dir, base_dir: data_dir, keep_output: true)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
         expect(result[:formats][file]).to include format
@@ -112,17 +110,17 @@ describe 'Identfier' do
     end
 
     it 'should identify all files in a list at once' do
-      filelist = fidolist.keys.map {|file| File.join(dir, file)}
+      filelist = fidolist.keys.map {|file| File.join(data_dir, file)}
       result = identifier.get (filelist)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
-        expect(result[:formats][File.join(dir, file)]).to include format
+        expect(result[:formats][File.join(data_dir, file)]).to include format
       end
     end
 
     it 'should identify all files in a list with base_dir option' do
-      filelist = fidolist.keys.map {|file| File.join(dir, file)}
-      result = identifier.get(filelist, base_dir: dir)
+      filelist = fidolist.keys.map {|file| File.join(data_dir, file)}
+      result = identifier.get(filelist, base_dir: data_dir)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
         expect(result[:formats][file]).to include format
@@ -131,12 +129,12 @@ describe 'Identfier' do
 
   end
 
-  context 'Fido', if: File.exists?(Libis::Format::Config[:fido_path]) do
+  context 'Fido' do
 
     # expect(identifier.fido_formats.size).to be 1
     # expect(File.basename(identifier.fido_formats.first)).to eq 'lias_formats.xml'
     it 'should identify list of test documents' do
-      filelist = formatlist.keys.map {|file| File.join(dir, file)}
+      filelist = formatlist.keys.map {|file| File.join(data_dir, file)}
       fido_result = ::Libis::Format::Tool::Fido.instance.run_list(filelist)
       filelist.each do |filename|
         result = fido_result[filename]
@@ -147,8 +145,8 @@ describe 'Identfier' do
     end
 
     it 'should identify dir of test documents' do
-      filelist = fidolist.keys.map {|file| File.join(dir, file)}
-      fido_result = ::Libis::Format::Tool::Fido.instance.run_dir(dir, false)
+      filelist = fidolist.keys.map {|file| File.join(data_dir, file)}
+      fido_result = ::Libis::Format::Tool::Fido.instance.run_dir(data_dir, false)
       filelist.each do |filename|
         result = fido_result[filename]
         result = result[0] if result

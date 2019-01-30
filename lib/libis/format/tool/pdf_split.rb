@@ -25,7 +25,7 @@ module Libis
 
           timeout = Libis::Format::Config[:timeouts][:pdf_split]
           result = Libis::Tools::Command.run(
-              Libis::Format::Config[:java_path],
+              Libis::Format::Config[:java_cmd],
               '-cp', Libis::Format::Config[:pdf_tool],
               'SplitPdf',
               '--file_input', source,

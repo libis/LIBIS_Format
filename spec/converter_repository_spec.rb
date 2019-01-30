@@ -4,7 +4,6 @@ require 'spec_helper'
 describe 'Converters' do
 
   let(:repository) {Libis::Format::Converter::Repository}
-  let(:file_dir) {File.dirname(__FILE__)}
 
   before(:all) {
     Libis::Tools::Config.logger.level = 'off'

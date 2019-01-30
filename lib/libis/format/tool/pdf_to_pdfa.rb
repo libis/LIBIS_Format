@@ -39,7 +39,7 @@ module Libis
 
           timeout = Libis::Format::Config[:timeouts][:pdf_to_pdfa]
           result = Libis::Tools::Command.run(
-              Libis::Format::Config[:ghostscript_path],
+              Libis::Format::Config[:ghostscript_cmd],
               '-dBATCH', '-dNOPAUSE', '-dNOOUTERSAVE',
               '-sColorConversionStrategy=/UseDeviceIndependentColor',
               "-sProcessColorModel=#{icc_info[:device]}",
@@ -53,7 +53,6 @@ module Libis
           )
 
           raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
-          raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
           FileUtils.rm [icc_file, def_filename].compact, force: true
 

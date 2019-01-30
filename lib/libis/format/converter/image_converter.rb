@@ -167,7 +167,7 @@ module Libis
 
           else
 
-            image = MiniMagick::Image.new(source) { |b| b.quiet }
+            image = MiniMagick::Image.open(source) { |b| b.quiet }
 
             if image.pages.size > 1
               if @page

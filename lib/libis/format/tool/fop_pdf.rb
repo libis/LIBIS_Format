@@ -25,7 +25,7 @@ module Libis
 
           timeout = Libis::Format::Config[:timeouts][:fop]
           result = Libis::Tools::Command.run(
-              Libis::Format::Config[:java_path],
+              Libis::Format::Config[:java_cmd],
               "-Dfop.home=#{File.dirname(Libis::Format::Config[:fop_jar])}",
               '-jar', Libis::Format::Config[:fop_jar],
               '-fo', xml,

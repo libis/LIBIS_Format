@@ -91,7 +91,7 @@ module Libis
 
 
           Libis::Tools::Command.run(
-              Libis::Format::Config[:j2kdriver],
+              Libis::Format::Config[:j2k_cmd],
               '--input-file-name', source,
               '--set-output-type', 'JP2',
               *options,

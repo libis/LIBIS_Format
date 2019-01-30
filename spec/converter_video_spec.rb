@@ -6,7 +6,6 @@ require 'libis/format/converter/video_converter'
 describe 'Converters' do
 
   let(:repository) {Libis::Format::Converter::Repository}
-  let(:file_dir) {File.dirname(__FILE__)}
 
   before(:all) {
     Libis::Tools::Config.logger.level = 'off'
@@ -26,17 +25,17 @@ describe 'Converters' do
     ]
     bad_converts = [
     ]
-    let(:data_dir) {File.join(file_dir, 'data', 'video')}
+    dir = File.join(data_dir, 'video')
 
     context 'converts' do
       sources.each do |source|
         context source do
           extensions.each do |ext|
-            next unless (File.exists?(File.join(File.dirname(__FILE__), 'data', 'video', "#{source}.#{ext}")))
+            next unless (File.exists?(File.join(dir, "#{source}.#{ext}")))
             (targets - [ext]).each do |tgt|
               next if bad_converts.include? [ext, tgt]
               it "#{ext} to #{tgt}" do
-                src_file = File.join(data_dir, "#{source}.#{ext}")
+                src_file = File.join(dir, "#{source}.#{ext}")
                 tgt_file = File.join('', 'tmp', "test.#{source}.#{ext}.#{tgt}")
                 FileUtils.remove tgt_file, force: true
                 FileUtils.mkdir_p File.dirname(tgt_file)
@@ -67,7 +66,7 @@ describe 'Converters' do
           'SampleVideo_1080x720_2mb.mp4'
       ].each do |source|
         it "text with default options - #{source}" do
-          src_file = File.join(data_dir, "#{source}")
+          src_file = File.join(dir, "#{source}")
           tgt_file = File.join('', 'tmp', "test.#{source}_watermark.mp4")
           FileUtils.remove tgt_file, force: true
           FileUtils.mkdir_p File.dirname(tgt_file)
@@ -79,11 +78,11 @@ describe 'Converters' do
         end
 
         it "image with default options - #{source}" do
-          src_file = File.join(data_dir, "#{source}")
+          src_file = File.join(dir, "#{source}")
           tgt_file = File.join('', 'tmp', "test.#{source}_watermark_image.mp4")
           FileUtils.remove tgt_file, force: true
           FileUtils.mkdir_p File.dirname(tgt_file)
-          converter.watermark_image File.join(data_dir, 'copyright.png')
+          converter.watermark_image File.join(dir, 'copyright.png')
           result = converter.convert(src_file, tgt_file, :MP4)
           expect(result).to eq tgt_file
           expect(File.size(result)).to be > 2000

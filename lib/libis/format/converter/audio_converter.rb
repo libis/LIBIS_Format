@@ -112,7 +112,7 @@ module Libis
           target
         end
 
-        def sounds_like(file1, file2, threshold, rate, channels)
+        def self.sounds_like(file1, file2, threshold, rate, channels)
           rate ||= 96000
           channels ||= 2
           threshold ||= 0.85

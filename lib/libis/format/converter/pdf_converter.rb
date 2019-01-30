@@ -140,12 +140,12 @@ module Libis
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfCopy.run(
                 source, tmpname,
-                @options.map { |k, v|
+                @options.map {|k, v|
                   if v.nil?
                     nil
                   else
                     ["--#{k}", (v.is_a?(Array) ? v : v.to_s)]
-                  end }.flatten
+                  end}.flatten
             )
             unless result[:err].empty?
               error("Pdf conversion encountered errors:\n%s", result[:err].join('\n'))
@@ -160,9 +160,11 @@ module Libis
 
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfToPdfa.run source, tmpname
-            unless result[:status] == 0
+            if result[:status] != 0
               error("Pdf/A conversion encountered errors:\n%s", result[:err].join('\n'))
               next nil
+            else
+              warn("Pdf/A conversion warnings:\n%s", result[:err].join('\n')) unless result[:err].empty?
             end
             tmpname
           end
