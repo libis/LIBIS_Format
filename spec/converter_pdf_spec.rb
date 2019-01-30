@@ -8,7 +8,7 @@ describe 'Converters' do
   let(:repository) {Libis::Format::Converter::Repository}
 
   before(:all) {
-    Libis::Tools::Config.logger.level = 'off'
+    Libis::Tools::Config.logger.level = :WARN
   }
 
   context 'Pdf Converter' do
