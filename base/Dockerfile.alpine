@@ -1,0 +1,20 @@
+FROM alpine:3.8
+LABEL maintainer="kris.dekeyser@libis.be"
+RUN apk update -q && apk upgrade -q
+RUN apk add -q python2 py-pip openjdk8-jre ffmpeg libreoffice ttf-liberation ttf-freefont ttf-opensans sox git wget unzip sudo bash curl tar imagemagick
+# install fido
+RUN pip install -q --upgrade pip && pip install -q opf-fido
+# install droid
+RUN wget -q -O droid.zip http://www.nationalarchives.gov.uk/documents/information-management/droid-binary-6.4-bin.zip \
+ && mkdir -p /opt/droid \
+ && unzip -q -d /opt/droid droid.zip \
+ && chmod 755 /opt/droid/droid.sh \
+ && rm droid.zip
+# install ImageMagick
+RUN apk add -q imagemagick
+ADD ../tools /tools
+ADD ../data /cfg
+VOLUME /data
+WORKDIR /data
+
+CMD ["/bin/bash", "-l"]

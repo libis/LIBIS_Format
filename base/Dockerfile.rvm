@@ -1,0 +1,56 @@
+ARG ubuntu_ver=latest
+ARG ruby_ver=2.5.3
+ARG node_ver=10.15.0
+
+FROM ubuntu:${ubuntu_ver}
+LABEL maintainer="kris.dekeyser@libis.be"
+
+ENV RUBY_ENV=${ruby_ver}
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_VER=${node_ver}
+ENV NODE_PATH=$NVM_DIR/v$NODE_VER/lib/node_modules
+ENV NODE_PATH=$NVM_DIR/versions/node/v$NODE_VER/bin
+ENV PATH "${PATH}:${NODE_PATH}:${NODE_PATH}/npm"
+
+RUN echo $RUBY_ENV
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -q \
+ && apt-get install -y -q --no-install-recommends software-properties-common apt-utils
+RUN apt-add-repository -y ppa:rael-gc/rvm \
+ && apt-get update -q
+RUN apt-get  install -y -q --no-install-recommends \
+        build-essential \
+        gnupg2 \
+        git \
+        wget \
+        curl \
+        sudo \
+        unzip \
+        openjdk-8-jre-headless
+
+ENV BASH_ENV='/etc/profile exec bash'
+SHELL ["/bin/bash", "-l", "-c"]
+
+RUN addgroup --gid 2000 teneo \
+ && adduser --uid 2000 --gid 2000 --disabled-password --gecos "Teneo user" teneo \
+ && usermod -L -s /bin/bash teneo
+RUN echo 'teneo ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+USER teneo
+
+RUN gpg2 --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+
+RUN curl -sSL https://get.rvm.io | bash -s stable
+
+RUN echo 'gem: --no-document' > ${HOME}/.gemrc
+RUN echo rvm install ${ruby_ver}
+RUN echo rvm use ${RUBY_ENV}@teneo --create --ruby-version --ruby-gems
+
+# required due to bug in rubygems (https://github.com/rubygems/rubygems/issues/2483)
+RUN gem install rdoc bundler
+RUN gem update --no-document --system
+RUN rvm info
+#ADD . /home/libis/libis_format
+#WORKDIR /home/libis/libis_format
+#RUN bundle install && bundle exec rake spec
