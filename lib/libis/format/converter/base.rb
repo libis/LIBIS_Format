@@ -22,6 +22,10 @@ module Libis
           @flags = {}
         end
 
+        def self.category
+          :converter
+        end
+
         def convert(source, target, format, opts = {})
           unless File.exist? source
             error "Cannot find file '#{source}'."

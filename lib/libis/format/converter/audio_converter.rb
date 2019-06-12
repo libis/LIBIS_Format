@@ -69,47 +69,13 @@ module Libis
           (@options[:preset] ||= {})[stream] = name
         end
 
-        # def encoder(value)
-        #   @options[:encoder] = value
-        # end
-        #
-        # def encoder_options(value)
-        #   @options[:encoder_options] = value
-        # end
-
         def convert(source, target, _format, opts = {})
           super
 
           FileUtils.mkpath(File.dirname(target))
 
-          if source.is_a? Array
+          convert_file(source, target)
 
-            assemble_and_convert(source, target)
-
-          elsif File.directory?(source)
-
-            sources = Dir[File.join(source, '**', '*')].reject {|p| File.directory? p}
-            assemble_and_convert(sources, target)
-
-          else
-
-            convert_file(source, target)
-
-          end
-
-          target
-
-        end
-
-        def assemble_and_convert(sources, target)
-          Tempfile.create(%w(list .txt)) do |f|
-            sources.each {|src| f.puts src}
-            opts[:global] ||= []
-            opts[:global] += %w(-f concat)
-            f.close
-            target = convert_file(f.to_path, target)
-          end
-          target
         end
 
         def self.sounds_like(file1, file2, threshold, rate, channels)
