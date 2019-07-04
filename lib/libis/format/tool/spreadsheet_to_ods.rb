@@ -1,3 +1,4 @@
+# noinspection RubyResolve
 require 'fileutils'
 
 require 'libis/tools/extend/string'

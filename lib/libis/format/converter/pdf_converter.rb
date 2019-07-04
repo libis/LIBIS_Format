@@ -11,6 +11,7 @@ module Libis
   module Format
     module Converter
 
+      # noinspection DuplicatedCode
       class PdfConverter < Libis::Format::Converter::Base
 
         def self.input_types
@@ -22,32 +23,30 @@ module Libis
           [:PDF, :PDFA]
         end
 
-        def pdf_convert(_)
-          #force usage of this converter
+        def title(v)
+          @options['md_title'] = v.blank? ? nil : v
         end
 
-        # Set metadata for Pdf file
-        #
-        # valid metadata keys are):
-        #       - title
-        #       - author
-        #       - creator
-        #       - keywords
-        #       - subject
-        #
-        # @param [Hash] values list of metadata values to set
-        def metadata(values = {})
-          values.key_strings_to_symbols!
-          values.each do |k, v|
-            next unless [:title, :author, :creator, :keywords, :subject].include?(k)
-            @options["md_#{k}"] = v
-          end
+        def author(v)
+          @options['md_author'] = v.blank? ? nil : v
+        end
+
+        def creator(v)
+          @options['md_creator'] = v.blank? ? nil : v
+        end
+
+        def keywords(v)
+          @options['md_keywords'] = v.blank? ? nil : v
+        end
+
+        def subject(v)
+          @options['md_subject'] = v.blank? ? nil : v
         end
 
         # Select a partial list of pages
         # @param [String] selection as described in com.itextpdf.text.pdf.SequenceList: [!][o][odd][e][even]start-end
         def range(selection)
-          @options[:ranges] = selection
+          @options[:ranges] = selection.blank? ? nil : selection
         end
 
         # Create or use a watermark image.

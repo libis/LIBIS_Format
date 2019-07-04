@@ -7,6 +7,13 @@ module Libis
     autoload :TypeDatabaseImpl, 'libis/format/type_database_impl'
     autoload :Identifier, 'libis/format/identifier'
 
+    autoload :Info, 'libis/format/info'
+    autoload :Library, 'libis/format/libary'
+
+    module Library
+      autoload :YamlLoader, 'libis/format/libary_yaml_loader'
+    end
+
     autoload :Tool, 'libis/format/tool'
     autoload :Converter, 'libis/format/converter'
 
