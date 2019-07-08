@@ -39,8 +39,11 @@ before_install:
   - sudo chmod 755 /opt/droid/droid.sh
   - sudo locale-gen "en_US.UTF-8"
   - echo 'Europe/Brussels' | sudo tee /etc/timezone
+  - export TZ=Europe/Brussels
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
   - date
+before_script:
+  - export TZ=Europe/Brussels
 env:
   - LC_ALL=en_US.UTF-8
   - LANG=en_US.UTF-8
