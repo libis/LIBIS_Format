@@ -45,46 +45,57 @@ module Libis
 
         def quiet(v)
           @quiet = !!v
+          self
         end
 
         def page(nr)
           @page = nr
+          self
         end
 
         def scale(percent)
           @options[:scale] = percent
+          self
         end
 
         def resize(geometry)
           @options[:resize] = geometry
+          self
         end
 
         def quality(value)
           @options[:quality] = value
+          self
         end
 
         def dpi(value)
           @options[:density] = value
+          self
         end
 
         def resample(value)
           @options[:resample] = value
+          self
         end
 
         def flatten(value = true)
           @options[:flatten] = !!value
+          self
         end
 
         def colorspace(value)
           @options[:colorspace] = value
+          self
         end
 
         def delete_date(value = true)
           @delete_date = !!value
+          self
         end
 
         def profile(icc)
           @profile = icc
+          self
         end
 
         def convert(source, target, format, opts = {})
@@ -101,6 +112,11 @@ module Libis
         protected
 
         def convert_image(source, target, format)
+
+          if @page
+            image = MiniMagick::Image.open(source) { |b| b.quiet }
+            source = image.pages[@page].path if image.pages.size > 1
+          end
 
           MiniMagick::Tool::Convert.new do |convert|
             convert.quiet if @quiet

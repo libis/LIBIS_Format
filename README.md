@@ -26,9 +26,9 @@ Or install it yourself as:
 
 ## Usage
 
-### ::Libis::Format::TypeDatabase
+### ::Libis::Format::Library
 
-The type database is the core of the format services. It stores information about all the known formats.
+The format database is the core of the format services. It stores information about all the known formats.
 
 ### ::Libis::Format::Identifier
 

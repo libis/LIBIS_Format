@@ -67,7 +67,7 @@ module Libis
         arguments that any of the targetted converters support.
 
         The source file's format will be identified by the Libis::Format::Identifier and the target file's format
-        will be derived from the file's extension. The Libis::Format::TypeDatabase is used to relate extensions
+        will be derived from the file's extension. The Libis::Format::Library is used to relate extensions
         with formats.
 
         DESC
@@ -89,7 +89,7 @@ module Libis
             A source file name and target file name should be supplied. The source file should exist and be readable.
             The target file should be writable, but should not exist.
 
-            The target file's format will be derived from the file's extension. The Libis::Format::TypeDatabase is used 
+            The target file's format will be derived from the file's extension. The Libis::Format::Library is used 
             to relate extensions with formats.
 
         DESC
@@ -265,11 +265,11 @@ module Libis
         end
 
         def extname(format)
-          Libis::Format::TypeDatabase.type_extentions(format).first
+          Libis::Format::Library.get_field(format, :extensions)
         end
 
         def get_format(file_name)
-          Libis::Format::TypeDatabase.ext_types(File.extname(file_name)).first
+          Libis::Format::Library.get_field_by(:extension, File.extname(file_name), :format)
         end
 
         def format_identifier(file)

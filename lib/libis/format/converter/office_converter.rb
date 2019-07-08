@@ -3,7 +3,7 @@
 require_relative 'base'
 
 require 'libis/format/tool/office_to_pdf'
-require 'libis/format/type_database'
+require 'libis/format/library'
 
 module Libis
   module Format

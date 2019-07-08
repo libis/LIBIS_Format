@@ -7,7 +7,7 @@ require 'libis/tools/logger'
 require 'libis/tools/command'
 
 require 'libis/format/config'
-require 'libis/format/type_database'
+require 'libis/format/library'
 
 module Libis
   module Format
@@ -99,7 +99,7 @@ module Libis
           end
 
           # Normalize the mimetype
-          Libis::Format::TypeDatabase.normalize(result, PUID: :puid, MIME: :mimetype)
+          Libis::Format::Library.normalize(result, PUID: :puid, MIME: :mimetype)
 
           # Default score is 5
           result[:score] = 5
@@ -117,14 +117,14 @@ module Libis
             # Signature match increases score with 2
             when 'signature'
               result[:score] += 2
-            # typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(result[:puid])
+            # typeinfo = ::Libis::Format::Library.get_info_by(:puid, result[:puid])
             # ext = File.extname(result[:filename])
             # result[:score] += 1 if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
 
             # Container match increases score with 4
             when 'container'
               result[:score] += 4
-            # typeinfo = ::Libis::Format::TypeDatabase.puid_typeinfo(result[:puid])
+            # typeinfo = ::Libis::Format::Library.get_info_by(:puid, result[:puid])
             # ext = File.extname(result[:filename])
             # result[:score] += 1 if typeinfo and typeinfo[:EXTENSIONS].include?(ext)
 
@@ -152,11 +152,11 @@ module Libis
         end
 
         def get_mimetype(puid)
-          ::Libis::Format::TypeDatabase.puid_typeinfo(puid)[:MIME].first rescue nil
+          ::Libis::Format::Library.get_field_by(:puid, puid, :mime_types).first rescue nil
         end
 
         def get_puid(mimetype)
-          ::Libis::Format::TypeDatabase.mime_infos(mimetype).first[:PUID].first rescue nil
+          ::Libis::Format::Library.get_field_by(:mime_type, mimetype, :puids).first rescue nil
         end
 
         attr_accessor :bad_mimetypes, :bad_puids

@@ -3,7 +3,7 @@
 require_relative 'base'
 
 require 'libis/format/tool/spreadsheet_to_ods'
-require 'libis/format/type_database'
+require 'libis/format/library'
 
 module Libis
   module Format

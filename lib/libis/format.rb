@@ -3,16 +3,12 @@ require 'libis/format/version'
 module Libis
   module Format
     autoload :Config, 'libis/format/config'
-    autoload :TypeDatabase, 'libis/format/type_database'
-    autoload :TypeDatabaseImpl, 'libis/format/type_database_impl'
-    autoload :Identifier, 'libis/format/identifier'
 
     autoload :Info, 'libis/format/info'
-    autoload :Library, 'libis/format/libary'
+    autoload :Library, 'libis/format/library'
+    autoload :YamlLoader, 'libis/format/yaml_loader'
 
-    module Library
-      autoload :YamlLoader, 'libis/format/libary_yaml_loader'
-    end
+    autoload :Identifier, 'libis/format/identifier'
 
     autoload :Tool, 'libis/format/tool'
     autoload :Converter, 'libis/format/converter'

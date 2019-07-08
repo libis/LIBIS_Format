@@ -1,25 +1,20 @@
 #!/bin/bash
 
-#file=${1/$SRC_PATH/$TGT_PATH}
-#echo "$1 -> $file"
-
 CMD=$1
 shift
 
 readarray -d ',' -t mapping <<< "$VOLUME_MAPPING"
 
 args=("$@")
-echo "args: ${args[@]}"
-#args="${args[@]/$SRC_PATH/$TGT_PATH}"
-#args="${args[@]/$SRC_TMP/$TGT_TMP}"
+#echo "args: ${args[@]}"
 for map in "${mapping[@]}"
 do
         map="${map//[$'\t\r\n ']}"
         readarray -d '=' -t m <<< "$map"
         src="${m[0]//[$'\t\r\n ']}"
         tgt="${m[1]//[$'\t\r\n ']}"
-        echo "$src -> $tgt"
-        args="${args[@]/$src/$tgt}"
-        echo "args: ${args[@]}"
+#        echo "$src -> $tgt"
+        args=("${args[@]/$src/$tgt}")
+#        echo "args: ${args[@]}"
 done
-echo $CMD "${args[@]}"
+${CMD} "${args[@]}"

@@ -27,7 +27,9 @@ RUN wget -q -O fop.tar.gz "http://www.apache.org/dyn/closer.cgi?filename=/xmlgra
  && rm fop.tar.gz
 
 RUN echo "8\n9\n" | apt-get install tzdata
-ADD ./tools /tools
-ADD ./data /config
-ADD ./spec/data /data
+RUN mkdir -p /teneo/format/spec
+ADD ./tools /teneo/format/tools
+ADD ./data /teneo/format/data
+ADD ./spec/data /teneo/format/spec/data
+ADD ./base/rework_path /teneo/format/rework_path
 CMD /bin/bash

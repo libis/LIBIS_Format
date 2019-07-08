@@ -2,6 +2,7 @@
 require 'spec_helper'
 
 require 'libis/format/converter/image_converter'
+require 'libis/format/converter/image_watermarker'
 require 'libis/format/converter/jp2_converter'
 
 describe 'Converters' do
@@ -71,14 +72,17 @@ describe 'Converters' do
       FileUtils.rm diff_file, force: true
     end
 
-    it 'converts TIFF to PNG with many options' do
+    it 'converts TIFF to PNG and add watermark' do
       src_file = File.join(data_dir, 'test.tif')
       ref_file = File.join(data_dir, 'test-options.png')
       tgt_file = File.join('', 'tmp', 'test-options.png')
       FileUtils.mkdir_p File.dirname(tgt_file)
-      converter.watermark(text: 'RSPEC', size: 5, opacity: 0.1, rotation: 15, gap: 0.5, composition: 'modulate')
+      # converter.watermark(text: 'RSPEC', size: 5, opacity: 0.1, rotation: 15, gap: 0.5, composition: 'modulate')
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :PNG, options: {scale: '150%'})
+      watermarker = Libis::Format::Converter::ImageWatermarker.new
+      watermarker.text('RSPEC').tiles(5).gap(0.5).composition('modulate').composition_args('10%')
+      result = watermarker.convert(tgt_file, tgt_file, :PNG)
       expect(result).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file

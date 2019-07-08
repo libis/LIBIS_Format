@@ -23,7 +23,8 @@ module Libis
     Config[:preflight_jar] = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-2.0.13.jar')
     # noinspection RubyStringKeysInHashInspection
     Config[:xml_validations] = [['archive/ead', File.join(Libis::Format::DATA_DIR, 'ead.xsd')]]
-    Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
+    Config[:format_library_implementation] = 'Libis::Format::YamlLoader.instance'
+    Config[:format_library_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
     Config[:raw_audio_convert_cmd] = 'sox -V1 %s -e signed -b 16 -t wav %s rate %d channels %d'
     Config[:watermark_font] = '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
     Config[:timeouts] = {

@@ -37,14 +37,14 @@ module Libis
         def runner(*args)
 
           args.map do |file|
-            info = ::Libis::Format::TypeDatabase.ext_infos(File.extname(file)).first
+            info = ::Libis::Format::Library.get_info_by(:extension, File.extname(file))
             if info
               {
                   filepath: file,
-                  mimetype: (info[:MIME].first rescue nil),
-                  puid: (info[:PUID].first rescue nil),
+                  mimetype: (info[:mime_types].first rescue nil),
+                  puid: (info[:puids].first rescue nil),
                   matchtype: 'extension',
-                  tool: :type_database
+                  tool: :format_library
               }
             end
           end.cleanup

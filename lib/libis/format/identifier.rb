@@ -9,7 +9,7 @@ require 'libis/tools/extend/string'
 require 'libis/tools/extend/empty'
 require 'nori/core_ext/object'
 
-require 'libis/format/type_database'
+require 'libis/format/library'
 
 require_relative 'config'
 require_relative 'tool/fido'
@@ -132,7 +132,7 @@ module Libis
             if doc.validates_against?(xsd_file)
               log_msg result, :debug, "XML file validated against XML Schema: #{xsd_file}"
               info = {mimetype: mime, tool_raw: file_result[:tool], tool: :xsd_validation, match_type: 'xsd_validation', format_version: '', }
-              file_result.merge! Libis::Format::TypeDatabase.enrich(info, PUID: :puid, MIME: :mimetype, NAME: :format_name)
+              file_result.merge! Libis::Format::Library.enrich(info, PUID: :puid, MIME: :mimetype, NAME: :format_name)
             end
           rescue => e
             # Do nothing - probably Nokogiri chrashed during validation. Could have many causes
@@ -208,7 +208,7 @@ module Libis
       end
 
       def get_mimetype(puid)
-        ::Libis::Format::TypeDatabase.puid_typeinfo(puid)[:MIME].first rescue nil
+        ::Libis::Format::Library.get_field_by(:puid, puid, :mimetypes)
       end
 
       def get_best_result(results)

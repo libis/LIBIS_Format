@@ -12,7 +12,7 @@ describe 'Converters' do
   context 'Repository' do
 
     it 'loads all converters' do
-      expect(repository.get_converters.size).to eq 9
+      expect(repository.get_converters.size).to eq 10
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::ImageConverter'
       # noinspection RubyResolve
@@ -53,9 +53,10 @@ describe 'Converters' do
     it 'creates converter chain with options' do
       chain = repository.get_converter_chain(:TIFF, :PDF, {watermark: {}})
       expect(chain).to_not be nil
-      expect(chain.to_array.size).to eq 1
+      expect(chain.to_array.size).to eq 2
       expect(chain.to_array).to match [
-                                          {converter: Libis::Format::Converter::ImageConverter, input: :TIFF, output: :PDF, operations: [{method: :watermark, argument: {}}]}
+                                          {converter: Libis::Format::Converter::ImageConverter, input: :TIFF, output: :PDF},
+                                          {converter: Libis::Format::Converter::PdfConverter, input: :PDF, output: :PDF, operations: [{method: :watermark, argument: {}}]}
                                       ]
     end
 

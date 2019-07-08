@@ -5,7 +5,7 @@ require 'deep_dive'
 
 require 'libis/tools/logger'
 require 'libis/tools/extend/hash'
-require 'libis/format/type_database'
+require 'libis/format/library'
 
 module Libis
   module Format
@@ -83,8 +83,8 @@ module Libis
             target = target_file
 
             if i < size - 1
-              target += ".temp.#{TypeDatabase.type_extentions(target_type).first}"
-              target += ".#{TypeDatabase.type_extentions(target_type).first}" while File.exist? target
+              target += ".temp.#{Libis::Format::Library.get_field(target_type, :extensions).first}"
+              target += ".#{Libis::Format::Library.get_field(target_type, :extensions).first}" while File.exist? target
               temp_files << target
             end
 

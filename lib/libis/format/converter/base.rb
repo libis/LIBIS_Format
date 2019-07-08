@@ -4,7 +4,7 @@
 require 'tmpdir'
 require 'libis/tools/logger'
 require 'libis/tools/temp_file'
-require 'libis/format/type_database'
+require 'libis/format/library'
 
 require_relative 'repository'
 
@@ -77,12 +77,12 @@ module Libis
             end
 
             def input_mimetype?(mimetype)
-              type_id = TypeDatabase.instance.mime_types(mimetype).first
+              type_id = Libis::Format::Library.get_field_by(:mime_type, mimetype, :format)
               input_type? type_id
             end
 
             def output_mimetype?(mimetype)
-              type_id = TypeDatabase.instance.mime_types(mimetype).first
+              type_id = Libis::Format::Library.get_field_by(:mime_type, mimetype, :format)
               output_type? type_id
             end
 
@@ -95,7 +95,7 @@ module Libis
             end
 
             def extension?(extension)
-              !TypeDatabase.ext_types(extension).first.nil?
+              !Libis::Format::Library.get_field_by(:extension, extension,:format).nil?
             end
 
           end

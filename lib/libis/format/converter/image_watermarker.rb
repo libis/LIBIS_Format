@@ -29,7 +29,7 @@ module Libis
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format)
-          format
+          [format]
         end
 
         def self.multipage?(format)
@@ -53,30 +53,36 @@ module Libis
 
         def image_watermark(_)
           #force usage of this converter
+          self
         end
 
         def quiet(v)
           @quiet = !!v
+          self
         end
 
         def page(v)
           @page = v.to_i
+          self
         end
 
         # watermark image to use
         def file(v)
           @wm_file = v.blank? ? nil : v
+          self
         end
 
         # text to create a watermark from
         def text(v)
           @wm_text = v.blank? ? nil : v
+          self
         end
 
         # rotation of the watermark text (counter clockwise in degrees; integer number)
         # default 30
         def rotation(v)
           @wm_rotation = v.to_i
+          self
         end
 
         # number of tiles of the watermark
@@ -87,23 +93,27 @@ module Libis
         # n < 0: tile without scaling the watermark
         def tiles(v)
           @wm_tiles = v.to_i
+          self
         end
 
         # fraction 0.0 - 1.0
         def resize(v)
           @wm_resize = (v.to_f * 100).to_i
+          self
         end
 
         # size of the gap between watermark instances. Fractions as percentage of widht/height
         # default 0.2
         def gap(v)
           @wm_gap = (v.to_f * 100).to_i
+          self
         end
 
         # center point for the watermark overlay
         # default 'center'
         def gravity(v)
           @wm_gravity = v.blank? ? nil : v
+          self
         end
 
         # the image composition method for merging the watermark image
@@ -111,6 +121,7 @@ module Libis
         # See https://imagemagick.org/script/compose.php for more information
         def composition(v)
           @wm_composition = v.blank? ? nil : v
+          self
         end
 
         # arguments for the composition method
@@ -118,6 +129,7 @@ module Libis
         # See https://imagemagick.org/script/compose.php for more information
         def composition_args(v)
           @wm_composition_args = v.blank? ? nil : v
+          self
         end
 
 
@@ -126,7 +138,7 @@ module Libis
 
           FileUtils.mkpath(File.dirname(target))
 
-          if source.is_a? Array && File.directory?(source)
+          if source.is_a?(Array) || File.directory?(source)
             error 'Only a single image file is allowed for input'
           else
             image = MiniMagick::Image.open(source) { |b| b.quiet }
@@ -184,7 +196,7 @@ module Libis
               end
             end
             # perform the blending operation
-            convert.compose(@wm_composition).gravity(@wm_gravity).define("compose:args=#{@wm_composition_args}%").composite
+            convert.compose(@wm_composition).gravity(@wm_gravity).define("compose:args=#{@wm_composition_args}").composite
 
             convert.format(format)
             convert << target

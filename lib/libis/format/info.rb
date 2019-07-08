@@ -1,33 +1,20 @@
 module Libis
   module Format
     class Info
-      def name
-        raise NotImplementedError
-      end
+      attr_reader :format, :category, :description, :puids, :mime_types, :extensions
 
-      def description
-        raise NotImplementedError
-      end
-
-      def category
-        raise NotImplementedError
-      end
-
-      def puids
-        raise NotImplementedError
-      end
-
-      def mime_types
-        raise NotImplementedError
-      end
-
-      def extensions
-        raise NotImplementedError
+      def initialize(format:, category:, description: '', puids: [], mime_types: [], extensions: [])
+        @format = format
+        @category = category
+        @description = description
+        @puids = puids
+        @mime_types = mime_types
+        @extensions = extensions
       end
 
       def to_hash
         {
-            name: name,
+            format: format,
             description: description.dup,
             category: category,
             puids: puids.dup,
