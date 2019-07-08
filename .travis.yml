@@ -42,9 +42,12 @@ before_install:
   - sudo mkdir -p /opt/droid
   - sudo unzip droid.zip -d /opt/droid
   - sudo chmod 755 /opt/droid/droid.sh
+  - sudo ntpdate ntp.ubuntu.com
   - sudo locale-gen "en_US.UTF-8"
+  - echo 'Europe/Brussels' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure locales
-  - echo "8\n9\n" | sudo dpkg-reconfigure tzdata
+  - sudo dpkg-reconfigure --frontend noninteractive tzdata
+  - sudo ntpdate ntp.ubuntu.com
 env:
   - LC_ALL=en_US.UTF-8
   - LANG=en_US.UTF-8
