@@ -1,33 +1,41 @@
+dist: bionic
 language: ruby
-sudo: false
-dist: trusty
 cache: bundler
+sudo: false
 rvm:
+  - 2.3
+  - 2.4
   - 2.5
   - 2.6
+  - ruby-head
   - jruby-9.1
   - jruby-9.2
-  - ruby-head
   - jruby-head
 jdk:
-  - openjdk8
-  - oraclejdk8
+  - openjdk10
+  - openjdk11
 matrix:
   exclude:
+    - rvm: 2.3
+      jdk: openjdk10
+    - rvm: 2.4
+      jdk: openjdk10
     - rvm: 2.5
-      jdk: oraclejdk8
+      jdk: openjdk10
     - rvm: 2.6
-      jdk: oraclejdk8
+      jdk: openjdk10
     - rvm: ruby-head
-      jdk: oraclejdk8
+      jdk: openjdk10
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
 branches:
   only:
-      - master
-      - v2
+    - master
+    - v2
 before_install:
+  - gem update --system
+  - gem --version
   - sudo add-apt-repository ppa:mc3man/trusty-media -y
   - sudo apt-get update -y -q
   - sudo apt-get install -y -q ffmpeg gstreamer0.10-ffmpeg
