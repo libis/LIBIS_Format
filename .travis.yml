@@ -36,9 +36,10 @@ branches:
 before_install:
   - gem update --system
   - gem --version
-  - sudo add-apt-repository ppa:mc3man/trusty-media -y
+  - sudo add-apt-repository ppa:mc3man/bionic-media -y
   - sudo apt-get update -y -q
-  - sudo apt-get install -y -q ffmpeg gstreamer0.10-ffmpeg
+  - sudo apt-get install
+  - sudo apt-get install -y -q ffmpeg ubuntu-restricted-extras
   - sudo pip install --upgrade pip
   - sudo pip install --upgrade --ignore-installed opf-fido six
   - sudo wget -O droid.zip -q http://www.nationalarchives.gov.uk/documents/information-management/droid-binary-6.4-bin.zip
