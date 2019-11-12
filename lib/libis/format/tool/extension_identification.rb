@@ -41,7 +41,7 @@ module Libis
             if info
               {
                   filepath: file,
-                  mimetype: (info[:mime_types].first rescue nil),
+                  mimetype: (info[:mimetypes].first rescue nil),
                   puid: (info[:puids].first rescue nil),
                   matchtype: 'extension',
                   tool: :format_library

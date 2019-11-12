@@ -99,7 +99,7 @@ module Libis
           end
 
           # Normalize the mimetype
-          Libis::Format::Library.normalize(result, PUID: :puid, MIME: :mimetype)
+          Libis::Format::Library.normalize(result)
 
           # Default score is 5
           result[:score] = 5
@@ -152,11 +152,11 @@ module Libis
         end
 
         def get_mimetype(puid)
-          ::Libis::Format::Library.get_field_by(:puid, puid, :mime_types).first rescue nil
+          ::Libis::Format::Library.get_field_by(:puid, puid, :mimetype) rescue nil
         end
 
         def get_puid(mimetype)
-          ::Libis::Format::Library.get_field_by(:mime_type, mimetype, :puids).first rescue nil
+          ::Libis::Format::Library.get_field_by(:mimetype, mimetype, :puid) rescue nil
         end
 
         attr_accessor :bad_mimetypes, :bad_puids

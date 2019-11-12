@@ -77,12 +77,12 @@ module Libis
             end
 
             def input_mimetype?(mimetype)
-              type_id = Libis::Format::Library.get_field_by(:mime_type, mimetype, :format)
+              type_id = Libis::Format::Library.get_field_by(:mimetype, mimetype, :format)
               input_type? type_id
             end
 
             def output_mimetype?(mimetype)
-              type_id = Libis::Format::Library.get_field_by(:mime_type, mimetype, :format)
+              type_id = Libis::Format::Library.get_field_by(:mimetype, mimetype, :format)
               output_type? type_id
             end
 

@@ -1,24 +1,24 @@
 module Libis
   module Format
     class Info
-      attr_reader :format, :category, :description, :puids, :mime_types, :extensions
+      attr_reader :name, :category, :description, :puids, :mimetypes, :extensions
 
-      def initialize(format:, category:, description: '', puids: [], mime_types: [], extensions: [])
-        @format = format
+      def initialize(name:, category:, description: '', puids: [], mimetypes: [], extensions: [])
+        @name = name
         @category = category
         @description = description
         @puids = puids
-        @mime_types = mime_types
+        @mimetypes = mimetypes
         @extensions = extensions
       end
 
       def to_hash
         {
-            format: format,
+            name: name,
             description: description.dup,
             category: category,
             puids: puids.dup,
-            mime_types: mime_types.dup,
+            mimetypes: mimetypes.dup,
             extensions: extensions.dup
         }
       end

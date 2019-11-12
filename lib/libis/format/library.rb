@@ -54,30 +54,40 @@ module Libis
         @implementation = impl
       end
 
-      def get_info(format)
-        @implementation.get_info(format)
-      end
-
-      def get_info_by(key, value)
-        @implementation.get_info_by(key, value)
-      end
-
-      def get_infos_by(key, value)
-        @implementation.get_infos_by(key, value)
-      rescue
-        []
-      end
-
       def get_field(format, field)
-        get_info(format)&.[](field)
+        get_field_by(:name, format, field)
       end
 
       def get_field_by(key, value, field)
-        get_info_by(key, value)&.[](field)
+        info = get_info_by(key, value)
+        return nil unless info
+        case field
+        when :mimetype
+          info[:mimetypes]&.first
+        when :puid
+          info[:puids]&.first
+        when :extension
+          info[:extensions]&.first
+        else
+          info[field]
+        end
       end
 
       def get_fields_by(key, value, field)
         get_infos_by(key, value)&.map { |info| info[field] }.compact
+      end
+
+      def get_info(format)
+        get_info_by(:name, format)
+      end
+
+      def get_info_by(key, value)
+        get_infos_by(key, value)&.first
+      end
+
+      def get_infos_by(key, value)
+        result = @implementation.query(key, value)
+        result.map(&:to_hash)
       end
 
       def known?(key, value)
@@ -87,39 +97,39 @@ module Libis
       def enrich(info, map_keys = {})
         info = normalize(info, map_keys)
         mapper = Hash.new { |hash, key| hash[key] = key }.merge(map_keys)
-        unless (format = info[mapper[:TYPE]]).nil?
+        unless (format = info[mapper[:name]]).nil?
           lib_info = get_info(format)
           mapper.keys.each do |key|
             case key
-            when :MIME
-              info[mapper[key]] = lib_info[:mime_types].first
-            when :PUID
+            when :mimetype
+              info[mapper[key]] = lib_info[:mimetypes].first
+            when :puid
               info[mapper[key]] = lib_info[:puids].first
-            when :EXTENSION
+            when :extension
               info[mapper[key]] = lib_info[:extensions].first
             else
-              # do nothing
+              info[mapper[key]] = lib_info[key]
             end
           end
         end
         info
       end
 
+      # Derive name from the available info
       def normalize(info, map_keys = {})
         return {} unless info.is_a? Hash
         mapper = Hash.new { |hash, key| hash[key] = key }.merge(map_keys)
         # fill format from looking up by puid
-        unless (puid = info[mapper[:PUID]]).blank?
-          info[mapper[:TYPE]] ||= get_field_by(:puid, puid, :format)
+        unless (puid = info[mapper[:puid]]).blank?
+          info[mapper[:name]] ||= get_field_by(:puid, puid, :name)
         end
-        # fill format from looking up by mime_type
-        unless (mime = info[mapper[:MIME]]).blank?
-          info[mapper[:TYPE]] ||= get_field_by(:mime_type, mime, :format)
+        # fill format from looking up by mimetype
+        unless (mime = info[mapper[:mimetype]]).blank?
+          info[mapper[:name]] ||= get_field_by(:mimetype, mime, :name)
         end
         # finally complete the information from looking up by format name
-        unless (format = info[mapper[:TYPE]]).nil?
-          info[mapper[:MIME]] = get_field(format, :mime_types).first
-          info[mapper[:GROUP]] = get_field(format, :category)
+        unless (format = info[mapper[:name]]).nil?
+          info[mapper[:mimetype]] = get_field(format, :mimetype)
         end
         info
       end

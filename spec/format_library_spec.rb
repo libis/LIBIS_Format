@@ -10,56 +10,56 @@ describe 'Format Library' do
   it 'should load formats from file' do
 
     expect(::Libis::Format::Library.get_info :TESTDATA).to eq category: :TESTMEDIUM,
-                                                              format: :TESTDATA,
+                                                              name: :TESTDATA,
                                                               description: 'Test data format',
                                                               puids: %w'test-fmt/001 spec-fmt/101',
-                                                              mime_types: %w'test/data application/test/data',
+                                                              mimetypes: %w'test/data application/test/data',
                                                               extensions: %w'dat data'
     expect(::Libis::Format::Library.get_info :TESTSPEC).to eq category: :TESTMEDIUM,
-                                                              format: :TESTSPEC,
+                                                              name: :TESTSPEC,
                                                               description: 'Test specification format',
                                                               puids: %w'test-fmt/002 spec-fmt/102',
-                                                              mime_types: %w'test/spec application/test/spec',
+                                                              mimetypes: %w'test/spec application/test/spec',
                                                               extensions: %w'spc spec'
   end
 
   it 'should get the category\'s formats' do
 
-    expect(::Libis::Format::Library.get_fields_by :category, :TESTMEDIUM, :format).to eq [:TESTDATA, :TESTSPEC]
+    expect(::Libis::Format::Library.get_fields_by :category, :TESTMEDIUM, :name).to eq [:TESTDATA, :TESTSPEC]
 
   end
 
   it 'should get the mimetype\'s format name' do
 
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'test/data', :format)).to eq :TESTDATA
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'application/test/data', :format)).to eq :TESTDATA
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'test/spec', :format)).to eq :TESTSPEC
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'application/test/spec', :format)).to eq :TESTSPEC
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'test/data', :name)).to eq :TESTDATA
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'application/test/data', :name)).to eq :TESTDATA
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'test/spec', :name)).to eq :TESTSPEC
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'application/test/spec', :name)).to eq :TESTSPEC
 
   end
 
   it 'should get the mimetype\'s category' do
 
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'test/data', :category)).to eq :TESTMEDIUM
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'application/test/data', :category)).to eq :TESTMEDIUM
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'test/spec', :category)).to eq :TESTMEDIUM
-    expect(::Libis::Format::Library.get_field_by(:mime_type, 'application/test/spec', :category)).to eq :TESTMEDIUM
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'test/data', :category)).to eq :TESTMEDIUM
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'application/test/data', :category)).to eq :TESTMEDIUM
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'test/spec', :category)).to eq :TESTMEDIUM
+    expect(::Libis::Format::Library.get_field_by(:mimetype, 'application/test/spec', :category)).to eq :TESTMEDIUM
 
   end
 
   it 'should get the extension\'s format name' do
 
-    expect(::Libis::Format::Library.get_field_by(:extension, 'dat', :format)).to eq :TESTDATA
-    expect(::Libis::Format::Library.get_field_by(:extension, 'data', :format)).to eq :TESTDATA
-    expect(::Libis::Format::Library.get_field_by(:extension, 'spc', :format)).to eq :TESTSPEC
-    expect(::Libis::Format::Library.get_field_by(:extension, 'spec', :format)).to eq :TESTSPEC
+    expect(::Libis::Format::Library.get_field_by(:extension, 'dat', :name)).to eq :TESTDATA
+    expect(::Libis::Format::Library.get_field_by(:extension, 'data', :name)).to eq :TESTDATA
+    expect(::Libis::Format::Library.get_field_by(:extension, 'spc', :name)).to eq :TESTSPEC
+    expect(::Libis::Format::Library.get_field_by(:extension, 'spec', :name)).to eq :TESTSPEC
 
   end
 
   it 'should check if mimetype is known' do
 
-    expect(::Libis::Format::Library.known?(:mime_type, 'test/data')).to be_truthy
-    expect(::Libis::Format::Library.known?(:mime_type, 'test/spec')).to be_truthy
+    expect(::Libis::Format::Library.known?(:mimetype, 'test/data')).to be_truthy
+    expect(::Libis::Format::Library.known?(:mimetype, 'test/spec')).to be_truthy
 
   end
 
@@ -74,10 +74,10 @@ describe 'Format Library' do
     }
 
     expect(::Libis::Format::Library.get_info :TESTREPORT).to eq category: :TESTMEDIUM,
-                                                                format: :TESTREPORT,
+                                                                name: :TESTREPORT,
                                                                 description: 'Test report format',
                                                                 puids: [],
-                                                                mime_types: %w'test/report application/test/report',
+                                                                mimetypes: %w'test/report application/test/report',
                                                                 extensions: %w'rep'
 
   end
@@ -91,10 +91,10 @@ describe 'Format Library' do
     }
 
     expect(::Libis::Format::Library.get_info :TESTREPORT).to eq category: :TESTMEDIUM,
-                                                                format: :TESTREPORT,
+                                                                name: :TESTREPORT,
                                                                 description: 'Test report format',
                                                                 puids: [],
-                                                                mime_types: %w'test/report application/test/report',
+                                                                mimetypes: %w'test/report application/test/report',
                                                                 extensions: %w'rep rpt'
 
   end

@@ -132,7 +132,7 @@ module Libis
             if doc.validates_against?(xsd_file)
               log_msg result, :debug, "XML file validated against XML Schema: #{xsd_file}"
               info = {mimetype: mime, tool_raw: file_result[:tool], tool: :xsd_validation, match_type: 'xsd_validation', format_version: '', }
-              file_result.merge! Libis::Format::Library.enrich(info, PUID: :puid, MIME: :mimetype, NAME: :format_name)
+              file_result.merge! Libis::Format::Library.enrich(info, puid: :puid, mimetype: :mimetype, name: :format_name)
             end
           rescue => e
             # Do nothing - probably Nokogiri chrashed during validation. Could have many causes
