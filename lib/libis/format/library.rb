@@ -102,13 +102,13 @@ module Libis
           mapper.keys.each do |key|
             case key
             when :mimetype
-              info[mapper[key]] = lib_info[:mimetypes].first
+              info[mapper[key]] = lib_info[:mimetypes].first if lib_info[:mimetypes].first
             when :puid
-              info[mapper[key]] = lib_info[:puids].first
+              info[mapper[key]] = lib_info[:puids].first if lib_info[:puids].first
             when :extension
-              info[mapper[key]] = lib_info[:extensions].first
+              info[mapper[key]] = lib_info[:extensions].first if lib_info[:extensions].first
             else
-              info[mapper[key]] = lib_info[key]
+              info[mapper[key]] = lib_info[key] if lib_info[key]
             end
           end
         end
@@ -130,6 +130,7 @@ module Libis
         # finally complete the information from looking up by format name
         unless (format = info[mapper[:name]]).nil?
           info[mapper[:mimetype]] = get_field(format, :mimetype)
+          info[mapper[:category]] = get_field(format, :category)
         end
         info
       end
