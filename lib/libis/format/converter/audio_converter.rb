@@ -15,7 +15,7 @@ module Libis
         end
 
         def self.output_types(format = nil)
-          return [] unless input_types.include?(format)
+          return [] unless format.nil? || input_types.include?(format)
           [:MP3, :FLAC, :AC3, :AAC, :WMA, :ALAC, :WAV, :AIFF, :AMR, :AU, :M4A]
         end
 

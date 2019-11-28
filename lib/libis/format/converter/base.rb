@@ -26,10 +26,19 @@ module Libis
           :converter
         end
 
+        def check_file_exist(file)
+          unless File.exist? file
+            error "Cannot find file '#{file}'."
+            return false
+          end
+          true
+        end
+
         def convert(source, target, format, opts = {})
-          unless File.exist? source
-            error "Cannot find file '#{source}'."
-            return nil
+          if source.is_a?(Array)
+            return nil unless source.map { |f| check_file_exist(f) }.reduce(:&)
+          else
+            return nil unless check_file_exist(source)
           end
           @options.merge!(opts[:options]) if opts[:options]
           @flags.merge!(opts[:flags]) if opts[:flags]
@@ -55,7 +64,7 @@ module Libis
           target
         end
 
-        def Base.inherited( klass )
+        def Base.inherited(klass)
 
           Repository.register klass
 
@@ -95,7 +104,7 @@ module Libis
             end
 
             def extension?(extension)
-              !Libis::Format::Library.get_field_by(:extension, extension,:format).nil?
+              !Libis::Format::Library.get_field_by(:extension, extension, :format).nil?
             end
 
           end

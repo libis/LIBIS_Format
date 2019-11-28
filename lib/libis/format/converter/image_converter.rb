@@ -22,11 +22,11 @@ module Libis
       class ImageConverter < Libis::Format::Converter::Base
 
         def self.input_types
-          [:TIFF, :JPG, :PNG, :BMP, :GIF, :PDF, :JP2]
+          [:TIFF, :JPG, :PNG, :BMP, :GIF, :PDF, :JP2, :PBM, :PGM, :PPM]
         end
 
         def self.output_types(format = nil)
-          return [] unless input_types.include?(format)
+          return [] unless input_types.include?(format) if format
           [:TIFF, :JPG, :PNG, :BMP, :GIF, :PDF, :JP2]
         end
 
@@ -79,7 +79,7 @@ module Libis
         end
 
         def flatten(value = true)
-          @options[:flatten] = !!value
+          @options[:flatten] = value
           self
         end
 
@@ -89,7 +89,7 @@ module Libis
         end
 
         def delete_date(value = true)
-          @delete_date = !!value
+          @delete_date = value
           self
         end
 

@@ -18,7 +18,7 @@ module Libis
         end
 
         def self.output_types(format = nil)
-          return [] unless input_types.include?(format)
+          return [] unless input_types.include?(format) if format
           [:PDF]
         end
 
@@ -28,39 +28,36 @@ module Libis
 
         def initialize
           super
-          @options['wm_text'] = '© LIBIS'
-          @options['wm_opacity'] = '0.3'
+          @options[:text] = '© LIBIS'
+          @options[:opacity] = '0.3'
         end
 
         def file(v)
-          @options['wm_image'] = v.blank? ? nil : v
+          @options[:file] = v.blank? ? nil : v
         end
 
         def text(v)
-          @options['wm_text'] = v.split('\n') unless v.blank?
+          @options[:text] = v
         end
 
         def rotation(v)
-          @options['wm_text_rotation'] = v unless v.blank?
+          @options[:rotation] = v unless v.blank?
         end
 
         def size(v)
-          @options['wm_font_size'] = v unless v.blank?
+          @options[:size] = v unless v.blank?
         end
 
         def opacity(v)
-          @options['wm_opacity'] = v unless v.blank?
+          @options[:opacity] = v unless v.blank?
         end
 
-        def gap(v)
-          case v.to_s
-          when /^\s*(0+\.\d+|1\.0+)\s*$/
-            @options['wm_gap_ratio'] = v
-          when /^\s*\d+\s*$/
-            @options['wm_gap_size'] = v
-          else
+        def gap_size(v)
+          @options[:gap_size] = v
+        end
 
-          end
+        def gap_ratio(v)
+          @options[:gap_ratio] = v
         end
 
         def convert(source, target, format, opts = {})
@@ -73,6 +70,15 @@ module Libis
 
         end
 
+        OPTIONS_TABLE = {
+            file: 'wm_image',
+            text: 'wm_text',
+            rotation: 'wm_text_rotation',
+            size: 'wm_font_size',
+            opacity: 'wm_opacity',
+            gap_size: 'wm_gap_size',
+            gap_ratio: 'wm_gap_ratio'
+        }
         # noinspection DuplicatedCode
         def convert_pdf(source, target)
 
@@ -83,8 +89,10 @@ module Libis
                   if v.nil?
                     nil
                   else
+                    v = v.split('\n') unless v.blank? if k == :text
+                    k = OPTIONS_TABLE[k] || k
                     ["--#{k}", (v.is_a?(Array) ? v : v.to_s)]
-                  end}.flatten
+                  end}.compact.flatten
             )
             unless result[:err].empty?
               error("Pdf conversion encountered errors:\n%s", result[:err].join(join("\n")))

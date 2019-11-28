@@ -18,6 +18,7 @@ module Libis
         end
 
         def self.output_types(format = nil)
+          return [] unless input_types.include?(format) if format
           [:PDF]
         end
 
