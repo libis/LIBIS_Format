@@ -3,6 +3,7 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+require 'bundler'
 require 'libis/format/version'
 
 Gem::Specification.new do |spec|
@@ -26,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'equivalent-xml', '~> 0.5'
-  if spec.platform == Gem::Platform::JAVA
+  if Gem::Platform::JAVA
     spec.add_development_dependency 'saxon-xslt'
   else
     spec.add_development_dependency 'nokogiri'
