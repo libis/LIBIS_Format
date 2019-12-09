@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'equivalent-xml', '~> 0.5'
-  if Gem::Platform::JAVA
+  if spec.platform == Gem::Platform::JAVA
     spec.add_development_dependency 'saxon-xslt'
   else
     spec.add_development_dependency 'nokogiri'
