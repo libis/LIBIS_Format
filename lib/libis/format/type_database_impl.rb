@@ -4,6 +4,7 @@ require 'singleton'
 require 'yaml'
 
 require 'libis/tools/logger'
+require 'libis/tools/extend/hash'
 require 'libis/tools/extend/string'
 
 module Libis

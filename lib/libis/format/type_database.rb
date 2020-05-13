@@ -1,6 +1,7 @@
 # coding: utf-8
 
 require 'yaml'
+require 'libis/tools/extend/hash'
 
 module Libis
   module Format
