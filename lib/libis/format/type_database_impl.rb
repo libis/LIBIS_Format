@@ -3,7 +3,6 @@
 require 'singleton'
 require 'yaml'
 
-require 'backports/rails/hash'
 require 'libis/tools/logger'
 require 'libis/tools/extend/string'
 

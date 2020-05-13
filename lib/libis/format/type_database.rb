@@ -2,8 +2,6 @@
 
 require 'yaml'
 
-require 'backports/rails/hash'
-
 module Libis
   module Format
 
