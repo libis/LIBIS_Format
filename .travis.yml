@@ -2,36 +2,48 @@ language: ruby
 sudo: false
 dist: trusty
 cache: bundler
+
 rvm:
-  - 2.1.10
-  - 2.2.8
-  - 2.3.5
-  - 2.4.2
+  - 2.3
+  - 2.4
+  - 2.5
+  - 2.6
   - ruby-head
-  - jruby-9.0.5.0
-  - jruby-9.1.9.0
+  - jruby-9.1
   - jruby-head
 jdk:
   - openjdk8
-  - oraclejdk8
+  - openjdk10
+  - openjdk11
 matrix:
   exclude:
-    - rvm: 2.1.10
-      jdk: oraclejdk8
-    - rvm: 2.2.8
-      jdk: oraclejdk8
-    - rvm: 2.3.5
-      jdk: oraclejdk8
-    - rvm: 2.4.2
-      jdk: oraclejdk8
+    - rvm: 2.3
+      jdk: openjdk10
+    - rvm: 2.3
+      jdk: openjdk11
+    - rvm: 2.4
+      jdk: openjdk10
+    - rvm: 2.4
+      jdk: openjdk11
+    - rvm: 2.5
+      jdk: openjdk10
+    - rvm: 2.5
+      jdk: openjdk11
+    - rvm: 2.6
+      jdk: openjdk10
+    - rvm: 2.6
+      jdk: openjdk11
     - rvm: ruby-head
-      jdk: oraclejdk8
+      jdk: openjdk10
+    - rvm: ruby-head
+      jdk: openjdk11
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-head
 branches:
   only:
       - master
+
 before_install:
   - sudo add-apt-repository ppa:mc3man/trusty-media -y
   - sudo apt-get update -y -q
@@ -46,8 +58,8 @@ before_install:
   - sudo dpkg-reconfigure locales
   - echo "8\n9\n" | sudo dpkg-reconfigure tzdata
 env:
-  - LC_ALL=en_US.UTF-8
-  - LANG=en_US.UTF-8
+  - LC_ALL=en_IE.UTF-8
+  - LANG=en_IE.UTF-8
 addons:
   apt:
     packages:
