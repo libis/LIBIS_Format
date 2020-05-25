@@ -44,6 +44,9 @@ branches:
   only:
       - master
 
+env:
+  - LC_ALL=en_IE.UTF-8
+
 before_install:
   - sudo add-apt-repository ppa:mc3man/trusty-media -y
   - sudo apt-get update -y -q
@@ -57,9 +60,6 @@ before_install:
   - sudo locale-gen "en_US.UTF-8"
   - sudo dpkg-reconfigure locales
   - echo "8\n9\n" | sudo dpkg-reconfigure tzdata
-env:
-  - LC_ALL=en_IE.UTF-8
-  - LANG=en_IE.UTF-8
 addons:
   apt:
     packages:
