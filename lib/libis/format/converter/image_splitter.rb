@@ -33,6 +33,10 @@ module Libis
           [:PDF, :TIFF, :GIF, :PBM, :PGM, :PPM].include?(format)
         end
 
+        def self.category
+          :splitter
+        end
+
         def image_split(_)
           #force usage of this converter
         end

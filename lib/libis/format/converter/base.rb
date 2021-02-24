@@ -4,6 +4,7 @@
 require 'tmpdir'
 require 'libis/tools/logger'
 require 'libis/tools/temp_file'
+require 'libis/tools/extend/string'
 require 'libis/format/library'
 
 require_relative 'repository'

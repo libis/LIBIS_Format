@@ -36,6 +36,7 @@ module Libis
         fop: 5 * 60,
         identification_tool: 5 * 60,
         office_to_pdf: 5 * 60,
+        pdf_select: 5 * 60,
         pdf_copy: 5 * 60,
         pdf_merge: 5 * 60,
         pdf_optimizer: 5 * 60,

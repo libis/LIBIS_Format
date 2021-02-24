@@ -17,20 +17,20 @@ module Libis
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format) if format
-          [:PDF]
-        end
-
-        def pdf_split(_)
-          #force usage of this converter
+          [:PDFA]
         end
 
         def self.category
           :splitter
         end
 
-        # Split at given page. If omitted or nil, the source PDF will be split at every page
+        def initialize
+          super
+        end
+
+        # Split at given page. If omitted, nil or 0, the source PDF will be split at every page
         def page(v)
-          @page = v unless v.blank
+          @options[:page] = v unless v.blank?
         end
 
         def convert(source, target, format, opts = {})
@@ -46,15 +46,20 @@ module Libis
 
         def split(source, target)
 
-          options = @page ? ['--page', @page] : ['--every_page']
-          using_temp(target) do |tmpname|
-            result = Libis::Format::Tool::PdfSplit.run(source, tmpname, *options)
-            unless result[:err].empty?
-              error("Pdf split encountered errors:\n%s", result[:err].join(join("\n")))
-              next nil
-            end
-            tmpname
+          result = Libis::Format::Tool::PdfSplit.run(
+            source, target,
+            @options.map { |k, v|
+              if v.nil?
+                nil
+              else
+                ["--#{k}", v]
+              end }.compact.flatten
+          )
+          unless result[:err].empty?
+            error("Pdf split encountered errors:\n%s", result[:err].join(join("\n")))
+            return nil
           end
+          result[:out]
 
         end
 

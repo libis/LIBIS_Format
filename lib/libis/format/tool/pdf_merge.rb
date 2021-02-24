@@ -27,9 +27,9 @@ module Libis
           timeout = Libis::Format::Config[:timeouts][:pdf_merge]
           result = Libis::Tools::Command.run(
               Libis::Format::Config[:java_cmd],
-              '-cp', Libis::Format::Config[:pdf_tool],
-              'MergePdf',
-              '--file_output', target,
+              '-jar', Libis::Format::Config[:pdf_tool],
+              'merge',
+              '-o', target,
               *options,
               *source,
               timeout: timeout,

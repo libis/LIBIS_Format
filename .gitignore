@@ -18,3 +18,5 @@ mkmf.log
 *.pyc
 tools/pdf/
 /test*
+/*~
+/*.pdf

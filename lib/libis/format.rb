@@ -19,3 +19,9 @@ module Libis
 
   end
 end
+
+class Object
+  def blank?
+    respond_to?(:empty?) ? !!empty? : !self
+  end unless defined? :blank?
+end
