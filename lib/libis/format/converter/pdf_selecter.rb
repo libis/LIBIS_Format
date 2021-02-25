@@ -26,13 +26,26 @@ module Libis
 
         def initialize
           super
-          @options[:range] = []
+          @options[:ranges] = []
         end
 
         # Select a partial list of pages
         # @param [String] selection as described in com.itextpdf.text.pdf.SequenceList: [!][o][odd][e][even]start-end
         def range(selection)
-          @options[:range] << selection unless selection.blank?
+          @options[:ranges] += selection.split(/\s*,\s*/) unless selection.blank?
+        end
+
+        # Select a partial list of pages
+        # @param [String|Array<String>] selection as described in com.itextpdf.text.pdf.SequenceList: [!][o][odd][e][even]start-end
+        def ranges(selection)
+          case selection
+          when Array
+            @options[:ranges] += selection unless selection.empty?
+          when String
+            range(selection)
+          else
+            # nothing
+          end
         end
 
         def convert(source, target, format, opts = {})
@@ -52,15 +65,8 @@ module Libis
         def convert_pdf(source, target)
 
           using_temp(target) do |tmpname|
-            result = Libis::Format::Tool::PdfSelect.run(
-              source, tmpname,
-              @options.map { |k, v|
-                if v.nil?
-                  nil
-                else
-                  ["--#{k}", v]
-                end }.compact.flatten
-            )
+            opts = @options[:ranges].map { |range| ["-r", range] }.compact.flatten
+            result = Libis::Format::Tool::PdfSelect.run(source, tmpname, opts)
             unless result[:err].empty?
               error("Pdf selection encountered errors:\n%s", result[:err].join(join("\n")))
               next nil
