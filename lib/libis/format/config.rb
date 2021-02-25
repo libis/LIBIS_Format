@@ -30,19 +30,20 @@ module Libis
     Config[:watermark_font] = '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf'
     Config[:timeouts] = {
         droid: 20 * 60,
-        ffmpeg: 5 * 60,
+        ffmpeg: 500 * 60,
         fido: 20 * 60,
-        file_tool: 5 * 60,
-        fop: 5 * 60,
-        identification_tool: 5 * 60,
-        office_to_pdf: 5 * 60,
-        pdf_select: 5 * 60,
-        pdf_copy: 5 * 60,
-        pdf_merge: 5 * 60,
-        pdf_optimizer: 5 * 60,
-        pdf_split: 5 * 60,
-        pdf_to_pdfa: 5 * 60,
-        pdfa_validator: 5 * 60,
+        file_tool: 20 * 60,
+        fop: 50 * 60,
+        identification_tool: 50 * 60,
+        office_to_pdf: 50 * 60,
+        pdf_select: 50 * 60,
+        pdf_copy: 50 * 60,
+        pdf_merge: 50 * 60,
+        pdf_optimizer: 50 * 60,
+        pdf_split: 50 * 60,
+        pdf_watermark: 50 * 60,
+        pdf_to_pdfa: 50 * 60,
+        pdfa_validator: 50 * 60,
     }
 
   end
