@@ -51,11 +51,13 @@ module Libis
           @options[:progression_order] = value
         end
 
-        def tile_size(width = 1024, height = 1024)
+        def tile_size(width = 1024, height = nil)
+          height ||= width
           @options[:tile_size] = [width, height]
         end
 
-        def codeblock_size(height = 6, width = 6)
+        def codeblock_size(width = 6, height = nil)
+          height ||= width
           @options[:codeblock_size] = [height, width]
         end
 

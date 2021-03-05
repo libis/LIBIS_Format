@@ -40,9 +40,9 @@ module Libis
         def ranges(selection)
           case selection
           when Array
-            @options[:ranges] += selection unless selection.empty?
+            @options[:ranges] += selection.to_s unless selection.empty?
           when String
-            range(selection)
+            range([selection])
           else
             # nothing
           end

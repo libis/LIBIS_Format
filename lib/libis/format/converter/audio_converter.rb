@@ -128,12 +128,12 @@ module Libis
           opts[:output] << '-map_metadata:g' << '0:g' # Copy global metadata
           opts[:output] << '-map_metadata:s:a' << '0:s:a' # Copy audio metadata
           opts[:input] << '-accurate_seek' << (@options[:start].to_i < 0 ? '-sseof' : '-ss') << @options[:start] if @options[:start]
-          opts[:input] << '-t' << @options[:duration] if @options[:duration]
-          opts[:output] << '-q:a' << @options[:quality] if @options[:quality]
-          opts[:output] << '-b:a' << @options[:bit_rate] if @options[:bit_rate]
-          opts[:output] << '-ar' << @options[:sampling_freq] if @options[:sampling_freq]
-          opts[:output] << '-ac' << @options[:channels] if @options[:channels]
-          opts[:output] << '-f' << @options[:format] if @options[:format]
+          opts[:input] << '-t' << @options[:duration].to_s if @options[:duration]
+          opts[:output] << '-q:a' << @options[:quality].to_s if @options[:quality]
+          opts[:output] << '-b:a' << @options[:bit_rate].to_s if @options[:bit_rate]
+          opts[:output] << '-ar' << @options[:sampling_freq].to_s if @options[:sampling_freq]
+          opts[:output] << '-ac' << @options[:channels].to_s if @options[:channels]
+          opts[:output] << '-f' << @options[:format].to_s if @options[:format]
           result = Libis::Format::Tool::FFMpeg.run(source, target, opts)
           info "FFMpeg output: #{result}"
           result

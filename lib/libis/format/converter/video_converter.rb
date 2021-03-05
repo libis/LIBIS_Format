@@ -31,7 +31,7 @@ module Libis
         end
 
         def audio_channels(value)
-          @options[:audio_channels] = value.to_s
+          @options[:audio_channels] = value
         end
 
         def audio_codec(codec)
@@ -43,39 +43,39 @@ module Libis
         end
 
         def start(seconds)
-          @options[:start] = seconds.to_s
+          @options[:start] = seconds
         end
 
         def duration(seconds)
-          @options[:duration] = seconds.to_s
+          @options[:duration] = seconds
         end
 
         def audio_quality(value)
-          @options[:audio_quality] = value.to_s
+          @options[:audio_quality] = value
         end
 
         def video_quality(value)
-          @options[:video_quality] = value.to_s
+          @options[:video_quality] = value
         end
 
         def audio_bitrate(value)
-          @options[:audio_bitrate] = value.to_s
+          @options[:audio_bitrate] = value
         end
 
         def video_bitrate(value)
-          @options[:video_bitrate] = value.to_s
+          @options[:video_bitrate] = value
         end
 
         def constant_rate_factor(value)
-          @options[:crf] = value.to_s
+          @options[:crf] = value
         end
 
         def frame_rate(value)
-          @options[:frame_rate] = value.to_s
+          @options[:frame_rate] = value
         end
 
         def sampling_freq(value)
-          @options[:sampling_freq] = value.to_s
+          @options[:sampling_freq] = value
         end
 
         def scale(width_x_height)
@@ -239,21 +239,21 @@ module Libis
                 ] if @options[:watermark_text_shadow_offset] > 0
             opts[:filter] << '-vf' << filter_text
           end
-          opts[:output] << '-ac' << @options[:audio_channels] if @options[:audio_channels]
-          opts[:output] << '-c:a' << @options[:audio_codec] if @options[:audio_codec]
-          opts[:output] << '-c:v' << @options[:video_codec] if @options[:video_codec]
-          opts[:output] << '-b:a' << @options[:audio_bitrate] if @options[:audio_bitrate]
-          opts[:output] << '-b:v' << @options[:video_bitrate] if @options[:video_bitrate]
-          opts[:output] << '-crf' << @options[:crf] if @options[:crf]
+          opts[:output] << '-ac' << @options[:audio_channels].to_s if @options[:audio_channels]
+          opts[:output] << '-c:a' << @options[:audio_codec].to_s if @options[:audio_codec]
+          opts[:output] << '-c:v' << @options[:video_codec].to_s if @options[:video_codec]
+          opts[:output] << '-b:a' << @options[:audio_bitrate].to_s if @options[:audio_bitrate]
+          opts[:output] << '-b:v' << @options[:video_bitrate].to_s if @options[:video_bitrate]
+          opts[:output] << '-crf' << @options[:crf].to_s if @options[:crf]
           opts[:output] << '-map_metadata:g' << '0:g' # Copy global metadata
           opts[:output] << '-map_metadata:s:a' << '0:s:a' # Copy audio metadata
           opts[:output] << '-map_metadata:s:v' << '0:s:v' # Copy video metadata
-          opts[:input] << '-accurate_seek' << (@options[:start].to_i < 0 ? '-sseof' : '-ss') << @options[:start] if @options[:start]
-          opts[:input] << '-t' << @options[:duration] if @options[:duration]
-          opts[:output] << '-qscale' << @options[:video_quality] if @options[:video_quality]
-          opts[:output] << '-q:a' << @options[:audio_quality] if @options[:audio_quality]
-          opts[:output] << '-r' << @options[:frame_rate] if @options[:frame_rate]
-          opts[:output] << '-ar' << @options[:sampling_freq] if @options[:sampling_freq]
+          opts[:input] << '-accurate_seek' << (@options[:start].to_i < 0 ? '-sseof' : '-ss') << @options[:start].to_s if @options[:start]
+          opts[:input] << '-t' << @options[:duration].to_s if @options[:duration]
+          opts[:output] << '-qscale' << @options[:video_quality].to_s if @options[:video_quality]
+          opts[:output] << '-q:a' << @options[:audio_quality].to_s if @options[:audio_quality]
+          opts[:output] << '-r' << @options[:frame_rate].to_s if @options[:frame_rate]
+          opts[:output] << '-ar' << @options[:sampling_freq].to_s if @options[:sampling_freq]
           if @options[:scale]
             scale = @options[:scale].split('x')
             width = scale[0]

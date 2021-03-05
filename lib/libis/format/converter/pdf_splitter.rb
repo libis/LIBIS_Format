@@ -52,7 +52,7 @@ module Libis
               if v.nil?
                 nil
               else
-                ["--#{k}", v]
+                ["--#{k}", v.to_s]
               end }.compact.flatten
           )
           unless result[:err].empty?

@@ -130,7 +130,7 @@ module Libis
             colorspace = @options.delete(:colorspace) || 'sRGB'
             unless @options.empty?
               convert.colorspace('RGB')
-              @options.each {|o, v| convert.send(o, v)}
+              @options.each {|o, v| convert.send(o, v.to_s)}
             end
             convert.colorspace(colorspace)
             convert.profile @profile if @profile

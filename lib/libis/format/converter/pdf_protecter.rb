@@ -103,7 +103,7 @@ module Libis
                     nil
                   else
                     k = OPTIONS_TABLE[k] || k
-                    ["--#{k}", v]
+                    ["--#{k}", v.to_s]
                   end
                 },
                 @flags.map { |k, v|
