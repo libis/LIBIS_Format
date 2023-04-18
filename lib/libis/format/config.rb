@@ -12,6 +12,7 @@ module Libis
     Config[:java_cmd] = 'java'
     Config[:j2k_cmd] = 'j2kdriver'
     Config[:soffice_cmd] = 'soffice'
+    Config[:emai2pdf_cmd] = 'convert_email'
     Config[:ghostscript_cmd] = 'gs'
     Config[:droid_cmd] = '/opt/droid/droid.sh'
     Config[:droid_temp_path] = '/tmp'
@@ -34,6 +35,7 @@ module Libis
         fop: 5 * 60,
         identification_tool: 5 * 60,
         office_to_pdf: 5 * 60,
+        email2pdf: 5 * 60,
         pdf_copy: 5 * 60,
         pdf_merge: 5 * 60,
         pdf_optimizer: 5 * 60,
