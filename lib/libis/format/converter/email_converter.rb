@@ -4,6 +4,7 @@ require_relative 'base'
 
 require 'libis/format/tool/email_to_pdf'
 require 'libis/format/type_database'
+require 'rexml/document'
 
 module Libis
   module Format
@@ -27,10 +28,7 @@ module Libis
         def convert(source, target, format, opts = {})
           super
 
-          return nil unless Format::Tool::EmailToPdf.run(source, target)
-
-          target
-
+          Format::Tool::EmailToPdf.run(source, target)&.merge(converter: self.class.name)
         end
 
       end
