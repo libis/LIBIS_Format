@@ -97,19 +97,18 @@ module Libis
 
           end
 
-          target
-
         end
 
         def assemble_and_convert(sources, target)
+          result = {}
           Tempfile.create(%w(list .txt)) do |f|
             sources.each {|src| f.puts src}
             opts[:global] ||= []
             opts[:global] += %w(-f concat)
             f.close
-            target = convert_file(f.to_path, target)
+            result = convert_file(f.to_path, target)
           end
-          target
+          result
         end
 
         def self.sounds_like(file1, file2, threshold, rate, channels)
@@ -155,6 +154,7 @@ module Libis
 
         def convert_file(source, target)
           opts = {global: [], input: [], filter: [], output: []}
+
           opts[:global] << '-hide_banner'
           opts[:global] << '-loglevel' << (@options[:quiet] ? 'fatal' : 'warning')
           opts[:output] << '-vn' # disable input video stream in case it exists
@@ -168,10 +168,8 @@ module Libis
           opts[:output] << '-ar' << @options[:sampling_freq] if @options[:sampling_freq]
           opts[:output] << '-ac' << @options[:channels] if @options[:channels]
           opts[:output] << '-f' << @options[:format] if @options[:format]
-          result = Libis::Format::Tool::FFMpeg.run(source, target, opts)
-          info "FFMpeg output: #{result}"
-          result
-          target
+
+          Libis::Format::Tool::FFMpeg.run(source, target, opts)&.merge(converter: self.class.name)
         end
 
       end

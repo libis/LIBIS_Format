@@ -38,7 +38,11 @@ module Libis
 
           warn "FFMpeg warnings: #{(result[:err] + result[:out]).join("\n")}" unless result[:err].empty?
 
-          result[:out]
+          {
+            command: result,
+            files: [ target ]
+          }
+
         end
 
       end

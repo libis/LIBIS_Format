@@ -69,6 +69,8 @@ module Libis
 
           temp_files = []
 
+          result = { commands: [] }
+
           # noinspection RubyParenthesesAroundConditionInspection
           result = @converter_chain.each_with_index do |node, i|
 
@@ -90,10 +92,16 @@ module Libis
 
             FileUtils.mkdir_p File.dirname(target)
 
-            src_file = converter.convert(src_file, target, target_type)
+            r = converter.convert(src_file, target, target_type)
 
+            src_file = r[:files].first
             break :failed unless src_file
 
+            result[:commands] << r.merge
+
+            if i == size - 1
+              result.merge!(r.slice(r.keys - [:command, :converter]))
+            end
           end
 
           temp_files.each do |f|
