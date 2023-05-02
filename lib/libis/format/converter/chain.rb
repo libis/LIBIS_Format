@@ -97,12 +97,14 @@ module Libis
             src_file = r[:files].first
             break :failed unless src_file
 
-            result[:commands] << r.merge
+            result[:commands] << r.merge(converter: converter_class.name)
 
             if i == size - 1
-              result.merge!(r.slice(r.keys - [:command, :converter]))
+              result[files:] = r[:files]
             end
           end
+
+          result[:files] = result[:commands].last[:files]
 
           temp_files.each do |f|
             FileUtils.rm(f, force: true)

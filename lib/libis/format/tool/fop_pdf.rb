@@ -13,6 +13,12 @@ module Libis
       class FopPdf
         include ::Libis::Tools::Logger
 
+        def self.installed?
+          result = Libis::Tools::Command.run(Libis::Format::Config[:java_cmd], "-version")
+          return false unless result[:status] == 0
+          File.exist?(Libis::Format::Config[:fop_jar])
+        end
+
         def self.run(xml, target, options = [])
           self.new.run xml, target, options
         end
@@ -36,6 +42,11 @@ module Libis
 
           raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
           raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0
+
+          {
+            command: result,
+            files: [ target ]
+          }
 
         end
       end

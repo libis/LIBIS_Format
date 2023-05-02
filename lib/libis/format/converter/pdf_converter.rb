@@ -119,7 +119,10 @@ module Libis
             result = pdf_to_pdfa(source, target)
           end
 
-          result
+          { 
+            files: [result]
+            converter: self.class.name
+          }
 
         end
 

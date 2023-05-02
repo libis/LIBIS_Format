@@ -31,9 +31,7 @@ module Libis
         def convert(source, target, format, opts = {})
           super
 
-          return nil unless Format::Tool::SpreadsheetToOds.run(source, target)
-
-          target
+          Format::Tool::SpreadsheetToOds.run(source, target)
 
         end
 

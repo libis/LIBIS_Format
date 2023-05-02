@@ -16,6 +16,11 @@ module Libis
       class PdfToPdfa
         include ::Libis::Tools::Logger
 
+        def self.installed?
+          result = Libis::Tools::Command.run(Libis::Format::Config[:ghostscript_cmd])
+          result == 0
+        end
+
         def self.run(source, target = nil, options = {})
           self.new.run source, target, options
         end
@@ -61,7 +66,11 @@ module Libis
             result[:err] << 'Failed to validate generated PDF/A file.'
           end
 
-          result
+          {
+            command: result,
+            files: [ target ]
+          }
+
         end
 
 

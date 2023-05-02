@@ -13,6 +13,12 @@ module Libis
       class PdfSplit
         include ::Libis::Tools::Logger
 
+        def self.installed?
+          result = Libis::Tools::Command.run(Libis::Format::Config[:java_cmd], "-version")
+          return false unless result[:status] == 0
+          File.exist?(Libis::Format::Config[:pdf_tool])
+        end
+
         def self.run(source, target, options = [])
           self.new.run source, target, options
         end
@@ -38,7 +44,11 @@ module Libis
           raise RuntimeError, "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
           raise RuntimeError, "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
 
-          result
+          {
+            command: result,
+            files: [ target ] # TODO: collect the files
+          }
+
         end
       end
 

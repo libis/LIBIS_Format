@@ -180,9 +180,11 @@ module Libis
               convert_image(source, target, format)
             end
           end
-
-          target
-
+          
+          { 
+            files: [target],
+            converter: self.class.name
+          }
         end
 
         def assemble_and_convert(sources, target, format)

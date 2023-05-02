@@ -28,7 +28,7 @@ module Libis
         def convert(source, target, format, opts = {})
           super
 
-          Format::Tool::EmailToPdf.run(source, target)&.merge(converter: self.class.name)
+          Format::Tool::EmailToPdf.run(source, target)
         end
 
       end

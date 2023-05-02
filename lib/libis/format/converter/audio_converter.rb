@@ -169,7 +169,7 @@ module Libis
           opts[:output] << '-ac' << @options[:channels] if @options[:channels]
           opts[:output] << '-f' << @options[:format] if @options[:format]
 
-          Libis::Format::Tool::FFMpeg.run(source, target, opts)&.merge(converter: self.class.name)
+          Libis::Format::Tool::FFMpeg.run(source, target, opts)
         end
 
       end

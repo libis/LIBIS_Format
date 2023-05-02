@@ -1,5 +1,5 @@
 require_relative 'base'
-require 'libis/format/tool/ffmpeg'
+require 'libis/format/tool/ff_mpeg'
 
 require 'fileutils'
 
@@ -179,7 +179,10 @@ module Libis
 
           end
 
-          target
+          {
+            files: [target],
+            converter: self.class.name
+          }
 
         end
 

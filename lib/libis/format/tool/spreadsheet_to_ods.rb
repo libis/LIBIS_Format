@@ -13,6 +13,11 @@ module Libis
       class SpreadsheetToOds
         include ::Libis::Tools::Logger
 
+        def self.installed?
+          result = Libis::Tools::Command.run(Libis::Format::Config[:soffice_cmd], "--version")
+          result == 0
+        end
+
         def self.run(source, target, options = {})
           self.new.run source, target, options
         end
@@ -51,7 +56,11 @@ module Libis
         ensure
           FileUtils.rmtree workdir rescue nil
 
-          result[:out]
+          {
+            command: result,
+            files: [ target ]
+          }
+
         end
       end
 

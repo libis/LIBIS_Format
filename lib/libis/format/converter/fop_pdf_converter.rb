@@ -31,8 +31,6 @@ module Libis
 
           Libis::Format::Tool::FopPdf.run(source, target)
 
-          target
-
         end
 
       end

@@ -90,16 +90,16 @@ module Libis
           end
 
 
-          Libis::Tools::Command.run(
+          result = Libis::Tools::Command.run(
               Libis::Format::Config[:j2k_cmd],
               '--input-file-name', source,
               '--set-output-type', 'JP2',
               *options,
               '--output-file-name', target,
-
           )
 
-          target
+          result.merge(files: [target], converter: self.class.name)
+
         end
       end
     end

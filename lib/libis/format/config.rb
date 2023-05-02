@@ -12,7 +12,6 @@ module Libis
     Config[:java_cmd] = 'java'
     Config[:j2k_cmd] = 'j2kdriver'
     Config[:soffice_cmd] = 'soffice'
-    Config[:emai2pdf_cmd] = 'convert_email'
     Config[:ghostscript_cmd] = 'gs'
     Config[:droid_cmd] = '/opt/droid/droid.sh'
     Config[:droid_temp_path] = '/tmp'
@@ -22,6 +21,7 @@ module Libis
     Config[:fido_formats] = [(File.join(Libis::Format::DATA_DIR, 'lias_formats.xml'))]
     Config[:pdf_tool] = File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar')
     Config[:preflight_jar] = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-2.0.13.jar')
+    Config[:emai2pdf_jar] = File.join(Libis::Format::TOOL_DIR, 'emailconverter.jar')
     # noinspection RubyStringKeysInHashInspection
     Config[:xml_validations] = [['archive/ead', File.join(Libis::Format::DATA_DIR, 'ead.xsd')]]
     Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
