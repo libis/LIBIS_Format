@@ -68,15 +68,17 @@ module Libis
           end
 
           temp_files = []
+          xtra_files = []
 
           result = { commands: [] }
 
           # noinspection RubyParenthesesAroundConditionInspection
-          result = @converter_chain.each_with_index do |node, i|
+          conversion_success = converter_chain.each_with_index do |node, i|
 
             target_type = node[:output]
             converter_class = node[:converter]
             converter = converter_class.new
+
 
             node[:operations].each do |operation|
               converter.send operation[:method], operation[:argument]
@@ -95,22 +97,22 @@ module Libis
             r = converter.convert(src_file, target, target_type)
 
             src_file = r[:files].first
-            break :failed unless src_file
+            xtra_files += r[:files][1..]
+            break :failed unless src_file1
 
             result[:commands] << r.merge(converter: converter_class.name)
 
-            if i == size - 1
-              result[files:] = r[:files]
-            end
+            :success
+
           end
 
-          result[:files] = result[:commands].last[:files]
+          result[:files] = [src_file] + xtra_files
 
           temp_files.each do |f|
             FileUtils.rm(f, force: true)
           end
 
-          result == :failed ? nil : target_file
+          conversion_success == :failed ? nil : result
 
         end
 
