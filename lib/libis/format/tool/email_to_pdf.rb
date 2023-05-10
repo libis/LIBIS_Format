@@ -26,8 +26,8 @@ module Libis
           timeout = Libis::Format::Config[:timeouts][:email2pdf] || 120
           result = Libis::Tools::Command.run(
             Libis::Format::Config[:java_cmd],
-            "-Duser.timezone=Europe/Brussels -Duser.language=nl -Duser.country=BE",
-            "jar", Libis::Format::Config[:email2pdf_cmd],
+            "-Duser.timezone=Europe/Brussels", "-Duser.language=nl", "-Duser.country=BE",
+            "-jar", Libis::Format::Config[:email2pdf_jar],
             "-e", "-hd", "-a",
             "-o", target,
             source,
@@ -35,7 +35,7 @@ module Libis
             kill_after: timeout * 2
           )
 
-          warn "EmailToPdf conversion messages: \n\t#{result[:out].join("\n\t")}" unless result[:out].empty?
+          warn "EmailToPdf conversion messages: \n\t#{result[:err].join("\n\t")}" unless result[:err].empty?
 
           raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
           raise "#{self.class} failed to generate target file #{target}" unless File.exist?(target)
@@ -59,7 +59,7 @@ module Libis
           return headers unless File.exist?(headers_file)
           doc = REXML::Document.new(File.new(headers_file))
           root = doc.root
-          root.elements("/emailheader/*").each do |element|
+          root.children.each do |element|
             case element.name
             when "attachments"
               headers[:attachments] = element.elements.map { |e| e.text }
