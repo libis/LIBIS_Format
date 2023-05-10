@@ -12,7 +12,7 @@ formatlist =
         'test.odt' => {mimetype: 'application/vnd.oasis.opendocument.text', puid: 'fmt/291'},
         'test.doc' => {mimetype: 'application/msword', puid: 'fmt/40'},
         'test.docx' => {mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', puid: 'fmt/412'},
-        'test.pdf' => {mimetype: 'application/pdf', puid: 'fmt/276'},
+        'test.pdf' => {mimetype: 'application/pdf', puid: 'fmt/20'},
         'test.rtf' => {mimetype: 'application/rtf', puid: 'fmt/45'},
         'test.txt' => {mimetype: 'text/plain', puid: 'x-fmt/111'},
         'test.ods' => {mimetype: 'application/vnd.oasis.opendocument.spreadsheet', puid: 'fmt/295'},
@@ -28,6 +28,10 @@ formatlist =
         'test.jpg' => {mimetype: 'image/jpeg', puid: 'fmt/43'},
         'test.gif' => {mimetype: 'image/gif', puid: 'fmt/4'},
         'test.xml' => {mimetype: 'text/xml', puid: 'fmt/101'},
+        'test2.html' => {mimetype: 'text/html', puid: 'fmt/471'},
+        'test2.pdf' => {mimetype: 'application/pdf', puid: 'fmt/18'},
+        'test3.html' => {mimetype: 'text/html', puid: 'fmt/471'},
+        'test3.pdf' => {mimetype: 'application/pdf', puid: 'fmt/18'},
         'test-ead.xml' => {mimetype: 'archive/ead', puid: 'fmt/101'},
         'NikonRaw-CaptureOne.tif' => {mimetype: 'image/tiff', puid: 'x-fmt/387'},
         'NikonRaw-CameraRaw.TIF' => {mimetype: 'image/tiff', puid: 'fmt/353'},
@@ -42,7 +46,7 @@ fidolist =
         'test.odt' => {mimetype: 'application/vnd.oasis.opendocument.text', puid: 'fmt/290'},
         'test.doc' => {mimetype: nil, puid: 'fmt/111'},
         'test.docx' => {mimetype: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', puid: 'fmt/412'},
-        'test.pdf' => {mimetype: 'application/pdf', puid: 'fmt/276'},
+        'test.pdf' => {mimetype: 'application/pdf', puid: 'fmt/20'},
         'test.rtf' => {mimetype: 'application/rtf', puid: 'fmt/45'},
         'test.txt' => {mimetype: 'text/plain', puid: 'x-fmt/111'},
         'test.ods' => {mimetype: 'application/vnd.oasis.opendocument.spreadsheet', puid: 'fmt/294'},
@@ -58,6 +62,10 @@ fidolist =
         'test.jpg' => {mimetype: 'image/jpeg', puid: 'fmt/43'},
         'test.gif' => {mimetype: 'image/gif', puid: 'fmt/4'},
         'test.xml' => {mimetype: 'text/xml', puid: 'fmt/101'},
+        'test2.html' => {mimetype: 'text/html', puid: 'fmt/471'},
+        'test2.pdf' => {mimetype: 'application/pdf', puid: 'fmt/18'},
+        'test3.html' => {mimetype: 'text/html', puid: 'fmt/471'},
+        'test3.pdf' => {mimetype: 'application/pdf', puid: 'fmt/18'},
         'test-ead.xml' => {mimetype: 'text/xml', puid: 'fmt/101'},
         'NikonRaw-CaptureOne.tif' => {mimetype: 'image/tiff', puid: 'fmt/353'},
         'NikonRaw-CameraRaw.TIF' => {mimetype: 'image/tiff', puid: 'fmt/353'},
@@ -110,7 +118,7 @@ describe 'Identfier' do
     end
 
     it 'should identify all files in a list at once' do
-      filelist = fidolist.keys.map {|file| File.join(data_dir, file)}
+      filelist = formatlist.keys.map {|file| File.join(data_dir, file)}
       result = identifier.get (filelist)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
@@ -119,7 +127,7 @@ describe 'Identfier' do
     end
 
     it 'should identify all files in a list with base_dir option' do
-      filelist = fidolist.keys.map {|file| File.join(data_dir, file)}
+      filelist = formatlist.keys.map {|file| File.join(data_dir, file)}
       result = identifier.get(filelist, base_dir: data_dir)
       expect(result[:formats].size).to be >= formatlist.size
       formatlist.each do |file, format|
@@ -134,7 +142,7 @@ describe 'Identfier' do
     # expect(identifier.fido_formats.size).to be 1
     # expect(File.basename(identifier.fido_formats.first)).to eq 'lias_formats.xml'
     it 'should identify list of test documents' do
-      filelist = formatlist.keys.map {|file| File.join(data_dir, file)}
+      filelist = fidolist.keys.map {|file| File.join(data_dir, file)}
       fido_result = ::Libis::Format::Tool::Fido.instance.run_list(filelist)
       filelist.each do |filename|
         result = fido_result[filename]
