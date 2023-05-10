@@ -53,13 +53,13 @@ module Libis
 
           FileUtils.copy tgt_file, target, preserve: true
 
-        ensure
-          FileUtils.rmtree workdir rescue nil
-
           {
             command: result,
             files: [ target ]
           }
+
+        ensure
+          FileUtils.rmtree workdir rescue nil
 
         end
       end

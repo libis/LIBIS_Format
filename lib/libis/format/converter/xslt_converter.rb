@@ -1,17 +1,17 @@
-require_relative 'base'
+require_relative "base"
 
 module Libis
   module Format
     module Converter
-
       class XsltConverter < Libis::Format::Converter::Base
-
         def self.input_types
           [:XML]
         end
 
         def self.output_types(format = nil)
-          return [] unless input_types.include?(format) if format
+          if format
+            return [] unless input_types.include?(format)
+          end
           [:XML, :HTML, :TXT]
         end
 
@@ -28,20 +28,20 @@ module Libis
           end
 
           unless @options[:xsl_file]
-            error 'No xsl_file supplied'
+            error "No xsl_file supplied"
             return nil
           end
 
           FileUtils.mkpath(File.dirname(target))
 
           if RUBY_PLATFORM == "java"
-            require 'saxon-xslt'
+            require "saxon-xslt"
             xsl = Saxon.XSLT(File.open(@options[:xsl_file]))
             xml = Saxon.XML(File.open(source))
             result = xsl.transform(xml)
-            File.open(target, 'w') {|f| f.write(result.to_s)}
+            File.write(target, result.to_s)
           else
-            require 'nokogiri'
+            require "nokogiri"
 
             doc = nil
             begin
@@ -65,7 +65,7 @@ module Libis
             xsl = nil
 
             begin
-              fp = File.open(file, 'r')
+              fp = File.open(file, "r")
               xsl = Nokogiri::XSLT(fp) do |config|
                 config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOBLANKS
               end
@@ -80,7 +80,7 @@ module Libis
 
             begin
               target_xml = xsl.transform(doc)
-              fp = File.open(target, 'w')
+              fp = File.open(target, "w")
               fp.write(target_xml)
             rescue Exception => e
               error "Error transforming '#{source}' with '#{file}': #{e.message} @ #{e.backtrace[0]}"
@@ -89,13 +89,14 @@ module Libis
               fp.close unless fp.nil? or fp.closed?
             end
 
-            target
+            {
+              command: {status: 0},
+              files: [target]
+            }
+
           end
-
         end
-
       end
-
     end
   end
 end
