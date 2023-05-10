@@ -18,3 +18,4 @@ mkmf.log
 *.pyc
 tools/pdf/
 /test*
+.rake_tasks~
