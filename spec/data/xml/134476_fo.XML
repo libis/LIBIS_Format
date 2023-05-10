@@ -16,7 +16,7 @@
   <fo:page-sequence master-reference="cover">
     <fo:flow flow-name="xsl-region-body">
       <fo:block font-family="Times" space-before="0.5in" text-align="left">
-        <fo:external-graphic content-height="40" content-width="90" src="url('http://www.lias.be/themes/LIAS/images/lias.jpg')"/>
+        <fo:external-graphic content-height="40" content-width="90" src="url('https://libis.be/themes/default/images/lias_logo_small.png')"/>
       </fo:block>
       <fo:block space-before="0.1in" font-size="18pt" font-family="Times" font-weight="bold" text-align="center">Plaatsingslijst van het archief Katholieke Arbeiders Vrouwenbeweging (KAV) afdeling Sint-Elisabeth Borgerhout</fo:block>
       <fo:block font-size="10pt" font-family="Times" space-before="1.0in" text-align="left">Deze EAD-export werd op 23 januari  2014 automatisch gegenereerd.<fo:block/>LIAS bevat voor sommige beschrijvingen meer gegevens, en laat toe om digitale objecten die aanwezig zijn in het digitale depot rechtstreeks te raadplegen.<fo:block/>U kan het beschreven archief raadplegen via <fo:basic-link font-weight="bold" external-destination="http://abs.lias.be/Query/detail.aspx?ID=134476">LIAS</fo:basic-link><fo:block font-family="Times"><fo:leader leader-length="100%" leader-pattern="rule"/></fo:block></fo:block>
@@ -55,8 +55,10 @@
           <fo:leader leader-pattern="dots"/>
           <fo:page-number-citation ref-id="DISP_TITEL_1_3"/>
         </fo:block>
-        <fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
-          <fo:basic-link internal-destination="DISP_TITEL_1_4">Omvang en medium</fo:basic-link>
+        <fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
+          <fo:basic-link internal-destination="DISP_TITEL_1_4">
+            <fo:inline font-weight="bold">• OMVANG EN MEDIUM</fo:inline>
+          </fo:basic-link>
           <fo:leader leader-pattern="dots"/>
           <fo:page-number-citation ref-id="DISP_TITEL_1_4"/>
         </fo:block>
@@ -154,12 +156,12 @@
           <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_3">Datering</fo:block>
           <fo:block/>
           <fo:block font-family="Times">
-            <fo:block font-family="Times">1917-1970; 1990</fo:block>
+            <fo:block font-family="Times" linefeed-treatment="preserve">1917-1970; 1990</fo:block>
           </fo:block>
-          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_4">Omvang en medium</fo:block>
+          <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_4">• OMVANG EN MEDIUM</fo:block>
           <fo:block/>
           <fo:block font-family="Times">
-            <fo:block font-family="Times">0,4 strekkende meter</fo:block>
+            <fo:block font-family="Times" linefeed-treatment="preserve">0,4 strekkende meter</fo:block>
           </fo:block>
         </fo:block>
       </fo:block>
@@ -174,7 +176,7 @@
           <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_2_4">Verwerving</fo:block>
           <fo:block/>
           <fo:block font-family="Times">
-            <fo:block font-family="Times">In het archief van het KAV-verbond Antwerpen zoals het in 2008 werd overgemaakt aan KADOC bevond zich ook een afzonderlijke en zeer boeiend afdelingsarchief, namelijk dit van de Sint-Elisabethgilde, de KAV-afdeling van de Parochie van Sint-Jan, Borgerhout. (1917-1980). Dit archief werd in KADOC uit het archief van de KAV-verbond Antwerpen gelicht en als een afzonderlijk archief behandeld.</fo:block>
+            <fo:block font-family="Times" linefeed-treatment="preserve">In het archief van het KAV-verbond Antwerpen zoals het in 2008 werd overgemaakt aan KADOC bevond zich ook een afzonderlijke en zeer boeiend afdelingsarchief, namelijk dit van de Sint-Elisabethgilde, de KAV-afdeling van de Parochie van Sint-Jan, Borgerhout. (1917-1980). Dit archief werd in KADOC uit het archief van de KAV-verbond Antwerpen gelicht en als een afzonderlijk archief behandeld.</fo:block>
           </fo:block>
         </fo:block>
       </fo:block>
@@ -185,7 +187,13 @@
           <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_3_1">Bereik en inhoud</fo:block>
           <fo:block/>
           <fo:block font-family="Times">
-            <fo:block font-family="Times">Het archief van de de Sint-Elisabethgilde bevat 4 handgeschreven verslagboeken van deze KAV-afdeling betrefende de periode van 1917-1927 en 1937-1980. Verder is er een album met foto's van de jaren 1926 tot 1944. Tenslotte zijn er ook een 11-tal gebedenboeken uit de periode 1928 tot 1934. "Deze stukken belichten nauwgezet de werking van de gilde in al haar aspecten: inspiratie en bestuur, leden en activiteiten, propaganda en verwevenheid met het lokale parochiale, sociale en politieke weefsel. Ze tonen een vooroorlogs (katholiek) Borgerhout van processies, gilde- en koffiefeesten, bedevaarten, religieuze vieringen, studiekringen, spaarkassen en vakbonden voor vrouwen. Uit de documenten blijkt de verbazingwekkende schaal (600 tot 700 leden) en intensiteit van de werking van de Sint-Elisabethgilde. De archivalia wachten op een onderzoeker die zijn/haar tanden zet in dit merkwaardige stukje vrouwengeschiedenis op microniveau." Citaat uit "Voor de  'stoffelijke, zedelijke en god, sdienstige belangen der vrouw'. Archief katholieke vrouwengilde Sint-Elisabeth Borgerhout" KADOC-e-nieuwsbrief, 5de jg., nr. 11, november 2008.</fo:block>
+            <fo:block font-family="Times" linefeed-treatment="preserve">Het archief van de de Sint-Elisabethgilde bevat 4 handgeschreven verslagboeken van deze KAV-afdeling betrefende de periode van 1917-1927 en 1937-1980. Verder is er een album met foto's van de jaren 1926 tot 1944. Tenslotte zijn er ook een 11-tal gebedenboeken uit de periode 1928 tot 1934. 	
+
+"Deze stukken belichten nauwgezet de werking van de gilde in al haar aspecten: inspiratie en bestuur, leden en activiteiten, propaganda en verwevenheid met het lokale parochiale, sociale en politieke weefsel. Ze tonen een vooroorlogs (katholiek) Borgerhout van processies, gilde- en koffiefeesten, bedevaarten, religieuze vieringen, studiekringen, spaarkassen en vakbonden voor vrouwen.
+
+Uit de documenten blijkt de verbazingwekkende schaal (600 tot 700 leden) en intensiteit van de werking van de Sint-Elisabethgilde. De archivalia wachten op een onderzoeker die zijn/haar tanden zet in dit merkwaardige stukje vrouwengeschiedenis op microniveau."
+
+Citaat uit "Voor de  'stoffelijke, zedelijke en god, sdienstige belangen der vrouw'. Archief katholieke vrouwengilde Sint-Elisabeth Borgerhout" KADOC-e-nieuwsbrief, 5de jg., nr. 11, november 2008.</fo:block>
           </fo:block>
         </fo:block>
       </fo:block>
@@ -196,7 +204,7 @@
           <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_4_1">Voorwaarden voor raadpleging</fo:block>
           <fo:block/>
           <fo:block font-family="Times">
-            <fo:block font-family="Times">Raadpleegbaar na toestemming van de archivaris</fo:block>
+            <fo:block font-family="Times" linefeed-treatment="preserve">Raadpleegbaar na toestemming van de archivaris</fo:block>
           </fo:block>
         </fo:block>
       </fo:block>
@@ -207,7 +215,7 @@
           <fo:block font-weight="bold" font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_5_3">Verwante beschrijvingseenheden</fo:block>
           <fo:block/>
           <fo:block font-family="Times">
-            <fo:block font-family="Times">Bij het archief bevond zich een fotoalbum die werd overgedragen aan de Audiovisuele Afdeling.</fo:block>
+            <fo:block font-family="Times" linefeed-treatment="preserve">Bij het archief bevond zich een fotoalbum die werd overgedragen aan de Audiovisuele Afdeling.</fo:block>
           </fo:block>
         </fo:block>
       </fo:block>

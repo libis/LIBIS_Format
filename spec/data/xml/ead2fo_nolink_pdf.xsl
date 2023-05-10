@@ -30,7 +30,7 @@
 				<fo:flow flow-name="xsl-region-body">
 				
 					<fo:block font-family="Times" space-before="0.5in" text-align="left">
-						<fo:external-graphic content-height="40" content-width="90" src="url('https://libis.be/themes/default/images/lias_logo_small.png')"/>
+						<fo:external-graphic content-height="30" content-width="90" src="url('https://www.libis.be/images/liaslogo.jpg')"/>
 					</fo:block>					
                     <xsl:call-template name="header"/>  					
 				</fo:flow>
@@ -89,18 +89,11 @@
 	</xsl:template>
 	<xsl:template name="header">
 			<xsl:if test="normalize-space(eadheader/filedesc/titlestmt/titleproper) != '' or normalize-space(eadheader/filedesc/titlestmt/subtitle) !='' or normalize-space(eadheader/filedesc/titlestmt/author) != ''">
-				<xsl:if test="normalize-space(eadheader/filedesc/titlestmt/titleproper[@label='Titel']) != ''">
+				<xsl:if test="normalize-space(eadheader/filedesc/titlestmt/titleproper) != ''">
 					<fo:block space-before="0.1in" font-size="18pt" font-family="Times" font-weight="bold" text-align="center">			
-						<xsl:value-of select="eadheader/filedesc/titlestmt/titleproper[@label='Titel']"/>
+						<xsl:value-of select="eadheader/filedesc/titlestmt/titleproper"/>
 					</fo:block>
 				</xsl:if>	
-				<xsl:if test="normalize-space(eadheader/filedesc/titlestmt/titleproper[@label='Ondertitel']) != ''">
-					<fo:block space-before="0.1in" font-size="14pt"
-					font-family="Times"
-					font-weight="bold" text-align="center">
-					<xsl:value-of select="eadheader/filedesc/titlestmt/titleproper[@label='Ondertitel']"/>
-					</fo:block>
-				</xsl:if>					
 				<xsl:if test="normalize-space(eadheader/filedesc/titlestmt/subtitle) !=''">
 					<fo:block space-before="0.1in" font-size="14pt"
 					font-family="Times"
@@ -117,11 +110,10 @@
 				</xsl:if>	
 			</xsl:if>					
 			<fo:block font-size="10pt" font-family="Times" space-before="1.0in" text-align="left">
-						<xsl:value-of select="'Deze EAD-export werd op '"/><xsl:value-of select="$EAD_DATE"/><xsl:value-of select="' automatisch gegenereerd.'"/><fo:block/>
-						<xsl:value-of select="'LIAS bevat voor sommige beschrijvingen meer gegevens, en laat toe om digitale objecten die aanwezig zijn in het digitale depot rechtstreeks te raadplegen.'"/><fo:block/>
-						<xsl:value-of select="'U kan het beschreven archief raadplegen via '"/> 
+						<xsl:value-of select="'Deze inventaris werd automatisch gegenereerd en gecodeerd.'"/><fo:block/>
+						<xsl:value-of select="'De EAD-export werd gecontroleerd en gevalideerd door de werkgroep archivarissen van LIAS K.U.Leuven (Leuvens Integraal Archiveringssysteem), '"/><xsl:value-of select="$EAD_DATE"/><fo:block/>
 						<fo:basic-link  font-weight="bold">
-						<xsl:attribute name="external-destination"><xsl:value-of select="concat($XML_SCOPE_OPAC,$REC_ID)"/></xsl:attribute>LIAS</fo:basic-link>
+						<xsl:attribute name="external-destination"><xsl:value-of select="concat($XML_SCOPE_OPAC,$REC_ID)"/></xsl:attribute>Volledige beschrijving in databank LIAS</fo:basic-link>
 						<xsl:call-template name="hr_fo"/>  
 			</fo:block>
     </xsl:template>
@@ -155,16 +147,13 @@
 							<fo:leader leader-pattern="dots"/>
 							<fo:page-number-citation ref-id="DISP_TITEL_1_1"/>
 						</fo:block>
-
-						<xsl:if test="unittitle">
-							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> 
-							<!--<fo:block start-indent="1.35cm" space-after="3pt">-->
+						<xsl:if test="unititle">
+							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
 								<fo:basic-link internal-destination="DISP_TITEL_1_2"><xsl:copy-of select="$DISP_TITEL_1_2"/></fo:basic-link>
 								<fo:leader leader-pattern="dots"/>
 								<fo:page-number-citation ref-id="DISP_TITEL_1_2"/>								
 							</fo:block>						
 						</xsl:if>
-
 						<xsl:if test="unitdate">
 							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
 								<fo:basic-link internal-destination="DISP_TITEL_1_3"><xsl:copy-of select="$DISP_TITEL_1_3"/></fo:basic-link>
@@ -172,13 +161,12 @@
 								<fo:page-number-citation ref-id="DISP_TITEL_1_3"/>								
 							</fo:block>						
 						</xsl:if>
-
 						<xsl:if test="physdesc/extent[@label='Omvang']">
-						<fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
-							<fo:basic-link internal-destination="DISP_TITEL_1_4"><fo:inline font-weight="bold"><xsl:copy-of select="$DISP_TITEL_1_4"/></fo:inline></fo:basic-link>
-							<fo:leader leader-pattern="dots"/>
-							<fo:page-number-citation ref-id="DISP_TITEL_1_4"/>
-						</fo:block>	
+							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
+								<fo:basic-link internal-destination="DISP_TITEL_1_4"><xsl:copy-of select="$DISP_TITEL_1_4"/></fo:basic-link>
+								<fo:leader leader-pattern="dots"/>
+								<fo:page-number-citation ref-id="DISP_TITEL_1_4"/>							
+							</fo:block>						
 						</xsl:if>
 					</xsl:if>
 					<xsl:if test="head=$TITEL_2">
@@ -285,22 +273,13 @@
 								<fo:page-number-citation ref-id="DISP_TITEL_4_4"/>								
 							</fo:block>						
 						</xsl:if>
-						<xsl:if test="abbreviations/head=$TITEL_4_6">
-							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
-								<fo:basic-link internal-destination="DISP_TITEL_4_6"><xsl:copy-of select="$DISP_TITEL_4_6"/></fo:basic-link>
-								<fo:leader leader-pattern="dots"/>
-								<fo:page-number-citation ref-id="DISP_TITEL_4_6"/>								
-							</fo:block>						
-						</xsl:if>
-						<!--Toegang is commented as its not needed now
 						<xsl:if test="otherfindaid/head=$TITEL_4_5">
-							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify">
+							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
 								<fo:basic-link internal-destination="DISP_TITEL_4_5"><xsl:copy-of select="$DISP_TITEL_4_5"/></fo:basic-link>
 								<fo:leader leader-pattern="dots"/>
 								<fo:page-number-citation ref-id="DISP_TITEL_4_5"/>								
 							</fo:block>						
 						</xsl:if>						
-						-->
 					</xsl:if>
 					<xsl:if test="head=$TITEL_5">
 						<fo:block font-family="Times" space-after="2pt" keep-with-next="always" start-indent="1cm" text-align-last="justify">
@@ -322,25 +301,18 @@
 								<fo:page-number-citation ref-id="DISP_TITEL_5_2"/>								
 							</fo:block>						
 						</xsl:if>
-						<xsl:if test="relatedmaterial[@label='non_pub']/head=$TITEL_5_3">
+						<xsl:if test="relatedmaterial/head=$TITEL_5_3">
 							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
 								<fo:basic-link internal-destination="DISP_TITEL_5_3"><xsl:copy-of select="$DISP_TITEL_5_3"/></fo:basic-link>
 								<fo:leader leader-pattern="dots"/>
 								<fo:page-number-citation ref-id="DISP_TITEL_5_3"/>								
 							</fo:block>						
 						</xsl:if>
-						<xsl:if test="relatedmaterial[@label='pub']/head=$TITEL_5_4">
+						<xsl:if test="bibliography/head=$TITEL_5_4">
 							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
 								<fo:basic-link internal-destination="DISP_TITEL_5_4"><xsl:copy-of select="$DISP_TITEL_5_4"/></fo:basic-link>
 								<fo:leader leader-pattern="dots"/>
 								<fo:page-number-citation ref-id="DISP_TITEL_5_4"/>								
-							</fo:block>						
-						</xsl:if>
-						<xsl:if test="bibliography/head=$TITEL_5_5">
-							<fo:block font-family="Times" start-indent="1.5cm" space-after="3pt" text-align-last="justify"> <!--<fo:block start-indent="1.35cm" space-after="3pt">-->
-								<fo:basic-link internal-destination="DISP_TITEL_5_5"><xsl:copy-of select="$DISP_TITEL_5_5"/></fo:basic-link>
-								<fo:leader leader-pattern="dots"/>
-								<fo:page-number-citation ref-id="DISP_TITEL_5_5"/>								
 							</fo:block>						
 						</xsl:if>
 					</xsl:if>					
@@ -465,7 +437,7 @@
 						<xsl:attribute name="internal-destination">lnk_<xsl:value-of select="$cid"/></xsl:attribute>
 						<xsl:if test="unittitle[@label='Titel']/p/text()">
 							<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-								<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;
+								<xsl:value-of select="'&quot;'"/><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/><xsl:value-of select="'&quot;'"/><xsl:value-of select="'.'"/>&#160;
 							</xsl:if>
 						<xsl:value-of select="unittitle[@label='Titel']/p/text()"/></xsl:if>
 						<xsl:if test="not(unittitle[@label='Titel']/p/text())"><xsl:value-of select="unitid/@identifier"/></xsl:if>
@@ -509,22 +481,18 @@
 							</xsl:when>
 							<xsl:when test="../@level='Subrubriek'">
 								<xsl:attribute name="font-size"><xsl:value-of select="$Subrubriek_pt"/></xsl:attribute>
-								<xsl:attribute name="font-weight">bold</xsl:attribute>
 								<xsl:attribute name="font-style">italic</xsl:attribute>								
 							</xsl:when>							
 							<xsl:when test="../@level='Reeks'">
 								<xsl:attribute name="font-size"><xsl:value-of select="$Reeks_pt"/></xsl:attribute>
 								<xsl:attribute name="text-transform">uppercase</xsl:attribute>
-								<xsl:attribute name="font-style">italic</xsl:attribute>								
 							</xsl:when>
 							<xsl:when test="../@level='Deelreeks'">
 								<xsl:attribute name="font-size"><xsl:value-of select="$Deelreeks_pt"/></xsl:attribute>
 								<xsl:attribute name="text-decoration">underline</xsl:attribute>
 							</xsl:when>														
 							<xsl:otherwise>
-								<xsl:attribute name="font-size"><xsl:value-of select="$Deelarchief_pt"/></xsl:attribute>
-								<xsl:attribute name="font-weight">bold</xsl:attribute>							
-								<!--<xsl:attribute name="font-size"><xsl:value-of select="$Onderafdeling_pt"/></xsl:attribute>-->
+								<xsl:attribute name="font-size"><xsl:value-of select="$Onderafdeling_pt"/></xsl:attribute>
 							</xsl:otherwise>
 						</xsl:choose>
 					
@@ -536,14 +504,14 @@
 									<xsl:if test="(contains(../../../@level,'meervoudige beschrijving'))">
 										<xsl:value-of select="unitid"/><xsl:if test="substring(unitid,string-length(unitid),1) != '.'"><xsl:value-of select="'.'"/></xsl:if>&#160;</xsl:if>
 										<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-											<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;</xsl:if>
+											<xsl:value-of select="'&quot;'"/><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/><xsl:value-of select="'&quot;'"/><xsl:value-of select="'.'"/>&#160;</xsl:if>
 										<xsl:value-of select="unittitle[@label='Titel']/p/text()"/>
 								</fo:block>	
 							</xsl:if>
 							<xsl:if test="not(string(unitid))">
 								<fo:block font-family="Times">
 								<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-									<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;</xsl:if>
+									<xsl:value-of select="'&quot;'"/><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/><xsl:value-of select="'&quot;'"/><xsl:value-of select="'.'"/>&#160;</xsl:if>
 								<xsl:value-of select="unittitle[@label='Titel']/p/text()"/>
 								</fo:block>		
 							</xsl:if>
@@ -552,24 +520,13 @@
 							<xsl:if test="unitdate[@label='Datum']/p/text()">
 								<fo:block font-family="Times">
 									<xsl:for-each select="unitdate[@label='Datum']/p/text()">
-										<xsl:value-of select="."/><xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
+										<xsl:value-of select="."/><xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
 									</xsl:for-each>
 									<xsl:if test="physdesc/physfacet/p/text()">
 										<xsl:for-each select="physdesc/physfacet/p/text()">
-											<xsl:if test="position()=1">
-												<xsl:call-template name="initCap">
-													<xsl:with-param name="x" select="."/>
-												</xsl:call-template>
-											</xsl:if>
-											<xsl:if test="position() > 1">
-												<xsl:if test="position() = last()">
-													<xsl:value-of select="'en '"/>
-												</xsl:if>	
-												
-												<xsl:value-of select="."/>
-											</xsl:if>
-											<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-											<xsl:if test="position()=last()"><xsl:text>.</xsl:text></xsl:if>
+											<xsl:value-of select="."/>
+											<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
+											<xsl:if test="not(following-sibling::*)"><xsl:value-of select="'.'"/>&#160;</xsl:if>
 										</xsl:for-each>
 									</xsl:if>									
 								</fo:block>		
@@ -577,48 +534,12 @@
 						</xsl:if>	
 						
 						<xsl:if test="not(../@level = 'Subrubriek' or ../@level = 'Reeks' or ../@level = 'Deelreeks')">
-
-									<xsl:if test="physdesc/physfacet/p/text()">
-										<xsl:for-each select="physdesc/physfacet/p/text()">
-											<xsl:if test="position()=1">
-												<xsl:call-template name="initCap">
-													<xsl:with-param name="x" select="."/>
-												</xsl:call-template>
-											</xsl:if>
-											<xsl:if test="position() > 1">
-												<xsl:if test="position() = last()">
-													<xsl:value-of select="'en '"/>
-												</xsl:if>	
-												
-												<xsl:value-of select="."/>
-											</xsl:if>
-											<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-											<xsl:if test="position()=last()"><xsl:text>.</xsl:text></xsl:if>
-										</xsl:for-each>
-									</xsl:if>						
-						
 									<xsl:if test="physdesc/physfacet/p/text()">
 										<fo:block font-family="Times">
 										<xsl:for-each select="physdesc/physfacet/p/text()">
-											<xsl:if test="position()=1">
-												<xsl:call-template name="initCap">
-													<xsl:with-param name="x" select="."/>
-												</xsl:call-template>
-											</xsl:if>
-											<xsl:if test="position() > 1">
-												<xsl:if test="position() = last()">
-													<xsl:value-of select="'en '"/>
-												</xsl:if>	
-												
-												<xsl:value-of select="."/>
-											</xsl:if>
-											<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-											<xsl:if test="position()=last()"><xsl:text>.</xsl:text></xsl:if>										
-										<!--
 											<xsl:value-of select="."/>
-											<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
+											<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
 											<xsl:if test="not(following-sibling::*)"><xsl:value-of select="'.'"/>&#160;</xsl:if>
-										-->	
 										</xsl:for-each>
 										</fo:block>		
 									</xsl:if>									
@@ -633,36 +554,19 @@
 								<xsl:if test="following-sibling::*"><fo:block/></xsl:if>
 							</xsl:for-each>
 							</fo:block>
-						</xsl:if>	
-						<xsl:if test="relatedmaterial/p/text()">
-							<fo:block font-family="Times">
-								<xsl:for-each select="relatedmaterial/p/text()">
-								<xsl:value-of select="."/>
-									<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-								</xsl:for-each>
-							</fo:block>
-								</xsl:if>						
+						</xsl:if>											
 						<xsl:if test="physdesc/extent/p/text()">
 							<!--<fo:block font-family="Times" font-style="italic">	-->
 							<fo:block font-family="Times">
 								<xsl:for-each select="physdesc/extent/p/text()">
 								<xsl:value-of select="."/>
-									<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
+									<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
 								</xsl:for-each>
 							</fo:block>
 						</xsl:if>					
-						<xsl:if test="note/p/text()">
-							<!--<fo:block font-family="Times" font-style="italic">	-->
-							<fo:block font-family="Times" linefeed-treatment="preserve" white-space-collapse="false" white-space-treatment="preserve">							
-								<xsl:for-each select="note/p/text()">
-								<xsl:value-of select="."/>
-									<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-								</xsl:for-each>
-							</fo:block>
-						</xsl:if>						
+						
 						<xsl:for-each select="relatedmaterial/archref">
-						<fo:block font-family="Times">
-							<!--<fo:block font-family="Times" font-size="8pt">-->
+							<fo:block font-family="Times" font-size="8pt">
 							<!--<xsl:attribute name="font-size"><xsl:value-of select="$Bestanddeel_pt"/></xsl:attribute>-->
 								<xsl:if test="string(note)">[<xsl:value-of select="note"/>]&#160;:&#160;</xsl:if>
 								<xsl:value-of select="unittitle"/>
@@ -698,29 +602,22 @@
 								<xsl:attribute name="font-size"><xsl:value-of select="$Onderafdeling_pt"/></xsl:attribute>
 							</xsl:otherwise>
 							</xsl:choose>
-							<xsl:variable name="utitle"><xsl:if test="unittitle[@label='Formele titel']/p/text()"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/><xsl:value-of select="'.'"/>&#160;</xsl:if><xsl:value-of select="normalize-space(unittitle[@label='Titel']/p/text())"/></xsl:variable>	
-							<xsl:variable name="CLength">
+							<xsl:variable name="utitle"><xsl:if test="unittitle[@label='Formele titel']/p/text()"><xsl:value-of select="'&quot;'"/><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/><xsl:value-of select="'&quot;'"/><xsl:value-of select="'.'"/>&#160;</xsl:if><xsl:value-of select="normalize-space(unittitle[@label='Titel']/p/text())"/></xsl:variable>	
+							<xsl:variable name="CLength_B">
 							<xsl:if test="string(unitid)">
-								<xsl:if test="(string-length(unitid) > 12)">
-									<xsl:value-of select="string-length(unitid)+ 2 + string-length($GAP)"/>                               							
-								</xsl:if>	
-								<xsl:if test="not(string-length(unitid) > 12)">
-									<xsl:value-of select="12 + string-length($GAP)"/>                               							
-								</xsl:if>									
-								<!--<xsl:value-of select="string-length(unitid)+ string-length($GAP)"/>-->
+							<xsl:value-of select="string-length(unitid)+ string-length($GAP)"/>
 							</xsl:if>
 							<xsl:if test="not(string(unitid))">
 							<xsl:value-of select="'0'"/>
 							</xsl:if>
 							</xsl:variable>												
 							<fo:table table-layout="fixed" width="100%">
-								<xsl:if test="$CLength='0'">
+								<xsl:if test="$CLength_B='0'">
 									<fo:table-column column-width="100%"/>
 								</xsl:if>
-								<xsl:if test="$CLength!='0'">
+								<xsl:if test="$CLength_B!='0'">
 									<fo:table-column>
-									<!--<xsl:attribute name="column-width"><xsl:value-of select="concat($CLength*1.5,'mm')"/></xsl:attribute>-->
-										<xsl:attribute name="column-width"><xsl:value-of select="concat($CLength*1,'mm')"/></xsl:attribute>
+										<xsl:attribute name="column-width"><xsl:value-of select="concat($CLength_B*1.5,'mm')"/></xsl:attribute>
 									</fo:table-column>								
 									<fo:table-column column-width="proportional-column-width(1)"/>
 								</xsl:if>							
@@ -729,38 +626,21 @@
 										<xsl:if test="string(unitid)">
 										<fo:table-cell>							
 											<fo:block font-family="Times"  wrap-option="no-wrap">
-												<fo:basic-link>
-													<xsl:attribute name="external-destination"><xsl:value-of select="concat($XML_SCOPE_OPAC,../@id)"/></xsl:attribute>											
 												<xsl:if test="not(contains(../../../@level,'meervoudige beschrijving'))">
 														<fo:inline font-weight="bold"><xsl:value-of select="unitid"/><xsl:if test="substring(unitid,string-length(unitid),1) != '.'"><xsl:value-of select="'.'"/></xsl:if>&#160;</fo:inline></xsl:if>
-												<xsl:if test="(contains(../../../@level,'meervoudige beschrijving'))"><xsl:value-of select="unitid"/>
-													<xsl:if test="substring(unitid,string-length(unitid),1) != '.'"><xsl:value-of select="'.'"/></xsl:if>&#160;</xsl:if>									
-												</fo:basic-link>													
+												<xsl:if test="(contains(../../../@level,'meervoudige beschrijving'))">
+													<xsl:value-of select="unitid"/><xsl:if test="substring(unitid,string-length(unitid),1) != '.'"><xsl:value-of select="'.'"/></xsl:if>&#160;</xsl:if>									
 											</fo:block>	
 										</fo:table-cell>	
 										<fo:table-cell>							
 											<fo:block font-family="Times">
-													<xsl:if test="substring($utitle,string-length($utitle),1) != '.'">
-														<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-															<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;
-														</xsl:if>
-														<xsl:value-of select="normalize-space(unittitle[@label='Titel']/p/text())"/><xsl:value-of select="'.'"/>
-														<!--<xsl:value-of select="concat($utitle,'.')"/>-->
-													</xsl:if>
+													<xsl:if test="substring($utitle,string-length($utitle),1) != '.'"><xsl:value-of select="concat($utitle,'.')"/></xsl:if>
 													<xsl:if test="substring($utitle,string-length($utitle),1) = '.'">
 														<xsl:if test="substring($utitle,string-length($utitle)-1,1) = '.'">
-															<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-																<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;
-															</xsl:if>
-															<xsl:value-of select="substring(normalize-space(unittitle[@label='Titel']/p/text()),1,string-length(normalize-space(unittitle[@label='Titel']/p/text()))-1)"/>
-															<!--<xsl:value-of select="substring($utitle,1,string-length($utitle)-1)"/>-->
+															<xsl:value-of select="substring($utitle,1,string-length($utitle)-1)"/>
 														</xsl:if>
 														<xsl:if test="not(substring($utitle,string-length($utitle)-1,1) = '.')">
-														<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-															<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;
-														</xsl:if>
-														<xsl:value-of select="normalize-space(unittitle[@label='Titel']/p/text())"/>														
-															<!--<xsl:value-of select="$utitle"/>-->
+															<xsl:value-of select="$utitle"/>
 														</xsl:if>											
 													</xsl:if>										
 											</fo:block>	
@@ -768,33 +648,16 @@
 									</xsl:if>
 									<xsl:if test="not(string(unitid))">
 										<fo:table-cell>							
-											<fo:block font-family="Times" wrap-option="no-wrap">
-												<fo:basic-link>
-													<xsl:attribute name="external-destination"><xsl:value-of select="concat($XML_SCOPE_OPAC,../@id)"/></xsl:attribute>																						
-													<xsl:if test="substring($utitle,string-length($utitle),1) != '.'">
-														<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-															<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;
-														</xsl:if>
-														<xsl:value-of select="normalize-space(unittitle[@label='Titel']/p/text())"/><xsl:value-of select="'.'"/>
-														<!--<xsl:value-of select="concat($utitle,'.')"/>-->
-													</xsl:if>
+											<fo:block font-family="Times" wrap-option="no-wrap">	
+													<xsl:if test="substring($utitle,string-length($utitle),1) != '.'"><xsl:value-of select="concat($utitle,'.')"/></xsl:if>
 													<xsl:if test="substring($utitle,string-length($utitle),1) = '.'">
 														<xsl:if test="substring($utitle,string-length($utitle)-1,1) = '.'">
-															<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-																<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;
-															</xsl:if>
-															<xsl:value-of select="substring(normalize-space(unittitle[@label='Titel']/p/text()),1,string-length(normalize-space(unittitle[@label='Titel']/p/text()))-1)"/>
-															<!--<xsl:value-of select="substring($utitle,1,string-length($utitle)-1)"/>-->
+															<xsl:value-of select="substring($utitle,1,string-length($utitle)-1)"/>
 														</xsl:if>
 														<xsl:if test="not(substring($utitle,string-length($utitle)-1,1) = '.')">
-														<xsl:if test="unittitle[@label='Formele titel']/p/text()">
-															<fo:inline font-style="italic"><xsl:value-of select="unittitle[@label='Formele titel']/p/text()"/></fo:inline><xsl:value-of select="'.'"/>&#160;
-														</xsl:if>
-														<xsl:value-of select="normalize-space(unittitle[@label='Titel']/p/text())"/>														
-															<!--<xsl:value-of select="$utitle"/>-->
+															<xsl:value-of select="$utitle"/>
 														</xsl:if>											
-													</xsl:if>	
-												</fo:basic-link>													
+													</xsl:if>
 											</fo:block>
 										</fo:table-cell>
 									</xsl:if>
@@ -808,14 +671,14 @@
 											<fo:block font-family="Times">
 												<xsl:for-each select="unitdate[@label='Datum']/p/text()">
 													<xsl:value-of select="."/>
-													<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
+													<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
 													<xsl:if test="not(following-sibling::*)"><xsl:if test="substring(.,string-length(.),1) != '.'"><xsl:value-of select="'.'"/></xsl:if>&#160;</xsl:if>
 												</xsl:for-each>
 											<xsl:if test="physdesc/physfacet/p/text()">
 												<xsl:for-each select="physdesc/physfacet/p/text()">
 													<xsl:value-of select="."/>
-													<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-													<xsl:if test="position()=last()"><xsl:text>.</xsl:text></xsl:if>
+													<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
+													<xsl:if test="not(following-sibling::*)"><xsl:value-of select="'.'"/>&#160;</xsl:if>
 												</xsl:for-each>
 											</xsl:if>																		
 											</fo:block>
@@ -832,8 +695,8 @@
 											<fo:block font-family="Times">
 												<xsl:for-each select="physdesc/physfacet/p/text()">
 													<xsl:value-of select="."/>
-													<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-													<xsl:if test="position()=last()"><xsl:text>.</xsl:text></xsl:if>
+													<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
+													<xsl:if test="not(following-sibling::*)"><xsl:value-of select="'.'"/>&#160;</xsl:if>
 												</xsl:for-each>
 											</fo:block>
 										</fo:table-cell>	
@@ -858,22 +721,7 @@
 									</fo:table-row>																		
 								</xsl:if>										
 				
-
-								<xsl:if test="relatedmaterial/p/text()">
-									<fo:table-row>
-										<xsl:if test="(string(unitid))">
-											<fo:table-cell><fo:block font-family="Times"><xsl:value-of select="'&#160;'"/></fo:block></fo:table-cell>
-										</xsl:if>
-										<fo:table-cell>																									
-											<fo:block font-family="Times">
-												<xsl:for-each select="relatedmaterial/p/text()">
-													<xsl:value-of select="."/>
-													<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-												</xsl:for-each>
-											</fo:block>
-										</fo:table-cell>	
-									</fo:table-row>																		
-								</xsl:if>				
+								
 								<xsl:if test="physdesc/extent/p/text()">
 									<fo:table-row>
 										<xsl:if test="(string(unitid))">
@@ -883,27 +731,12 @@
 											<fo:block font-family="Times">
 												<xsl:for-each select="physdesc/extent/p/text()">
 													<xsl:value-of select="."/>
-													<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
+													<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
 												</xsl:for-each>
 											</fo:block>
 										</fo:table-cell>	
 									</fo:table-row>																		
 								</xsl:if>
-								<xsl:if test="note/p/text()">
-									<fo:table-row>
-										<xsl:if test="(string(unitid))">
-											<fo:table-cell><fo:block font-family="Times"><xsl:value-of select="'&#160;'"/></fo:block></fo:table-cell>
-										</xsl:if>
-										<fo:table-cell>																									
-											<fo:block font-family="Times" linefeed-treatment="preserve" white-space-collapse="false" white-space-treatment="preserve">
-												<xsl:for-each select="note/p/text()">
-													<xsl:value-of select="."/>
-													<xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-												</xsl:for-each>
-											</fo:block>
-										</fo:table-cell>	
-									</fo:table-row>																		
-								</xsl:if>								
 								<xsl:if test="scopecontent[@label='Inhoud']/p/text()">
 									<fo:table-row>
 										<xsl:if test="(string(unitid))">
@@ -925,9 +758,8 @@
 									<xsl:for-each select="relatedmaterial/archref">
 									<fo:table-row>
 										<fo:table-cell><fo:block font-family="Times"><xsl:value-of select="'&#160;'"/></fo:block></fo:table-cell>
-										<fo:table-cell>	
-											<fo:block font-family="Times">
-											<!--<fo:block font-family="Times" font-size="8pt">-->										
+										<fo:table-cell>																																									
+    										<fo:block font-family="Times" font-size="8pt">
 												<xsl:if test="string(note)">[<xsl:value-of select="note"/>]&#160;:&#160;</xsl:if>
 												<xsl:value-of select="unittitle"/>
 											</fo:block>	
@@ -938,10 +770,8 @@
 								<xsl:if test="not(string(unitid))">
 									<xsl:for-each select="relatedmaterial/archref">
 									<fo:table-row>
-										<fo:table-cell>						
-										
-    										<fo:block font-family="Times">
-											<!--<fo:block font-family="Times" font-size="8pt">-->
+										<fo:table-cell>																																									
+    										<fo:block font-family="Times" font-size="8pt">
 												<xsl:if test="string(note)">[<xsl:value-of select="note"/>]&#160;:&#160;</xsl:if>
 												<xsl:value-of select="unittitle"/>
 											</fo:block>	
@@ -993,14 +823,11 @@
 			</fo:block>
 			<fo:block/>			
 			<fo:block font-family="Times">
-			<xsl:apply-templates select="unitid/@repositorycode"/><xsl:value-of select="' of'"/><fo:block/>
-			<xsl:apply-templates select="repository/corpname"/>				
-						<xsl:if test="unittitle"><xsl:value-of select="', '"/><xsl:apply-templates select="unittitle"/></xsl:if>
+				<xsl:apply-templates select="repository/corpname"/>				
 				<fo:block/>				
-				
+				<xsl:apply-templates select="unitid/@repositorycode"/>
 			</fo:block>	
-
-			<xsl:if test="unittitle">
+			<xsl:if test="unititle">
 				<fo:block font-weight="bold"  font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_2">
 					<xsl:copy-of select="$DISP_TITEL_1_2"/>
 				</fo:block>
@@ -1009,7 +836,6 @@
 					<xsl:apply-templates select="unittitle"/>
 				</fo:block>	
 			</xsl:if>
-
 			<xsl:if test="unitdate">
 				<fo:block font-weight="bold"  font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_1_3">
 					<xsl:copy-of select="$DISP_TITEL_1_3"/>
@@ -1212,16 +1038,6 @@
 					<xsl:apply-templates select="phystech"/>
 				</fo:block>			
 			</xsl:if>
-			<xsl:if test="abbreviations/head=$TITEL_4_6">
-				<fo:block font-weight="bold"  font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_4_6">
-					<xsl:copy-of select="$DISP_TITEL_4_6"/>
-				</fo:block>
-				<fo:block/>
-				<fo:block font-family="Times">
-					<xsl:apply-templates select="abbreviations"/>
-				</fo:block>			
-			</xsl:if>
-			<!--toegang is commented as its not needed now
 			<xsl:if test="otherfindaid/head=$TITEL_4_5">
 				<fo:block font-weight="bold"  font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_4_5">
 					<xsl:copy-of select="$DISP_TITEL_4_5"/>
@@ -1231,7 +1047,6 @@
 					<xsl:apply-templates select="otherfindaid"/>
 				</fo:block>			
 			</xsl:if>
-			-->
 		</fo:block>	
 		</xsl:if>
 		
@@ -1259,27 +1074,18 @@
 					<xsl:apply-templates select="altformavail"/>
 				</fo:block>			
 			</xsl:if>
-			<xsl:if test="relatedmaterial[@label='non_pub']/head=$TITEL_5_3">
+			<xsl:if test="relatedmaterial/head=$TITEL_5_3">
 				<fo:block font-weight="bold"  font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_5_3">
 					<xsl:copy-of select="$DISP_TITEL_5_3"/>
 				</fo:block>
 				<fo:block/>
 				<fo:block font-family="Times">
-					<xsl:apply-templates select="relatedmaterial[@label='non_pub']"/>
+					<xsl:apply-templates select="relatedmaterial"/>
 				</fo:block>			
 			</xsl:if>
-			<xsl:if test="relatedmaterial[@label='pub']/head=$TITEL_5_4">
+			<xsl:if test="bibliography/head=$TITEL_5_4">
 				<fo:block font-weight="bold"  font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_5_4">
 					<xsl:copy-of select="$DISP_TITEL_5_4"/>
-				</fo:block>
-				<fo:block/>
-				<fo:block font-family="Times">
-					<xsl:apply-templates select="relatedmaterial[@label='pub']"/>
-				</fo:block>			
-			</xsl:if>
-			<xsl:if test="bibliography/head=$TITEL_5_5">
-				<fo:block font-weight="bold"  font-family="Times" space-before="0.1in" text-align="left" id="DISP_TITEL_5_5">
-					<xsl:copy-of select="$DISP_TITEL_5_5"/>
 				</fo:block>
 				<fo:block/>
 				<fo:block font-family="Times">
@@ -1357,48 +1163,24 @@
         <fo:block space-before="0.1in" space-after="0.1in" font-weight="bold" color="red" font-family="Times" font-size="9pt"><fo:basic-link internal-destination="toc_gv" >Terug naar Inhoudstafel</fo:basic-link></fo:block>
     </xsl:template>	
 		<xsl:template match="langmaterial | appraisal | accruals | arrangement | accessrestrict | userestrict | phystech | otherfindaid
-	 | abbreviations | originalsloc | altformavail | relatedmaterial[@label='non_pub'] | relatedmaterial[@label='pub'] | bibliography | note | processinfo[@label='Verantwoording'] | descrules 
-	 | processinfo[@label='Datering van de beschrijvingen'] | bioghist | custodhist 
+	 | originalsloc | altformavail | relatedmaterial | bibliography | note | processinfo[@label='Verantwoording'] | descrules 
+	 | processinfo[@label='Datering van de beschrijvingen'] | bioghist | custodhist |acqinfo 
 	 | scopecontent/scopecontent[@label='Bereik en inhoud'] | scopecontent/scopecontent[@label='Geografische informatie']
 	 | scopecontent/scopecontent[@label='Collectie periode'] | scopecontent/scopecontent[@label='Gerelateerde organisaties/families/personen']
-	 | unitdate | physdesc/extent[@label='Omvang'] | physdesc/extent[@label='Opmerkingen'] | physdesc/extent[@label='Aard archief']">
+	 | unittitle | unitdate | physdesc/extent[@label='Omvang'] | physdesc/extent[@label='Opmerkingen'] | physdesc/extent[@label='Aard archief']">
 		<xsl:for-each select="archref">
-			<fo:block font-family="Times">
-    		<!--<fo:block font-family="Times" font-size="8pt">-->
+    		<fo:block font-family="Times" font-size="8pt">
 				<xsl:if test="string(note)">[<xsl:value-of select="note"/>]&#160;:&#160;</xsl:if>
 				<xsl:value-of select="unittitle"/>
 			</fo:block>		
 			<fo:block/>
 		</xsl:for-each>
-		<fo:block font-family="Times" linefeed-treatment="preserve">
+		<fo:block font-family="Times">
 		<xsl:for-each select="p">
-			<xsl:if test="@type='remarks' and position() != '1'"><xsl:text>. </xsl:text></xsl:if> 
-					<xsl:call-template name="replace-dest"> <!-- imported template -->
-					<xsl:with-param name="text" select="."/>
-					</xsl:call-template>
-				<!--<xsl:value-of select="." disable-output-escaping="yes"/>-->
-					<xsl:choose>
-						
-							<xsl:when test="@type='remarks'"><xsl:text>. </xsl:text></xsl:when>
-						<xsl:otherwise><xsl:if test="position()!=last() and not(following-sibling::*[1]/@type)"><xsl:text>, </xsl:text></xsl:if></xsl:otherwise>
-					</xsl:choose>
+				<xsl:value-of select="." disable-output-escaping="yes"/>
+				<xsl:if test="following-sibling::*"><xsl:value-of select="','"/>&#160;</xsl:if>
 		</xsl:for-each>	
 		</fo:block>	
-	</xsl:template>	
-	<xsl:template match="acqinfo"> 	
-		<fo:block font-family="Times" linefeed-treatment="preserve">
-		<xsl:for-each select="p">
-				<xsl:value-of select="."/>
-				<xsl:if test="following-sibling::*">&#13;</xsl:if>
-		</xsl:for-each>	
-		</fo:block>
-	</xsl:template>
-	
-	<xsl:template match="unittitle"> 	
-		<xsl:for-each select="p">
-				<xsl:value-of select="."/>
-				<xsl:if test="following-sibling::*">&#13;</xsl:if>
-		</xsl:for-each>	
 	</xsl:template>	
 <xsl:template name="string-replace-all">
     <xsl:param name="text" />
@@ -1461,56 +1243,4 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
-<xsl:template name="initCap">
-	<xsl:param name="x"/>
-	<xsl:value-of select="translate(substring($x,1,1),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
-	<xsl:value-of select="substring($x,2)"/>
-</xsl:template>  
-<xsl:template match="link">
-	<fo:basic-link  font-weight="bold" external-destination="{@dest}"><xsl:apply-templates/></fo:basic-link>	
-		<!--<a href="{@dest}"><xsl:apply-templates/></a>-->
-	</xsl:template>
-
-	 <xsl:template name="replace-string">
-    <xsl:param name="text"/>
-    <xsl:param name="replace"/>
-    <xsl:param name="with"/>
-    <xsl:choose>
-      <xsl:when test="contains($text,$replace)">
-        <xsl:value-of select="substring-before($text,$replace)"/>
-        <xsl:value-of select="$with"/>
-        <xsl:call-template name="replace-string">
-          <xsl:with-param name="text" select="substring-after($text,$replace)"/>
-          <xsl:with-param name="replace" select="$replace"/>
-          <xsl:with-param name="with" select="$with"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$text"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="replace-dest">
-    <xsl:param name="text"/>
-	
-	<xsl:variable name="pre-text"><xsl:value-of select="substring-before($text,'&lt;link dest=&quot;')"/></xsl:variable>
-	<xsl:variable name="post-text"><xsl:value-of select="substring-after($text,'&lt;/link&gt;')"/></xsl:variable>
-	<xsl:variable name="href-lnk"><xsl:value-of select="substring-before(substring-after($text,'&lt;link dest=&quot;'),'&quot;')"/></xsl:variable>	
-	<xsl:variable name="href-text"><xsl:value-of select="substring-after(substring-after(substring-before($text,'&lt;/link&gt;'),'&lt;link dest=&quot;'),'&gt;')"/></xsl:variable>	
-	<xsl:choose>	
-		<xsl:when test="contains($text,'&lt;link dest=&quot;')">	
-			<xsl:value-of select="$pre-text"/><fo:basic-link  font-weight="bold"><xsl:attribute name="external-destination"><xsl:value-of select="$href-lnk"/></xsl:attribute><xsl:value-of select="$href-text"/></fo:basic-link><xsl:value-of select="$post-text"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$text"/>
-      </xsl:otherwise>
-    </xsl:choose>		
-  </xsl:template>
-
-<xsl:template name="varValue">
-	<xsl:param name="value" />
-	<xsl:value-of select="$value" />
-</xsl:template>	
-	</xsl:stylesheet>
+</xsl:stylesheet>

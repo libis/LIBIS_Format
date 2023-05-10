@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="windows-1252"?>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
 <xsl:variable name="REC_ID" select="ead/eadheader/eadid/@identifier"/>
 <xsl:variable name="TITLE_HEADER" select="ead/eadheader[1]/filedesc[1]/titlestmt[1]/titleproper[1]"/>	
@@ -11,7 +11,7 @@
 	<xsl:variable name="DISP_TITEL_1_1" select="'Referentie'"/>
 	<xsl:variable name="DISP_TITEL_1_2" select="'Titel'"/>
 	<xsl:variable name="DISP_TITEL_1_3" select="'Datering'"/>
-	<xsl:variable name="DISP_TITEL_1_4" select="'Omvang en medium'"/>
+	<xsl:variable name="DISP_TITEL_1_4" select="'&#x2022; OMVANG EN MEDIUM'"/>
 <xsl:variable name="DISP_TITEL_2" select="'&#x2022; CONTEXT'"/>
 	<xsl:variable name="DISP_TITEL_2_1" select="'Naam van de archiefvormer(s)'"/>
 	<xsl:variable name="DISP_TITEL_2_2" select="'Institutionele geschiedenis / Biografie'"/>
@@ -28,11 +28,13 @@
 	<xsl:variable name="DISP_TITEL_4_3" select="'Taal en schrift'"/>
 	<xsl:variable name="DISP_TITEL_4_4" select="'Fysieke kenmerken en technische vereisten'"/>
 	<xsl:variable name="DISP_TITEL_4_5" select="'Toegangen'"/>
+	<xsl:variable name="DISP_TITEL_4_6" select="'Afkortingen'"/>
 <xsl:variable name="DISP_TITEL_5" select="'&#x2022; VERWANT MATERIAAL'"/>
 	<xsl:variable name="DISP_TITEL_5_1" select="'Bestaan en bewaarplaats van originelen'"/>
-	<xsl:variable name="DISP_TITEL_5_2" select="'Bestaan en bewaarplaats van kopieën'"/>
+	<xsl:variable name="DISP_TITEL_5_2" select="'Bestaan en bewaarplaats van kopieÃ«n'"/>
 	<xsl:variable name="DISP_TITEL_5_3" select="'Verwante beschrijvingseenheden'"/>
-	<xsl:variable name="DISP_TITEL_5_4" select="'Publicaties'"/>	
+	<xsl:variable name="DISP_TITEL_5_4" select="'Verwante publicaties'"/>
+	<xsl:variable name="DISP_TITEL_5_5" select="'Bibliografie'"/>	
 <xsl:variable name="DISP_TITEL_6" select="'&#x2022; AANTEKENINGEN'"/>
 	<xsl:variable name="DISP_TITEL_6_1" select="'Aantekening'"/>
 <xsl:variable name="DISP_TITEL_7" select="'&#x2022; BESCHRIJVINGSBEHEER'"/>
@@ -68,11 +70,13 @@
 	<xsl:variable name="TITEL_4_3" select="'4.3. Taal en schrift'"/>
 	<xsl:variable name="TITEL_4_4" select="'4.4. Fysieke kenmerken en technische vereisten'"/>
 	<xsl:variable name="TITEL_4_5" select="'4.5. Toegangen'"/>
+	<xsl:variable name="TITEL_4_6" select="'4.6. Afkortingen'"/>
 <xsl:variable name="TITEL_5" select="'5. VERWANT MATERIAAL'"/>
 	<xsl:variable name="TITEL_5_1" select="'5.1. Bestaan en bewaarplaats van originelen'"/>
-	<xsl:variable name="TITEL_5_2" select="'5.2. Bestaan en bewaarplaats van kopieën'"/>
+	<xsl:variable name="TITEL_5_2" select="'5.2. Bestaan en bewaarplaats van kopieÃ«n'"/>
 	<xsl:variable name="TITEL_5_3" select="'5.3. Verwante beschrijvingseenheden'"/>
-	<xsl:variable name="TITEL_5_4" select="'5.4. Publicaties'"/>	
+	<xsl:variable name="TITEL_5_4" select="'5.4. Verwante publicaties'"/>
+	<xsl:variable name="TITEL_5_5" select="'5.5. Bibliografie'"/>	
 <xsl:variable name="TITEL_6" select="'6. AANTEKENINGEN'"/>
 	<xsl:variable name="TITEL_6_1" select="'6.1. Aantekening'"/>
 <xsl:variable name="TITEL_7" select="'7. BESCHRIJVINGSBEHEER'"/>
