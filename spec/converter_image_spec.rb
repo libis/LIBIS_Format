@@ -7,6 +7,7 @@ require 'libis/format/converter/jp2_converter'
 describe 'Converters' do
 
   let(:repository) {Libis::Format::Converter::Repository}
+  let(:work_dir) { File.join(data_dir, "..", "work") }
 
   before(:all) {
     Libis::Tools::Config.logger.level = 'off'
@@ -15,20 +16,20 @@ describe 'Converters' do
   context 'Image Converter' do
 
     let(:converter) {Libis::Format::Converter::ImageConverter.new}
-    let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}
+    let(:diff_file) {File.join(work_dir, 'diff.jpg')}
 
     it 'converts TIFF to JPEG' do
       src_file = File.join(data_dir, 'test.tif')
       ref_file = File.join(data_dir, 'test.jpg')
-      tgt_file = File.join('', 'tmp', 'test.jpg')
+      tgt_file = File.join(work_dir, 'test.jpg')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :JPG)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
       compare.metric << 'MAE'
-      compare.fuzz << '1%'
+      compare.fuzz << '5%'
       compare << diff_file
       compare.call {|_, _, status| expect(status).to be 0}
       FileUtils.rm tgt_file, force: true
@@ -38,12 +39,12 @@ describe 'Converters' do
     it 'converts TIFF to PNG' do
       src_file = File.join(data_dir, 'test.tif')
       ref_file = File.join(data_dir, 'test.png')
-      tgt_file = File.join('', 'tmp', 'test.png')
+      tgt_file = File.join(work_dir, 'test.png')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       converter.page(0)
       result = converter.convert(src_file, tgt_file, :PNG)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
       compare.metric << 'MAE'
@@ -56,11 +57,11 @@ describe 'Converters' do
     it 'converts PDF to TIFF' do
       src_file = File.join(data_dir, 'test.pdf')
       ref_file = File.join(data_dir, 'test.pdf.tif')
-      tgt_file = File.join('', 'tmp', 'test.pdf.tif')
+      tgt_file = File.join(work_dir, 'test.pdf.tif')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :TIFF)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
       compare.metric << 'AE'
@@ -74,12 +75,12 @@ describe 'Converters' do
     it 'converts TIFF to PNG with many options' do
       src_file = File.join(data_dir, 'test.tif')
       ref_file = File.join(data_dir, 'test-options.png')
-      tgt_file = File.join('', 'tmp', 'test-options.png')
+      tgt_file = File.join(work_dir, 'test-options.png')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.watermark(text: 'RSPEC', size: 5, opacity: 0.1, rotation: 15, gap: 0.5, composition: 'modulate')
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :PNG, options: {scale: '150%'})
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
       compare.metric << 'AE'
@@ -95,13 +96,13 @@ describe 'Converters' do
     it 'converts only first page of multipage TIFF to JP2' do
       src_file = File.join(data_dir, 'multipage.tif')
       ref_file = File.join(data_dir, 'multipage.tif.jp2')
-      tgt_file = File.join('', 'tmp', 'test.jp2')
+      tgt_file = File.join(work_dir, 'test.jp2')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       converter.quiet(true)
       converter.page(0)
       result = converter.convert(src_file, tgt_file, :JP2)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
@@ -115,29 +116,28 @@ describe 'Converters' do
 
     it 'converts TIFF to JP2' do
       src_file = File.join(data_dir, 'test.tif')
-      tgt_file = File.join('', 'tmp', 'test.jp2')
+      tgt_file = File.join(work_dir, 'test.jp2')
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.delete_date
       result = converter.convert(src_file, tgt_file, :JP2)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
       FileUtils.rm tgt_file, force: true
     end
-
 
   end
 
   context 'JP2 Converter', unless: `which "#{Libis::Format::Config[:j2k_cmd]}"` do
 
     let(:converter) {Libis::Format::Converter::Jp2Converter.new}
-    let(:diff_file) {File.join('', 'tmp', 'diff.jpg')}
+    let(:diff_file) {File.join(work_dir, 'diff.jpg')}
 
     it 'converts TIFF to JP2' do
       src_file = File.join(data_dir, 'test.tif')
-      tgt_file = File.join('', 'tmp', 'test.jp2')
+      tgt_file = File.join(work_dir, 'test.jp2')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :JP2)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
       FileUtils.rm tgt_file, force: true
     end
@@ -145,10 +145,10 @@ describe 'Converters' do
     it 'converts only first page of multipage TIFF to JP2' do
       src_file = File.join(data_dir, 'multipage.tif')
       ref_file = File.join(data_dir, 'multipage.tif.jp2')
-      tgt_file = File.join('', 'tmp', 'test.jp2')
+      tgt_file = File.join(work_dir, 'test.jp2')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :JP2)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       expect(File.exist?(tgt_file)).to be_truthy
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file

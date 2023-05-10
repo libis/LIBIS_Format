@@ -12,7 +12,7 @@ describe 'Converters' do
   context 'Repository' do
 
     it 'loads all converters' do
-      expect(repository.get_converters.size).to eq 9
+      expect(repository.get_converters.size).to eq 10
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::ImageConverter'
       # noinspection RubyResolve
@@ -31,6 +31,8 @@ describe 'Converters' do
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::XsltConverter'
       # noinspection RubyResolve
       expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::FopPdfConverter'
+      # noinspection RubyResolve
+      expect(repository.get_converters.map(&:to_s)).to include 'Libis::Format::Converter::EmailConverter'
     end
 
     it 'creates simple converter chain' do

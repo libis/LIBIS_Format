@@ -21,7 +21,7 @@ describe 'Converters' do
       tgt_file = File.join(work_dir, 'test_xls.ods')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :OO_CALC)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       FileUtils.rm tgt_file, force: true
     end
 
@@ -30,7 +30,7 @@ describe 'Converters' do
       tgt_file = File.join(work_dir, 'test_xlsx.ods')
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :OO_CALC)
-      expect(result).to eq tgt_file
+      expect(result[:files].first).to eq tgt_file
       FileUtils.rm tgt_file, force: true
     end
 
