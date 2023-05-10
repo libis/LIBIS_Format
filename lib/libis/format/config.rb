@@ -21,7 +21,7 @@ module Libis
     Config[:fido_formats] = [(File.join(Libis::Format::DATA_DIR, 'lias_formats.xml'))]
     Config[:pdf_tool] = File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar')
     Config[:preflight_jar] = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-2.0.13.jar')
-    Config[:emai2pdf_jar] = File.join(Libis::Format::TOOL_DIR, 'emailconverter.jar')
+    Config[:email2pdf_jar] = File.join(Libis::Format::TOOL_DIR, 'emailconverter.jar')
     # noinspection RubyStringKeysInHashInspection
     Config[:xml_validations] = [['archive/ead', File.join(Libis::Format::DATA_DIR, 'ead.xsd')]]
     Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
