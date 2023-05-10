@@ -5,10 +5,10 @@
 % unless the user modifies the corresponding line below.
 
 % Define entries in the document Info dictionary :
-/ICCProfile ([** Fill in ICC profile location **])
+/ICCProfile ([**ICC profile**])
 def
 
-[ /Title (Title)
+[ [**METADATA**]
   /DOCINFO pdfmark
 
 % Define an ICC profile :
@@ -35,6 +35,6 @@ def
   /Type /OutputIntent             % Must be so (the standard requires).
   /S /GTS_PDFA1                   % Must be so (the standard requires).
   /DestOutputProfile {icc_PDFA}            % Must be so (see above).
-  /OutputConditionIdentifier ([** Fill in ICC reference name **])
+  /OutputConditionIdentifier ([**ICC reference**])
 >> /PUT pdfmark
 [{Catalog} <</OutputIntents [ {OutputIntent_PDFA} ]>> /PUT pdfmark

@@ -5,6 +5,7 @@ require_relative 'base'
 require 'libis/tools/extend/hash'
 require 'libis/format/tool/pdf_copy'
 require 'libis/format/tool/pdf_to_pdfa'
+require 'libis/format/tool/pdfa_validator'
 require 'libis/format/tool/pdf_optimizer'
 
 module Libis
@@ -120,7 +121,7 @@ module Libis
           end
 
           { 
-            files: [result]
+            files: [result],
             converter: self.class.name
           }
 
@@ -163,11 +164,16 @@ module Libis
 
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfToPdfa.run source, tmpname
-            if result[:status] != 0
-              error("Pdf/A conversion encountered errors:\n%s", result[:err].join("\n"))
+
+            if result[:command][:status] != 0
+              error("Pdf/A conversion encountered errors:\n%s", (result[:command][:out] + result[:command][:err]).join("\n"))
               next nil
             else
-              warn("Pdf/A conversion warnings:\n%s", result[:err].join("\n")) unless result[:err].empty?
+              r = Libis::Format::Tool::PdfaValidator.run tmpname
+              if r[:status] != 0
+                error "Pdf/A file failed to validate with following errors:\n%s", (r[:err] || r[:out] || []).join("\n")
+                next nil
+              end
             end
             tmpname
           end
