@@ -103,7 +103,7 @@ AUDIO:
     NAME: Windows Media Audio (WMA)
     MIME: audio/x-ms-wma
     PUID: fmt/132
-    EXTENSIONS: wma
+    EXTENSIONS: wma asf
 
   ALAC:
     NAME: Apple Lossless Audio Codec (ALAC)
@@ -194,7 +194,7 @@ VIDEO:
     NAME: Windows Media Video (WMV)
     MIME: video/x-ms-wmv
     PUID: fmt/133 fmt/441
-    EXTENSIONS: wmv
+    EXTENSIONS: wmv asf
 
   DV:
     NAME: Digital Video (DV)
@@ -319,6 +319,12 @@ TEXT:
 
 TABULAR:
 
+  CSV:
+    NAME: Comma Separated Values
+    MIME: text/csv
+    PUID: x-fmt/18
+    EXTENSIONS: csv
+
   MSXLS:
     NAME: Microsoft Excel Spreadsheet (XLS)
     MIME: application/vnd.ms-excel,application/msexcel
@@ -351,8 +357,15 @@ TABULAR:
 
 PRESENTATION:
 
+  MSPPS:
+    NAME: Microsoft Powerpoint Presentation Show
+    PUID: x-fmt/87
+    MIME: application/vnd.ms-powerpoint
+    EXTENSIONS: pps
+
   MSPPT:
     NAME: Microsoft Powerpoint Presentation (PPT)
+    PUID: fmt/181 fmt/179 fmt/1747 fmt/1748 x-fmt/88 fmt/125 fmt/126
     MIME: application/vnd.ms-powerpoint,application/mspowerpoint
     EXTENSIONS: ppt
 
