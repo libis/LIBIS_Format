@@ -96,7 +96,7 @@ AUDIO:
 
   AAC:
     NAME: Advanced Audio Coding (AAC)
-    MIME: audio/aac
+    MIME: audio/aac audio/x-hx-aac-adts
     EXTENSIONS: aac
 
   WMA:
