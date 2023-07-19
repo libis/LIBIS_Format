@@ -73,7 +73,7 @@ module Libis
           result = { commands: [] }
 
           # noinspection RubyParenthesesAroundConditionInspection
-          conversion_success = converter_chain.each_with_index do |node, i|
+          conversion_success = @converter_chain.each_with_index do |node, i|
 
             target_type = node[:output]
             converter_class = node[:converter]
@@ -98,7 +98,7 @@ module Libis
 
             src_file = r[:files].first
             xtra_files += r[:files][1..]
-            break :failed unless src_file1
+            break :failed unless src_file
 
             result[:commands] << r.merge(converter: converter_class.name)
 
