@@ -40,5 +40,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'chromaprint', '~> 0.0.2'
   spec.add_runtime_dependency 'naturally', '~> 2.1'
   spec.add_runtime_dependency 'pdfinfo', '~> 1.4'
+  spec.add_runtime_dependency 'ruby-msg', ''
 
 end

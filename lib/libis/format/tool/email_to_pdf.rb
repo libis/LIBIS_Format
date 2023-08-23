@@ -1,11 +1,13 @@
 require "fileutils"
 
 require "libis/tools/extend/string"
+require "libis/tools/extend/hash"
 require "libis/tools/logger"
 require "libis/tools/command"
 
 require "libis/format/config"
-require "rexml/document"
+
+require 'yaml'
 
 module Libis
   module Format
@@ -42,12 +44,12 @@ module Libis
           raise "#{self.class} command failed with status code #{result[:status]}" unless result[:status] == 0
 
           base_path = File.join(File.dirname(target), File.basename(target, ".*"))
-          headers_file = "#{base_path}.headers.xml"
+          headers_file = "#{base_path}.headers.yml"
           headers = read_header(headers_file)
 
           {
             command: result,
-            files: [target, headers_file] + headers[:attachments].map { |a| File.join("#{base_path}-attachments", a) },
+            files: [target] + headers[:attachments].map { |a| File.join("#{base_path}-attachments", a) },
             headers: headers
           }
         end
@@ -55,19 +57,8 @@ module Libis
         private
 
         def read_header(headers_file)
-          headers = {}
-          return headers unless File.exist?(headers_file)
-          doc = REXML::Document.new(File.new(headers_file))
-          root = doc.root
-          root.children.each do |element|
-            case element.name
-            when "attachments"
-              headers[:attachments] = element.elements.map { |e| e.text }
-            else
-              headers[element.name.to_sym] = element.text
-            end
-          end
-          headers
+          headers = YAML.load_file(headers_file)
+          headers.symbolize_keys
         end
       end
     end
