@@ -18,6 +18,7 @@ module Libis
       autoload :PdfSplit, 'libis/format/tool/pdf_split'
       autoload :PdfToPdfa, 'libis/format/tool/pdf_to_pdfa'
       autoload :PdfaValidator, 'libis/format/tool/pdfa_validator'
+      autoload :MsgToPdf, 'libis/format/tool/msg_to_pdf'
 
     end
   end

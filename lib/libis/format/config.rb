@@ -4,7 +4,6 @@ require 'os'
 module Libis
   module Format
 
-    # noinspection RubyConstantNamingConvention
     Config = ::Libis::Tools::Config
 
     Config[:converter_chain_max_level] = 8
@@ -21,8 +20,7 @@ module Libis
     Config[:fido_formats] = [(File.join(Libis::Format::DATA_DIR, 'lias_formats.xml'))]
     Config[:pdf_tool] = File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar')
     Config[:preflight_jar] = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-2.0.13.jar')
-    Config[:email2pdf_jar] = File.join(Libis::Format::TOOL_DIR, 'emailconverter.jar')
-    # noinspection RubyStringKeysInHashInspection
+    Config[:wkhtmltopdf] = 'wkhtmltopdf'
     Config[:xml_validations] = [['archive/ead', File.join(Libis::Format::DATA_DIR, 'ead.xsd')]]
     Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
     Config[:raw_audio_convert_cmd] = 'sox -V1 %s -e signed -b 16 -t wav %s rate %d channels %d'
