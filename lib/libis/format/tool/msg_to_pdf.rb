@@ -46,6 +46,7 @@ module Libis
 
           target_format = options.delete(:to_html) ? :HTML : :PDF
           msg_to_pdf(msg, target, target_format, options)
+          msg.close
         end
 
         def msg_to_pdf(msg, target, target_format, pdf_options, reraise: false)
@@ -217,6 +218,7 @@ module Libis
 # puts "ERROR: Exception #{e.class} raised: #{e.message}"
 # e.backtrace.each {|t| puts " - #{t}"}
           raise if reraise
+          msg.close
           return {
             error: e.message,
             error_class: e.class.name,
