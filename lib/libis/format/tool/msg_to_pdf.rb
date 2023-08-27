@@ -38,45 +38,44 @@ module Libis
           # Check if source file exists
           raise "File #{source} does not exist" unless File.exist?(source)
 
-          # Make sure the target directory exists
-          outdir = File.dirname(target)
-          FileUtils.mkdir_p(outdir)
-
           # Retrieving the message
           # ----------------------
 
           # Open the message
           msg = Mapi::Msg.open(source)
 
-          target_format = options.delete(:to_html) ? :PDF : :HTML
+          target_format = options.delete(:to_html) ? :HTML : :PDF
           msg_to_pdf(msg, target, target_format, options)
         end
 
-        def msg_to_pdf(msg, target, target_format, pdf_options)
+        def msg_to_pdf(msg, target, target_format, pdf_options, reraise: false)
+
+          # Make sure the target directory exists
           outdir = File.dirname(target)
+          FileUtils.mkdir_p(outdir)
 
-puts "Headers:"
-puts '--------'
-pp msg.headers
+# puts "Headers:"
+# puts '--------'
+# pp msg.headers
 
-puts "Recipients:"
-puts '-----------'
-pp msg.recipients
+# puts "Recipients:"
+# puts '-----------'
+# pp msg.recipients
 
-puts "Body:"
-puts '-----'
-puts msg.properties.body
-puts '-----'
-puts msg.properties.body_rtf
-puts '-----'
-puts msg.properties.body_html
+# puts "Body:"
+# puts '-----'
+# puts msg.properties.body
+# puts '-----'
+# puts msg.properties.body_rtf
+# puts '-----'
+# puts msg.properties.body_html
 
-puts "Attachments:"
-puts '------------'
-msg.attachments.each {|a| p "#{a.filename} - #{a.properties.attach_content_id}"}
+# puts "Attachments:"
+# puts '------------'
+# msg.attachments.each {|a| p "#{a.filename} - #{a.properties.attach_content_id}"}
 
-puts "Converting:"
-puts '-----------'
+# puts "Converting:"
+# puts '-----------'
 
           # Get the body of the message in HTML
           body = msg.properties.body_html
@@ -119,28 +118,37 @@ puts '-----------'
               body.gsub!(/<body/, '<head>' + HEADER_STYLE + '</head><body')
             end
             # Add the headers html table as first element in the body section
-            body.gsub!(/<body[^>]*>/) {|m| "#{m}#{HEADER_TABLE_TEMPLATE % headers}"}
+            body.gsub!(/<body[^>]*>/) {|m| "#{m}#{HEADER_TABLE_TEMPLATE % hdr_html}"}
           end
 
           # Embed inline images
           # -------------------
           attachments = msg.attachments
+          used_files = []
 
           # First process plaintext cid entries
           body.gsub!(IMG_CID_PLAIN_REGEX) do |match|
+# puts "CID found: #{match}, looking for #{$1}"
             data = getAttachmentData(attachments, $1)
             unless data
+# puts "cid #{$1} not found"
               return '<img src=""/>'
             end
+# puts "cid #{$1} data: #{data.inspect}"
+            used_files << $1
             "<img src=\"data:#{data[:mime_type]};base64,#{data[:base64]}\"/>"
           end
           
           # Then process HTML img tags with CID entries
           body.gsub!(IMG_CID_HTML_REGEX) do |match|
+# puts "CID found: #{match}, looking for #{$1}"
             data = getAttachmentData(attachments, $1)
             unless data
+# puts "cid #{$1} not found"
               return ''
             end
+# puts "cid #{$1} data: #{data.inspect}"
+            used_files << $1
             "data:#{data[:mime_type]};base64,#{data[:base64]}"
           end
 
@@ -161,30 +169,38 @@ puts '-----------'
               # viewport_size: '2480x3508',
             }.merge pdf_options
 
-            kit = PDFKit.new(body, title: (find_hdr(msg.headers, 'Subject') || 'message'), **pdf_options)
+# pp pdf_options
+# puts "Final HTML body:"
+# pp body
+            kit = PDFKit.new(body, title: (msg.subject || 'message'), **pdf_options)
             pdf = kit.to_pdf
             File.open(target, 'wb') {|f| f.write(pdf)}
+# puts "message #{msg.subject} converted to PDF file '#{target}'"
           else
             File.open(target, 'wb') {|f| f.write(body)}
+# puts "message #{msg.subject} converted to HTML file '#{target}'"
           end
           files << target if File.exist?(target)
 
           # Save attachments
           # ----------------
+          outdir = File.join(outdir, "attachments")
           attachments.delete_if {|a| a.properties.attachment_hidden}.each do |a|
             if a.filename
+              next if used_files.include?(a.filename)
               file = File.join(outdir, a.filename)
               FileUtils.mkdir_p(File.dirname(file))
               File.open(file, 'wb') {|f| a.save(f)}
               files << file
-  puts "Attachment file '#{file}' created"
+# puts "Attachment file '#{file}' created"
             elsif sub_msg = a.instance_variable_get(:@embedded_msg)
               subject = a.properties[:display_name] || sub_msg.subject || "attachment_#{a.properties[:attach_num]}"
-              subdir = File.join(outdir, "#{subject}.msg")
+              subdir = File.join(outdir, "#{subject}")
               FileUtils.mkdir_p(subdir)
-              result = msg_to_pdf(sub_msg, File.join(subdir, "message.#{target_format.to_s.downcase}"), target_format, pdf_options)
+# puts "Embedded email message ..."
+              result = msg_to_pdf(sub_msg, File.join(subdir, "message.#{target_format.to_s.downcase}"), target_format, pdf_options, reraise: true)
               if e = result[:error]
-                raise e
+                raise 
               end
               files += result[:files]
             else
@@ -198,10 +214,14 @@ puts '-----------'
           }
           
         rescue Exception => e
-puts "ERROR: Exception #{e.class} raised: #{e.message}"
+# puts "ERROR: Exception #{e.class} raised: #{e.message}"
+# e.backtrace.each {|t| puts " - #{t}"}
+          raise if reraise
           return {
             error: e.message,
-            command: nil,
+            error_class: e.class.name,
+            error_trace: e.backtrace,
+            command: {status: -1},
             files: [],
             headers: {}
           }
