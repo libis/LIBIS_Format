@@ -193,7 +193,7 @@ module Libis
 
           # Save attachments
           # ----------------
-          outdir = File.join(outdir, "attachments")
+          outdir = File.join(outdir, "#{File.basename(target)}.attachments")
           attachments.delete_if {|a| a.properties.attachment_hidden}.each do |a|
             if a.filename
               next if used_files.include?(a.filename)
