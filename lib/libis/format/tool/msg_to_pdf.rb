@@ -180,7 +180,7 @@ module Libis
 # pp pdf_options
 # puts "Final HTML body:"
 # pp body
-            subject = find_hdr(msg.headers, key)
+            subject = find_hdr(msg.headers, 'Subject')
             kit = PDFKit.new(body, title: (subject || 'message'), **pdf_options)
             pdf = kit.to_pdf
             File.open(target, 'wb') {|f| f.write(pdf)}
