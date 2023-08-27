@@ -180,13 +180,14 @@ module Libis
 # pp pdf_options
 # puts "Final HTML body:"
 # pp body
-            kit = PDFKit.new(body, title: (msg.subject || 'message'), **pdf_options)
+            subject = find_hdr(msg.headers, key)
+            kit = PDFKit.new(body, title: (subject || 'message'), **pdf_options)
             pdf = kit.to_pdf
             File.open(target, 'wb') {|f| f.write(pdf)}
-# puts "message #{msg.subject} converted to PDF file '#{target}'"
+# puts "message #{subject} converted to PDF file '#{target}'"
           else
             File.open(target, 'wb') {|f| f.write(body)}
-# puts "message #{msg.subject} converted to HTML file '#{target}'"
+# puts "message #{subject} converted to HTML file '#{target}'"
           end
           files << target if File.exist?(target)
 
