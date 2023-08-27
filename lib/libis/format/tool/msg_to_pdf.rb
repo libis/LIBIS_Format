@@ -213,6 +213,7 @@ module Libis
               end
               files += result[:files]
             else
+              @warnings << "Attachment #{a.properties[:display_name]} cannot be saved"
             end
           end
           
