@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'os'
+require 'libis-tools'
 
 module Libis
   module Format
