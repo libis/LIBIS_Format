@@ -35,6 +35,8 @@ module Libis
           # Preliminary checks
           # ------------------
 
+          @warnings = []
+
           # Check if source file exists
           raise "File #{source} does not exist" unless File.exist?(source)
 
@@ -211,7 +213,8 @@ module Libis
           {
             command: {status: 0},
             files: files,
-            headers: headers
+            headers: headers,
+            warnings: @warnings
           }
           
         rescue Exception => e
@@ -220,12 +223,17 @@ module Libis
           raise if reraise
           msg.close
           return {
-            error: e.message,
-            error_class: e.class.name,
-            error_trace: e.backtrace,
             command: {status: -1},
             files: [],
-            headers: {}
+            headers: {},
+            errors: [
+              {
+                error: e.message,
+                error_class: e.class.name,
+                error_trace: e.backtrace,
+              }
+            ],
+            warnings: @warnings
           }
         end
 
