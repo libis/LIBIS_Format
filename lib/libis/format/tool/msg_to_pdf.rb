@@ -92,9 +92,14 @@ module Libis
             # Try to encode into UTF-8
             body.encode!('UTF-8', universal_newline: true)
           rescue Encoding::InvalidByteSequenceError, Encoding::UndefinedConversionError
+            begin
             # If it fails, the text may be in Windows' Latin1 (ISO-8859-1)
-            # Note that if there still are invalid or undefined characters, they will be replaced with the ? character
-            body.force_encoding('ISO-8859-1').encode!('UTF-8', universal_newline: true, invalid: :replace, undef: :replace)
+            body.force_encoding('ISO-8859-1').encode!('UTF-8', universal_newline: true)
+            rescue Encoding::InvalidByteSequenceError, Encoding::UndefinedConversionError => e
+              # If that fails too, log a warning and replace the invalid/unknown with a ? character.
+              @warnings << "#{e.class}: #{e.message}"
+              body.encode!('UTF-8', universal_newline: true, invalid: :replace, undef: :replace)
+            end
           end
 
           # Process headers
