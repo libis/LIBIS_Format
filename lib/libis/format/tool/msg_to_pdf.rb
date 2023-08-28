@@ -195,27 +195,33 @@ module Libis
           # Save attachments
           # ----------------
           outdir = File.join(outdir, "#{File.basename(target)}.attachments")
+          digits = ((attachments.count + 1)/ 10) + 1
+          i = 0
           attachments.delete_if {|a| a.properties.attachment_hidden}.each do |a|
-            if a.filename
-              next if used_files.include?(a.filename)
-              file = File.join(outdir, a.filename)
-              FileUtils.mkdir_p(File.dirname(file))
-              File.open(file, 'wb') {|f| a.save(f)}
-              files << file
-# puts "Attachment file '#{file}' created"
-            elsif sub_msg = a.instance_variable_get(:@embedded_msg)
-              subject = a.properties[:display_name] || sub_msg.subject || "attachment_#{a.properties[:attach_num]}"
-              subdir = File.join(outdir, "#{subject}")
-              FileUtils.mkdir_p(subdir)
+            prefix = "#{"%0*d" % [digits, i]}-"
+            if sub_msg = a.instance_variable_get(:@embedded_msg)
 # puts "Embedded email message ..."
-              result = msg_to_pdf(sub_msg, File.join(subdir, "message.#{target_format.to_s.downcase}"), target_format, pdf_options, reraise: true)
+              subject = a.properties[:display_name] || sub_msg.subject || ""
+              file = File.join(outdir, "#{prefix}#{subject}.#{target_format.to_s.downcase}")
+
+              result = msg_to_pdf(sub_msg, file, target_format, pdf_options, reraise: true)
               if e = result[:error]
                 raise 
               end
               files += result[:files]
+            elsif a.filename
+              next if used_files.include?(a.filename)
+              file = File.join(outdir, "#{prefix}#{a.filename}")
+
+              FileUtils.mkdir_p(File.dirname(file))
+              File.open(file, 'wb') {|f| a.save(f)}
+              files << file
+# puts "Attachment file '#{file}' created"
             else
               @warnings << "Attachment #{a.properties[:display_name]} cannot be saved"
+              next
             end
+            i += 1
           end
           
           {
