@@ -47,8 +47,9 @@ module Libis
           msg = Mapi::Msg.open(source)
 
           target_format = options.delete(:to_html) ? :HTML : :PDF
-          msg_to_pdf(msg, target, target_format, options)
+          result = msg_to_pdf(msg, target, target_format, options)
           msg.close
+          return result
         end
 
         def msg_to_pdf(msg, target, target_format, pdf_options, reraise: false)
