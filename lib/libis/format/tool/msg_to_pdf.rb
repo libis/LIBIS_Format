@@ -5,7 +5,10 @@ require 'rfc_2047'
 require 'cgi'
 require 'pdfkit'
 
+require 'time'
+
 require 'fileutils'
+require 'pathname'
 
 require 'libis/format/config'
 
@@ -52,7 +55,7 @@ module Libis
           result
         end
 
-        def msg_to_pdf(msg, target, target_format, pdf_options, reraise: false)
+        def msg_to_pdf(msg, target, target_format, pdf_options, root_msg: true)
 
           # Make sure the target directory exists
           outdir = File.dirname(target)
@@ -114,6 +117,11 @@ module Libis
               headers[key.downcase.to_sym] = value
               hdr_html += hdr_html(key, value)
             end
+          end
+
+          [:date].each do |key|
+            next unless headers[key]
+            headers[key] = DateTime.parse(headers[key]).to_time.localtime.iso8601
           end
 
           # Add header section to the HTML body
@@ -204,9 +212,9 @@ module Libis
             if sub_msg = a.instance_variable_get(:@embedded_msg)
 # puts "Embedded email message ..."
               subject = a.properties[:display_name] || sub_msg.subject || ""
-              file = File.join(outdir, "#{prefix}#{subject}.#{target_format.to_s.downcase}")
+              file = File.join(outdir, "#{prefix}#{subject}.msg.#{target_format.to_s.downcase}")
 
-              result = msg_to_pdf(sub_msg, file, target_format, pdf_options, reraise: true)
+              result = msg_to_pdf(sub_msg, file, target_format, pdf_options, root_msg: false)
               if e = result[:error]
                 raise 
               end
@@ -225,6 +233,13 @@ module Libis
             end
             i += 1
           end
+
+          if root_msg
+            p = Pathname(File.dirname(files.first))
+            files[1..].each do |f|
+              (headers[:attachments] ||= []) << Pathname.new(f).relative_path_from(p).to_s
+            end
+          end
           
           {
             command: {status: 0},
@@ -236,7 +251,7 @@ module Libis
         rescue Exception => e
 # puts "ERROR: Exception #{e.class} raised: #{e.message}"
 # e.backtrace.each {|t| puts " - #{t}"}
-          raise if reraise
+          raise unless root_msg
           msg.close
           return {
             command: {status: -1},
