@@ -49,7 +49,7 @@ module Libis
           target_format = options.delete(:to_html) ? :HTML : :PDF
           result = msg_to_pdf(msg, target, target_format, options)
           msg.close
-          return result
+          result
         end
 
         def msg_to_pdf(msg, target, target_format, pdf_options, reraise: false)
@@ -139,26 +139,28 @@ module Libis
           body.gsub!(IMG_CID_PLAIN_REGEX) do |match|
 # puts "CID found: #{match}, looking for #{$1}"
             data = getAttachmentData(attachments, $1)
-            unless data
-# puts "cid #{$1} not found"
-              return '<img src=""/>'
-            end
+            if data
 # puts "cid #{$1} data: #{data.inspect}"
-            used_files << $1
-            "<img src=\"data:#{data[:mime_type]};base64,#{data[:base64]}\"/>"
+              used_files << $1
+              "<img src=\"data:#{data[:mime_type]};base64,#{data[:base64]}\"/>"
+            else
+  # puts "cid #{$1} not found"
+              '<img src=""/>'
+            end
           end
           
           # Then process HTML img tags with CID entries
           body.gsub!(IMG_CID_HTML_REGEX) do |match|
 # puts "CID found: #{match}, looking for #{$1}"
             data = getAttachmentData(attachments, $1)
-            unless data
-# puts "cid #{$1} not found"
-              return ''
-            end
+            if  data
 # puts "cid #{$1} data: #{data.inspect}"
             used_files << $1
             "data:#{data[:mime_type]};base64,#{data[:base64]}"
+            else
+# puts "cid #{$1} not found"
+              ''
+            end
           end
 
           # Create PDF
@@ -196,7 +198,7 @@ module Libis
           # ----------------
           outdir = File.join(outdir, "#{File.basename(target)}.attachments")
           digits = ((attachments.count + 1)/ 10) + 1
-          i = 0
+          i = 1
           attachments.delete_if {|a| a.properties.attachment_hidden}.each do |a|
             prefix = "#{"%0*d" % [digits, i]}-"
             if sub_msg = a.instance_variable_get(:@embedded_msg)
@@ -285,7 +287,7 @@ module Libis
               }
             end
           end
-          return nil
+          nil
         end
 
         def read_header(headers_file)
