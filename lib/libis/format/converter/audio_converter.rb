@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'base'
 require 'libis/format/identifier'
 require 'chromaprint'
@@ -7,24 +9,19 @@ require 'fileutils'
 module Libis
   module Format
     module Converter
-
       class AudioConverter < Libis::Format::Converter::Base
-
         def self.input_types
-          [:MP3, :FLAC, :AC3, :AAC, :WMA, :ALAC, :WAV, :AIFF, :AMR, :AU, :M4A]
+          %i[MP3 FLAC AC3 AAC WMA ALAC WAV AIFF AMR AU M4A]
         end
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format)
-          [:MP3, :FLAC, :AC3, :AAC, :WMA, :ALAC, :WAV, :AIFF, :AMR, :AU, :M4A]
+
+          %i[MP3 FLAC AC3 AAC WMA ALAC WAV AIFF AMR AU M4A]
         end
 
-        def initialize
-          super
-        end
-
-        def quiet(v)
-          @flags[:quiet] = !!v
+        def quiet(value)
+          @flags[:quiet] = !!value
         end
 
         def format(format)
@@ -60,9 +57,9 @@ module Libis
         end
 
         def web_stream(value)
-          if value
-            @options[:codec] = 'mp3'
-          end
+          return unless value
+
+          @options[:codec] = 'mp3'
         end
 
         def preset(stream, name)
@@ -88,7 +85,7 @@ module Libis
 
           elsif File.directory?(source)
 
-            sources = Dir[File.join(source, '**', '*')].reject {|p| File.directory? p}
+            sources = Dir[File.join(source, '**', '*')].reject { |p| File.directory? p }
             assemble_and_convert(sources, target)
 
           else
@@ -96,15 +93,14 @@ module Libis
             convert_file(source, target)
 
           end
-
         end
 
         def assemble_and_convert(sources, target)
           result = {}
-          Tempfile.create(%w(list .txt)) do |f|
-            sources.each {|src| f.puts src}
+          Tempfile.create(%w[list .txt]) do |f|
+            sources.each { |src| f.puts src }
             opts[:global] ||= []
-            opts[:global] += %w(-f concat)
+            opts[:global] += %w[-f concat]
             f.close
             result = convert_file(f.to_path, target)
           end
@@ -112,19 +108,19 @@ module Libis
         end
 
         def self.sounds_like(file1, file2, threshold, rate, channels)
-          rate ||= 96000
+          rate ||= 96_000
           channels ||= 2
           threshold ||= 0.85
 
-          if File.exists?(file1) && File.exists?(file2)
+          if File.exist?(file1) && File.exist?(file2)
             # Convert input files into raw 16-bit signed audio (WAV) to process with Chramaprint
-            file1_raw = File.join('', 'tmp', File.basename(file1) + '.wav')
-            file2_raw = File.join('', 'tmp', File.basename(file2) + '.wav')
+            file1_raw = File.join('', 'tmp', "#{File.basename(file1)}.wav")
+            file2_raw = File.join('', 'tmp', "#{File.basename(file2)}.wav")
             FileUtils.rm(file1_raw, force: true)
             FileUtils.rm(file2_raw, force: true)
             cvt_cmd = Libis::Format::Config[:raw_audio_convert_cmd]
-            %x"#{cvt_cmd % [file1, file1_raw, rate, channels]}"
-            %x"#{cvt_cmd % [file2, file2_raw, rate, channels]}"
+            `#{format(cvt_cmd, file1, file1_raw, rate, channels)}`
+            `#{format(cvt_cmd, file2, file2_raw, rate, channels)}`
             file1_audio = File.binread(file1_raw)
             file2_audio = File.binread(file2_raw)
 
@@ -144,16 +140,15 @@ module Libis
           else
             false
           end
-
         rescue Exception => e
-          error "Error comparing sound file #{file1} and #{file2}: #{e.message} @ #{e.backtrace.first}"
+          puts "Error comparing sound file #{file1} and #{file2}: #{e.message} @ #{e.backtrace.first}"
           false
         end
 
         protected
 
         def convert_file(source, target)
-          opts = {global: [], input: [], filter: [], output: []}
+          opts = { global: [], input: [], filter: [], output: [] }
 
           opts[:global] << '-hide_banner'
           opts[:global] << '-loglevel' << (@options[:quiet] ? 'fatal' : 'warning')
@@ -161,7 +156,7 @@ module Libis
           opts[:output] << '-codec:a' << @options[:codec] if @options[:codec]
           opts[:output] << '-map_metadata:g' << '0:g' # Copy global metadata
           opts[:output] << '-map_metadata:s:a' << '0:s:a' # Copy audio metadata
-          opts[:input] << '-accurate_seek' << (@options[:start].to_i < 0 ? '-sseof' : '-ss') << @options[:start] if @options[:start]
+          opts[:input] << '-accurate_seek' << (@options[:start].to_i.negative? ? '-sseof' : '-ss') << @options[:start] if @options[:start]
           opts[:input] << '-t' << @options[:duration] if @options[:duration]
           opts[:output] << '-q:a' << @options[:quality] if @options[:quality]
           opts[:output] << '-b:a' << @options[:bit_rate] if @options[:bit_rate]
@@ -171,9 +166,7 @@ module Libis
 
           Libis::Format::Tool::FFMpeg.run(source, target, opts)
         end
-
       end
-
     end
   end
 end

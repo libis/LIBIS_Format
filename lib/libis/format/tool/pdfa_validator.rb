@@ -1,10 +1,12 @@
-require "fileutils"
+# frozen_string_literal: true
 
-require "libis/tools/extend/string"
-require "libis/tools/logger"
-require "libis/tools/command"
+require 'fileutils'
 
-require "libis/format/config"
+require 'libis/tools/extend/string'
+require 'libis/tools/logger'
+require 'libis/tools/command'
+
+require 'libis/format/config'
 
 module Libis
   module Format
@@ -20,6 +22,7 @@ module Libis
           src_file = File.absolute_path(source)
 
           timeout = Libis::Format::Config[:timeouts][:pdfa_validator]
+          result = nil
           if (pdfa = Libis::Format::Config[:pdfa_cmd])
             # Keep it clean: tool generates fontconfig/ cache dir in current working dir
             previous_wd = Dir.getwd
@@ -27,16 +30,16 @@ module Libis
 
             result = Libis::Tools::Command.run(
               pdfa,
-              "--noxml",
-              "--level", "B",
-              "--verb", "0",
+              '--noxml',
+              '--level', 'B',
+              '--verb', '0',
               src_file,
-              timeout: timeout,
+              timeout:,
               kill_after: timeout * 2
             )
 
             raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
-            raise "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0 && result[:err].empty?
+            raise "#{self.class} errors: #{result[:err].join("\n")}" unless (result[:status]).zero? && result[:err].empty?
 
             Dir.chdir(previous_wd)
 
@@ -44,21 +47,20 @@ module Libis
             result[:out] = out
             result[:err] += err
 
-            result
           else
             jar = Libis::Format::Config[:preflight_jar]
             result = Libis::Tools::Command.run(
               Libis::Format::Config[:java_cmd],
-              "-jar", jar,
+              '-jar', jar,
               src_file,
-              timeout: timeout,
+              timeout:,
               kill_after: timeout * 2
             )
 
             raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
 
-            result
           end
+          result
         end
       end
     end

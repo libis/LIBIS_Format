@@ -5,17 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "rdbg",
             "name": "Debug current file with rdbg",
+            "type": "rdbg",
             "request": "launch",
+            "command": "bundle exec ruby",
             "script": "${file}",
             "args": [],
             "askParameters": true
         },
         {
+            "name": "Debug Rspec",
             "type": "rdbg",
-            "name": "Attach with rdbg",
-            "request": "attach"
+            "request": "launch",
+            "command": "bundle exec",
+            "script": "rake"
+        },
+        {
+            "name": "Debug Rspec with current file",
+            "type": "rdbg",
+            "request": "launch",
+            "command": "bundle exec rspec",
+            "script": "${file}",
+            "args": [],
+            "askParameters": true
         }
     ]
 }

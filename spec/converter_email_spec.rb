@@ -1,9 +1,11 @@
-require "spec_helper"
+require_relative "spec_helper"
 require 'fileutils'
 require 'yaml'
 require 'libis/tools/extend/hash'
 
 require "libis/format/converter/email_converter"
+
+require 'byebug'
 
 describe "Converters" do
   let(:repository) { Libis::Format::Converter::Repository }
@@ -22,7 +24,7 @@ describe "Converters" do
       tgt_file_truth = File.join(data_dir, "email", "test_msg.pdf")
       headers_file = File.join(work_dir, "test_msg.headers.xml")
       headers_file_truth = File.join(data_dir, "email", "test_msg.headers.yml")
-      attachments_file = File.join(work_dir, "test_msg-attachments", "test simple email.eml")
+      attachments_file = File.join(work_dir, "test_msg.pdf.attachments", "test simple email", "message.pdf")
       FileUtils.mkdir_p File.dirname(tgt_file)
       result = converter.convert(src_file, tgt_file, :PDF)
       expect(result[:files].size).to eq 2

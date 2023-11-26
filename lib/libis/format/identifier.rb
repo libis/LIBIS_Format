@@ -97,7 +97,7 @@ module Libis
       end
 
       def get_fido_identification(file, result, options)
-        output = ::Libis::Format::Tool::Fido.run(file, options[:recursive], options[:fido_options])
+        output = ::Libis::Format::Tool::Fido.run(file, options[:recursive], **(options[:fido_options] || {}))
         process_tool_output(output, result, options[:base_dir])
         output
       end

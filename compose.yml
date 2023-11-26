@@ -1,0 +1,15 @@
+name: libis-format
+services:
+  rspec:
+    image: ${IMAGE}
+    build:
+      context: .
+      args:
+        - BASE_IMAGE_VERSION=${BASE_IMAGE_VERSION}
+    user: ${USER_ID:?user ID of the current user; use USER_ID=$(id -u) prefix}
+    entrypoint: ''
+    command: /bin/bash -c "bundle install && ./patch-vcard.sh && bundle exec rake"
+    volumes:
+     - ./config/policy.xml:/etc/ImageMagick-6/policy.xml
+     - /temp:/magick-temp
+     - .:/app

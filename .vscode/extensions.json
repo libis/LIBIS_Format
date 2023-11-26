@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "Shopify.ruby-extensions-pack", // Ruby
+        "Shopify.ruby-lsp", // Ruby LSP
+        "ms-vscode-remote.vscode-remote-extensionpack", // Remote Development
+        "mhutchie.git-graph" // Git Graph
+    ]
+}

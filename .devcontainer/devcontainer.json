@@ -1,0 +1,18 @@
+{
+    "name": "Existing Docker Compose",
+    "dockerComposeFile": [
+        // Override the first configuration with a secnd docker-compose.yml
+        "../compose.yml",
+        "compose.yml"
+    ],
+    "service": "rspec",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "shopify.ruby-extensions-pack",
+                "koichisasada.vscode-rdbg"
+            ]
+        }
+    }
+}

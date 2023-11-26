@@ -19,3 +19,6 @@ mkmf.log
 tools/pdf/
 /test*
 .rake_tasks~
+/vendor/bundle
+.byebug_history
+derby.log
