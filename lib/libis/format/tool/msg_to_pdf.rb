@@ -4,9 +4,9 @@ require 'mapi/msg'
 require 'rfc_2047'
 require 'cgi'
 require 'pdfkit'
-
+require 'time'
 require 'fileutils'
-
+require 'pathname'
 require 'libis/format/config'
 
 module Libis
@@ -52,7 +52,7 @@ module Libis
           result
         end
 
-        def msg_to_pdf(msg, target, target_format, pdf_options, reraise: false)
+        def msg_to_pdf(msg, target, target_format, pdf_options, root_msg: true)
           # Make sure the target directory exists
           outdir = File.dirname(target)
           FileUtils.mkdir_p(outdir)
@@ -91,6 +91,12 @@ module Libis
             end
           end
 
+          [:date].each do |key|
+            next unless headers[key]
+
+            headers[key] = DateTime.parse(headers[key]).to_time.localtime.iso8601
+          end
+
           # Add header section to the HTML body
           unless hdr_html.empty?
             # Insert header block styles
@@ -116,19 +122,23 @@ module Libis
           # First process plaintext cid entries
           body.gsub!(IMG_CID_PLAIN_REGEX) do |_match|
             data = get_attachment_data(attachments, ::Regexp.last_match(1))
-            return '<img src=""/>' unless data
-
-            used_files << ::Regexp.last_match(1)
-            "<img src=\"data:#{data[:mime_type]};base64,#{data[:base64]}\"/>"
+            if data
+              used_files << ::Regexp.last_match(1)
+              "<img src=\"data:#{data[:mime_type]};base64,#{data[:base64]}\"/>"
+            else
+              '<img src=""/>'
+            end
           end
 
           # Then process HTML img tags with CID entries
           body.gsub!(IMG_CID_HTML_REGEX) do |_match|
             data = get_attachment_data(attachments, ::Regexp.last_match(1))
-            return '' unless data
-
-            used_files << ::Regexp.last_match(1)
-            "data:#{data[:mime_type]};base64,#{data[:base64]}"
+            if data
+              used_files << ::Regexp.last_match(1)
+              "data:#{data[:mime_type]};base64,#{data[:base64]}"
+            else
+              ''
+            end
           end
 
           # Create PDF
@@ -160,32 +170,40 @@ module Libis
           # Save attachments
           # ----------------
           outdir = File.join(outdir, "#{File.basename(target)}.attachments")
-          attached_files = []
+          digits = ((attachments.count + 1) / 10) + 1
+          i = 1
           attachments.delete_if { |a| a.properties.attachment_hidden }.each do |a|
+            prefix = "#{format('%0*d', digits, i)}-"
             if (sub_msg = a.instance_variable_get(:@embedded_msg))
-              subject = a.properties[:display_name] || sub_msg.subject || "attachment_#{a.properties[:attach_num]}"
-              subdir = File.join(outdir, subject.to_s)
-              FileUtils.mkdir_p(subdir)
-              result = msg_to_pdf(
-                sub_msg, File.join(subdir, "message.#{target_format.to_s.downcase}"),
-                target_format, pdf_options, reraise: true
-              )
+              subject = a.properties[:display_name] || sub_msg.subject || ''
+              file = File.join(outdir, "#{prefix}#{subject}.msg.#{target_format.to_s.downcase}")
+              result = msg_to_pdf(sub_msg, file, target_format, pdf_options, root_msg: false)
+              if (e = result[:error])
+                raise e
+              end
+
               files += result[:files]
-              attached_files << subject
-            elsif a.properties.attach_data && a.filename
+            elsif a.filename
               next if used_files.include?(a.filename)
 
-              file = File.join(outdir, a.filename)
+              file = File.join(outdir, "#{prefix}#{a.filename}")
               FileUtils.mkdir_p(File.dirname(file))
               File.open(file, 'wb') { |f| a.save(f) }
               files << file
-              attached_files << File.basename(file)
             else
-              @warnings << "Attachment #{a.properties[:display_name]} cannot be saved"
+              @warnings << "Attachment #{a.properties[:display_name]} cannot be extracted"
+              next
+            end
+            i += 1
+          end
+
+          if root_msg
+            p = Pathname(File.dirname(files.first))
+            files[1..].each do |f|
+              (headers[:attachments] ||= []) << Pathname.new(f).relative_path_from(p).to_s
             end
           end
 
-          headers.merge!(attachments: attached_files)
           {
             command: { status: 0 },
             files:,
@@ -193,7 +211,7 @@ module Libis
             warnings: @warnings
           }
         rescue Exception => e
-          raise if reraise
+          raise unless root_msg
 
           msg.close
           {

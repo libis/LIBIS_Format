@@ -19,7 +19,9 @@ Gem::Specification.new do |spec|
   spec.platform      = Gem::Platform::JAVA if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'
   spec.required_ruby_version = '>= 3.2'
 
-  spec.files         = `git ls-files -z`.split("\x0").select { |f| f.match(%r{^(bin/|lib/|data/|tools/|Gemfile|libis-format.gemspec|LICENSE\.txt|README\.md)}) }
+  spec.files = `git ls-files -z`.split("\x0").select do |f|
+    f.match(%r{^(bin/|lib/|data/|tools/|Gemfile|libis-format.gemspec|LICENSE\.txt|README\.md)})
+  end
   spec.executables   = spec.files.grep(%r{^bin/[^/]+$}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 

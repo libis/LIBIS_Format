@@ -2,6 +2,6 @@ subject: Test email with é è ©
 from: Kris Dekeyser <kris.dekeyser@kuleuven.be>
 to: "\"Kris Dekeyser\" <kris.dekeyser@kuleuven.be>"
 cc: Kris Dekeyser <kris.dekeyser@kuleuven.be>
-date: "Mon, 8 May 2023 13:23:05 +0200"
+date: "2023-05-08T13:23:05+02:00"
 attachments: 
- - test simple email
+ - test_msg.pdf.attachments/1-test simple email.msg.pdf
