@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'chromaprint', '~> 0.0.2'
   spec.add_runtime_dependency 'deep_dive', '~> 0.3'
+  spec.add_runtime_dependency 'libis-mapi', '~> 0.3'
   spec.add_runtime_dependency 'libis-tools', '~> 1.1'
   spec.add_runtime_dependency 'mini_magick', '~> 4.12'
   spec.add_runtime_dependency 'naturally', '~> 2.2'
@@ -34,7 +35,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'os', '~> 1.1'
   spec.add_runtime_dependency 'pdfinfo', '~> 1.4'
   spec.add_runtime_dependency 'pdfkit', '~> 0.8'
-  spec.add_runtime_dependency 'ruby-msg-nx', '~> 0.3'
 
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'equivalent-xml'
