@@ -135,6 +135,17 @@ describe 'Type Databse' do
                                                                      MIME: %w'test/report application/test/report',
                                                                      EXTENSIONS: %w'report rep rpt'
 
+  it 'should export type to CSV' do
+    csv = File.join(work_dir, 'test_types.csv')
+    expected_csv = File.join(__dir__, 'test_types.csv')
+    ::Libis::Format::TypeDatabase.export_csv(csv, write_headers: true)
+    expect(FileUtils.compare_file(csv, expected_csv)).to be_truthy
   end
 
+  it 'should export type to TSV' do
+    tsv = File.join(work_dir, 'test_types.tsv')
+    expected_tsv = File.join(__dir__, 'test_types.tsv')
+    ::Libis::Format::TypeDatabase.export_csv(tsv, write_headers: true, col_sep: "\t")
+    expect(FileUtils.compare_file(tsv, expected_tsv)).to be_truthy
+  end
 end

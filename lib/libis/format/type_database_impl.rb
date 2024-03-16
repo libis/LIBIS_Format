@@ -76,6 +76,19 @@ module Libis
         false
       end
 
+      def groups
+        @types.values.map(&:dig.call(:GROUP)).uniq
+      end
+
+      def export_csv(filename, **options)
+        headers = @types.values.each_with_object(Set.new) { |v, s| v.each_key { |k| s << k.to_s } }
+        options[:headers] = headers.to_a
+        CSV.open(filename, 'w', **options) do |csv|
+          @types.each_value do |v|
+            csv << CSV::Row.new(v.keys, v.values.map { |x| x.is_a?(Array) ? x.join(', ') : x })
+          end
+        end
+      end
       def load_types(file_or_hash = {}, append = true)
         hash = file_or_hash.is_a?(Hash) ? file_or_hash : YAML::load_file(file_or_hash)
         # noinspection RubyResolve

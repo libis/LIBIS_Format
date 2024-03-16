@@ -127,7 +127,13 @@ module Libis
         @implementation.known_mime?(mime)
       end
 
-    end
+      def self.groups
+        @implementation.groups
+      end
 
+      def self.export_csv(filename, **options)
+        @implementation.export_csv(filename, **options)
+      end
+    end
   end
 end
