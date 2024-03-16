@@ -7,7 +7,6 @@ require 'libis-tools'
 require 'libis/tools/extend/hash'
 require 'libis/tools/extend/string'
 require 'libis/tools/extend/empty'
-require 'nori/core_ext/object'
 
 require 'libis/format/type_database'
 
