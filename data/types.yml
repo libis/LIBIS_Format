@@ -377,7 +377,7 @@ PRESENTATION:
 
   OO_IMPRESS:
     NAME: OpenDocument Presentation (ODP)
-    PUIID: fmt/138 fmt/292 fmt/293
+    PUID: fmt/138 fmt/292 fmt/293
     MIME: application/vnd.oasis.opendocument.presentation application/vnd.oasis.opendocument.presentation-template
     EXTENSIONS: odp otp
 
