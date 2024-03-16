@@ -80,7 +80,7 @@ module Libis
 
           # Log warning if needed
           raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
-          raise "#{self.class} errors: #{result[:err].join("\n")}" unless (result[:status]).zero? && result[:err].empty?
+          raise "#{self.class} errors: #{result[:err].join("\n")}" unless (result[:status])&.zero? && result[:err].empty?
 
           # Parse output (CSV) text into array and return result
           keys = %i[status time puid format_name format_version filesize filepath mimetype matchtype]

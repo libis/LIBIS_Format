@@ -15,7 +15,7 @@ module Libis
     Config[:ghostscript_cmd] = 'gs'
     Config[:droid_cmd] = '/opt/droid/droid.sh'
     Config[:droid_temp_path] = '/tmp'
-    Config[:fido_cmd] = '/usr/local/bin/fido'
+    Config[:fido_cmd] = 'fido'
     Config[:fop_jar] = File.join(Libis::Format::TOOL_DIR, 'fop', 'build', 'fop.jar')
     Config[:ffmpeg_cmd] = 'ffmpeg'
     Config[:fido_formats] = [File.join(Libis::Format::DATA_DIR, 'lias_formats.xml')]
