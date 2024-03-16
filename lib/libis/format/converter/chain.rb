@@ -52,12 +52,8 @@ module Libis
         alias_method :length, :size
 
         def to_s
-          "#{@source_format}->-#{@converter_chain.map do |node|
-            "#{node[:converter].name.gsub(/^.*::/, '')}#{node[:operations].empty? ? '' :
-                "(#{node[:operations].each do |operation|
-                  "#{operation[:method]}:#{operation[:argument]}"
-                end.join(',')})"}->-#{node[:output]}"
-          end.join('->-')}"
+          result = @source_format.to_s
+          result << @converter_chain.map { |node| node_to_s(node) }.join('->-')
         end
 
         def convert(src_file, target_file)
@@ -165,6 +161,19 @@ module Libis
 
 
         private
+
+        def node_to_s(node)
+          result = node[:converter].name.gsub(/^.*::/, '').to_s
+          unless node[:operations].empty?
+            result << '('
+            result << node[:operations].map do |operation|
+              "#{operation[:method]}:#{operation[:argument]}"
+            end.join(',')
+            result << ')'
+          end
+          result << '->-'
+          result << node[:output].to_s
+        end
 
         def node_exists?(node)
           @converter_chain.detect do |n|
