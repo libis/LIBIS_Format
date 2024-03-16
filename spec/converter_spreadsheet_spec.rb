@@ -1,20 +1,18 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 require 'libis/format/converter/spreadsheet_converter'
 
 describe 'Converters' do
+  let(:repository) { Libis::Format::Converter::Repository }
 
-  let(:repository) {Libis::Format::Converter::Repository}
-  let(:work_dir) {File.join(data_dir, '..', 'work')}
-
-  before(:all) {
+  before(:all) do
     Libis::Tools::Config.logger.level = 'off'
-  }
+  end
 
   context 'Spreadsheet Converter' do
-
-    let(:converter) {Libis::Format::Converter::SpreadsheetConverter.new}
+    let(:converter) { Libis::Format::Converter::SpreadsheetConverter.new }
 
     it 'converts Excel to ODS' do
       src_file = File.join(data_dir, 'test.xls')
@@ -33,7 +31,5 @@ describe 'Converters' do
       expect(result[:files].first).to eq tgt_file
       FileUtils.rm tgt_file, force: true
     end
-
   end
-
 end

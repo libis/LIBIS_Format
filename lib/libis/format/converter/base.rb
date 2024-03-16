@@ -1,4 +1,4 @@
-# coding: utf-8
+# frozen_string_literal: true
 
 ### require 'tools/string'
 require 'tmpdir'
@@ -11,7 +11,6 @@ require_relative 'repository'
 module Libis
   module Format
     module Converter
-
       class Base
         include Libis::Tools::Logger
 
@@ -22,7 +21,7 @@ module Libis
           @flags = {}
         end
 
-        def convert(source, target, format, opts = {})
+        def convert(source, _target, _format, opts = {})
           unless File.exist? source
             error "Cannot find file '#{source}'."
             return nil
@@ -32,35 +31,33 @@ module Libis
         end
 
         def self.input_types
-          raise RuntimeError, 'Method #input_types needs to be overridden in converter'
+          raise 'Method #input_types needs to be overridden in converter'
         end
 
         def self.output_types(_format = nil)
-          raise RuntimeError, 'Method #output_types needs to be overridden in converter'
+          raise 'Method #output_types needs to be overridden in converter'
         end
 
         def using_temp(target, &block)
           self.class.using_temp(target, &block)
         end
 
-        def Base.using_temp(target)
+        def self.using_temp(target)
           tempfile = Tools::TempFile.name("convert-#{File.basename(target, '.*').gsub(/\s/, '_')}", File.extname(target))
           result = yield tempfile
           return nil unless result
+
           FileUtils.move result, target
           target
         end
 
-        def Base.inherited( klass )
-
+        def self.inherited(klass) # rubocop:disable Lint/MissingSuper
           Repository.register klass
 
           class << self
-
             def conversions
-              input_types.inject({}) do |hash, input_type|
+              input_types.each_with_object({}) do |input_type, hash|
                 hash[input_type] = output_types
-                hash
               end
             end
 
@@ -83,7 +80,7 @@ module Libis
             end
 
             def conversion?(input_type, output_type)
-              conversions[input_type] and conversions[input_type].any? { |t| t == output_type }
+              conversions[input_type]&.any? { |t| t == output_type }
             end
 
             def output_for(input_type)
@@ -93,13 +90,9 @@ module Libis
             def extension?(extension)
               !TypeDatabase.ext_types(extension).first.nil?
             end
-
           end
-
         end
-
       end
-
     end
   end
 end

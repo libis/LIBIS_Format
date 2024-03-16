@@ -1,4 +1,4 @@
-# coding: utf-8
+# frozen_string_literal: true
 
 require 'fileutils'
 require 'deep_dive'
@@ -10,7 +10,6 @@ require 'libis/format/type_database'
 module Libis
   module Format
     module Converter
-
       class Chain
         include ::Libis::Tools::Logger
         include DeepDive
@@ -26,15 +25,16 @@ module Libis
         # @return [Array[Hash]]
         def append(converter)
           return [] unless converter
+
           valid_chain_nodes(converter).map do |node|
-            self.ddup.add_chain_node(node)
+            ddup.add_chain_node(node)
           end.compact
         end
 
         def closed?
           !@converter_chain.empty? &&
-              @converter_chain.first[:input].to_sym == @source_format &&
-              @converter_chain.last[:output].to_sym == @target_format
+            @converter_chain.first[:input].to_sym == @source_format &&
+            @converter_chain.last[:output].to_sym == @target_format
         end
 
         def valid?
@@ -49,7 +49,7 @@ module Libis
           @converter_chain.size
         end
 
-        alias_method :length, :size
+        alias length size
 
         def to_s
           result = @source_format.to_s
@@ -57,7 +57,6 @@ module Libis
         end
 
         def convert(src_file, target_file)
-
           unless valid?
             error 'Converter chain is not valid'
             return nil
@@ -70,15 +69,13 @@ module Libis
 
           # noinspection RubyParenthesesAroundConditionInspection
           conversion_success = @converter_chain.each_with_index do |node, i|
-
             target_type = node[:output]
             converter_class = node[:converter]
             converter = converter_class.new
 
-
-            node[:operations].each do |operation|
+            node[:operations]&.each do |operation|
               converter.send operation[:method], operation[:argument]
-            end if node[:operations]
+            end
 
             target = target_file
 
@@ -99,7 +96,6 @@ module Libis
             result[:commands] << r.merge(converter: converter_class.name)
 
             :success
-
           end
 
           result[:files] = [src_file] + xtra_files
@@ -109,16 +105,20 @@ module Libis
           end
 
           conversion_success == :failed ? nil : result
-
         end
 
         def valid_chain_nodes(converter)
-          source_format = @converter_chain.last[:output] rescue @source_format
+          source_format = begin
+            @converter_chain.last[:output]
+          rescue StandardError
+            @source_format
+          end
           nodes = []
           if converter.input_types.include? source_format
             converter.output_types(source_format).each do |format|
-              node = {converter: converter, input: source_format, output: format}
+              node = { converter:, input: source_format, output: format }
               next if node_exists?(node)
+
               nodes << node
             end
           end
@@ -133,6 +133,7 @@ module Libis
           return nil unless node[:output] && node[:converter].output_types(source_format).include?(node[:output])
           return nil unless node[:converter].input_types.include? source_format
           return nil if node_exists?(node)
+
           @converter_chain << node
           # debug "Chain: #{self}"
           self
@@ -141,15 +142,16 @@ module Libis
         def apply_operations
           temp_chain = @converter_chain.reverse.ddup
           applied = true
-          operations = @operations && @operations.ddup || {}
+          operations = @operations&.ddup || {}
           while (operation = operations.shift)
             method = operation.first.to_s.to_sym
-            applied &&= :found == temp_chain.each do |node|
+            applied &&= temp_chain.each do |node|
               next unless node[:converter].instance_methods.include?(method)
+
               node[:operations] ||= []
-              node[:operations] << {method: method, argument: operation.last}
+              node[:operations] << { method:, argument: operation.last }
               break :found
-            end
+            end == :found
           end
           if applied && operations.empty?
             @converter_chain = temp_chain.reverse
@@ -158,7 +160,6 @@ module Libis
           end
           false
         end
-
 
         private
 
@@ -180,9 +181,7 @@ module Libis
             n[:converter] == node[:converter] && n[:input] == node[:input] && n[:output] == node[:output]
           end
         end
-
       end
-
     end
   end
 end

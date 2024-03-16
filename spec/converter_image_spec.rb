@@ -1,22 +1,20 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 require 'libis/format/converter/image_converter'
 require 'libis/format/converter/jp2_converter'
 
 describe 'Converters' do
+  let(:repository) { Libis::Format::Converter::Repository }
 
-  let(:repository) {Libis::Format::Converter::Repository}
-  let(:work_dir) { File.join(data_dir, "..", "work") }
-
-  before(:all) {
+  before(:all) do
     Libis::Tools::Config.logger.level = 'off'
-  }
+  end
 
   context 'Image Converter' do
-
-    let(:converter) {Libis::Format::Converter::ImageConverter.new}
-    let(:diff_file) {File.join(work_dir, 'diff.jpg')}
+    let(:converter) { Libis::Format::Converter::ImageConverter.new }
+    let(:diff_file) { File.join(work_dir, 'diff.jpg') }
 
     it 'converts TIFF to JPEG' do
       src_file = File.join(data_dir, 'test.tif')
@@ -31,7 +29,7 @@ describe 'Converters' do
       compare.metric << 'MAE'
       compare.fuzz << '5%'
       compare << diff_file
-      compare.call {|_, _, status| expect(status).to be 0}
+      compare.call { |_, _, status| expect(status).to be 0 }
       FileUtils.rm tgt_file, force: true
       FileUtils.rm diff_file, force: true
     end
@@ -49,7 +47,7 @@ describe 'Converters' do
       compare << ref_file << tgt_file
       compare.metric << 'MAE'
       compare << diff_file
-      compare.call {|_, _, status| expect(status).to be 0}
+      compare.call { |_, _, status| expect(status).to be 0 }
       FileUtils.rm tgt_file, force: true
       FileUtils.rm diff_file, force: true
     end
@@ -67,7 +65,7 @@ describe 'Converters' do
       compare.metric << 'AE'
       compare.fuzz << '100%'
       compare << diff_file
-      compare.call {|_, _, status| expect(status).to be 0}
+      compare.call { |_, _, status| expect(status).to be 0 }
       FileUtils.rm tgt_file, force: true
       FileUtils.rm diff_file, force: true
     end
@@ -79,7 +77,7 @@ describe 'Converters' do
       FileUtils.mkdir_p File.dirname(tgt_file)
       converter.watermark(text: 'RSPEC', size: 5, opacity: 0.1, rotation: 15, gap: 0.5, composition: 'modulate')
       converter.delete_date
-      result = converter.convert(src_file, tgt_file, :PNG, options: {scale: '150%'})
+      result = converter.convert(src_file, tgt_file, :PNG, options: { scale: '150%' })
       expect(result[:files].first).to eq tgt_file
       compare = MiniMagick::Tool::Compare.new
       compare << ref_file << tgt_file
@@ -109,7 +107,7 @@ describe 'Converters' do
       compare.metric << 'MAE'
       compare.fuzz << '10%'
       compare << diff_file
-      compare.call {|_, _, status| expect(status).to be 0}
+      compare.call { |_, _, status| expect(status).to be 0 }
       FileUtils.rm tgt_file, force: true
       FileUtils.rm diff_file, force: true
     end
@@ -124,13 +122,11 @@ describe 'Converters' do
       expect(File.exist?(tgt_file)).to be_truthy
       FileUtils.rm tgt_file, force: true
     end
-
   end
 
   context 'JP2 Converter', unless: `which "#{Libis::Format::Config[:j2k_cmd]}"` do
-
-    let(:converter) {Libis::Format::Converter::Jp2Converter.new}
-    let(:diff_file) {File.join(work_dir, 'diff.jpg')}
+    let(:converter) { Libis::Format::Converter::Jp2Converter.new }
+    let(:diff_file) { File.join(work_dir, 'diff.jpg') }
 
     it 'converts TIFF to JP2' do
       src_file = File.join(data_dir, 'test.tif')
@@ -155,11 +151,9 @@ describe 'Converters' do
       compare.metric << 'MAE'
       compare.fuzz << '10%'
       compare << diff_file
-      compare.call {|_, _, status| expect(status).to be 0}
+      compare.call { |_, _, status| expect(status).to be 0 }
       FileUtils.rm tgt_file, force: true
       FileUtils.rm diff_file, force: true
     end
-
   end
-
 end

@@ -6,7 +6,6 @@ require 'libis/format/converter/video_converter'
 
 describe 'Converters' do
   let(:repository) { Libis::Format::Converter::Repository }
-  let(:work_dir) { File.join(data_dir, '..', 'work') }
 
   before(:all) do
     Libis::Tools::Config.logger.level = 'off'

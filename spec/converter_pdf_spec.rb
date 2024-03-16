@@ -1,19 +1,20 @@
-require "spec_helper"
+# frozen_string_literal: true
 
-require "libis/format/converter/pdf_converter"
+require 'spec_helper'
 
-describe "Converters" do
+require 'libis/format/converter/pdf_converter'
+
+describe 'Converters' do
   let(:repository) { Libis::Format::Converter::Repository }
-  let(:work_dir) { File.join(data_dir, "..", "work") }
 
-  before(:all) {
+  before(:all) do
     Libis::Tools::Config.logger.level = :WARN
-  }
+  end
 
-  context "Pdf Converter" do
+  context 'Pdf Converter' do
     let(:converter) { Libis::Format::Converter::PdfConverter.new }
 
-    ["test", "test2", "test3"].each do |test|
+    %w[test test2 test3].each do |test|
       it "converts #{test} PDF to PDF/A" do
         src_file = File.join(data_dir, "#{test}.pdf")
         tgt_file = File.join(work_dir, "#{test}_pdfa.pdf")

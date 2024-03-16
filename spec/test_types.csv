@@ -1,0 +1,70 @@
+NAME,MIME,PUID,EXTENSIONS,TYPE,GROUP
+Tagged Image File Format (TIFF),"image/tiff, image/x-tiff, image/tif, image/x-tif, application/tiff, application/x-tiff, application/tif, application/x-tif","fmt/353, fmt/154, fmt/153, fmt/156, fmt/155, fmt/152, x-fmt/399, x-fmt/388, x-fmt/387, fmt/202","tif, TIF, tiff, tifx, dng, nef",TIFF,IMAGE
+Joint Photographic Experts Group 2000 (JPEG 2000),"image/jp2, image/jpeg2000, image/jpeg2000-image, image/x-jpeg2000-image, image/jpx","fmt/463, fmt/151, x-fmt/392",jp2,JP2,IMAGE
+Joint Photographic Experts Group (JPEG),"image/jpeg, image/jpg, image/jp_, application/jpg, application/x-jpg, image/pjpeg, image/pipeg, image/vnd.swiftview-jpeg","fmt/42, fmt/43, fmt/44, fmt/41, x-fmt/398, x-fmt/390, x-fmt/391, fmt/645","jpg, jpe, jpeg",JPG,IMAGE
+Portable Network Graphics (PNG),"image/png, application/png, application/x-png","fmt/11, fmt/12, fmt/13",png,PNG,IMAGE
+Animate Portable Network Graphics,image/vnd.mozilla.apng,fmt/935,"apng, png",APNG,IMAGE
+Device Independent Bitmap (DIP/BMP),"image/bmp, image/x-bmp, image/x-bitmap, image/x-xbitmap, image/x-win-bitmap, image/x-windows-bmp, image/ms-bmp, image/x-ms-bmp, application/bmp, application/x-bmp, application/x-win-bitmap","fmt/115, fmt/118, fmt/119, fmt/114, fmt/116, fmt/117, x-fmt/270",bmp,BMP,IMAGE
+Graphics Interchange Format (GIF),image/gif,"fmt/3, fmt/4",gif,GIF,IMAGE
+Portable Bitmap Format (PBM),"image/x-portable-bitmap, image/pbm, image/x-pbm","fmt/409, x-fmt/164",pbm,PBM,IMAGE
+Portable GrayMap Format (PGM),"fmt/406, fmt/407","image/x-portable-graymap, image/pgm, image/x-pgm",pgm,PGM,IMAGE
+Portable Pixel Map (PPM),"fmt/408, x-fmt/178","image/x-portable-pixmap, application/ppm, application/x-ppm, image/ppm, image/x-ppm",ppm,PPM,IMAGE
+OpenDocument Graphics (ODG),"application/vnd.oasis.opendocument.graphics, application/vnd.oasis.opendocument.graphics-template","fmt/139, fmt/296, fmt/297","odg, otg",OO_DRAW,IMAGE
+MPEG-1 or MPEG-2 Audio Layer III (MP3),audio/mpeg,fmt/134,mp3,MP3,AUDIO
+Free Lossless Audio Codec (FLAC),audio/flac,fmt/279,flac,FLAC,AUDIO
+Dolby Digital AC-3,audio/ac3,fmt/735,ac3,AC3,AUDIO
+Advanced Audio Coding (AAC),"audio/aac, audio/x-hx-aac-adts",aac,AAC,AUDIO
+Windows Media Audio (WMA),audio/x-ms-wma,fmt/132,"wma, asf",WMA,AUDIO
+Apple Lossless Audio Codec (ALAC),audio/alac,alac,ALAC,AUDIO
+Waveform Audio File Format (WAVE),audio/x-wav,"fmt/6, fmt/141, fmt/142, fmt/143, fmt/1, fmt/703, fmt/706, fmt/709, fmt/2, fmt/704, fmt/707, fmt/710, fmt/527, fmt/705, fmt/708, fmt/711, x-fmt/397, x-fmt/389, x-fmt/396, fmt/712, fmt/713",wav,WAV,AUDIO
+Audio Interchange File Format (AIFF),audio/aiff,"fmt/414, x-fmt/135, x-fmt/136","aif, aiff, aifc",AIFF,AUDIO
+Adaptive Multi-Rate Audio (AMR),audio/amr,fmt/954,amr,AMR,AUDIO
+NeXT/Sun sound (AU),audio/basic,x-fmt/139,au,AU,AUDIO
+MPEG-4 Media File (M4A),audio/mp4,fmt/596,"m4a, f4a",M4A,AUDIO
+Moving Picture Experts Group (MPEG-1/MPEG-2),video/mpeg,"x-fmt/385, x-fmt/386, fmt/425, fmt/649, fmt/640","mpg, mpeg, mp1, mp2, mp3, m1v, m1a, m2a, mpa, mpv",MPG,VIDEO
+Moving Picture Experts Group (MPEG-4),"video/mp4, application/mp4",fmt/199,"mp4, m4v, mpeg4",MP4,VIDEO
+Webm,fmt/573,video/webm,webm,WEBM,VIDEO
+Matroska Multimedia Container (MKV),video/x-matroska,fmt/569,"mkv, mk3d, mka, mks",MKV,VIDEO
+Motion JPEG 2000 (MJP2),video/mj2,fmt/337,"mj2, mjp2",MJP2,VIDEO
+QuickTime File Format (QTFF),video/quicktime,x-fmt/384,"mov, qt",QTFF,VIDEO
+Audio Video Interleave (AVI),video/x-msvideo,fmt/5,avi,AVI,VIDEO
+OGG Video (OGGV),video/ogg,fmt/945,ogv,OGGV,VIDEO
+Windows Media Video (WMV),video/x-ms-wmv,"fmt/133, fmt/441","wmv, asf",WMV,VIDEO
+Digital Video (DV),video/dv,x-fmt/152,dv,DV,VIDEO
+Flash video (FLV),video/x-flv,x-fmt/382,flv,FLV,VIDEO
+Macromedia Flash,application/x-shockwave-flash,"fmt/104, fmt/105, fmt/106, fmt/107, fmt/108, fmt/109, fmt/110",swf,SWF,VIDEO
+Unformatted text,text/plain,txt,TXT,TEXT
+Rich Text Format (RTF),fmt/45,"application/rtf, text/rtf",rtf,RTF,TEXT
+HyperText Markup Language (HTML),text/html,"html, htm",HTML,TEXT
+Microsoft Word Document (DOC),"fmt/609, fmt/39, x-fmt/273, x-fmt/274, x-fmt/275, x-fmt/276, fmt/37, fmt/38, fmt/40","application/msword, application/doc, appl/text, application/vnd.msword, application/vnd.ms-word, application/winword, application/word, application/x-msw6, application/x-msword","doc, wbk",MSDOC,TEXT
+Microsoft Word Document (Password Protected) (DOC),fmt/754,application/msword,"doc, wbk",MSDOCP,TEXT
+Microsoft Word Document Template (DOT),x-fmt/45,application/msword,dot,MSDOT,TEXT
+Microsoft Word Document Template (Password Protected) (DOT),fmt/755,application/msword,dot,MSDOTP,TEXT
+Microsoft Word OpenXML Document (DOCX),"fmt/412, fido-fmt/189.word, lias-fmt/189.word",application/vnd.openxmlformats-officedocument.wordprocessingml.document,docx,MSDOCX,TEXT
+Microsoft Word OpenXML Document (DOCM),fmt/523,application/vnd.ms-word.document.macroEnabled.12,docm,MSDOCM,TEXT
+Microsoft Word OpenXML Document Template (DOTX),fmt/597,application/vnd.openxmlformats-officedocument.wordprocessingml.template,dotx,MSDOTX,TEXT
+Microsoft Word OpenXML Macro-Enabled Document Template (DOTM),fmt/599,application/vnd.ms-word.template.macroEnabled.12,dotm,MSDOTM,TEXT
+Adobe Portable Document Format (PDF),"fmt/14, fmt/15, fmt/16, fmt/17, fmt/18, fmt/19, fmt/20, fmt/276",application/pdf,pdf,PDF,TEXT
+Adobe Portable Document Format for Archives (PDFA),"fmt/95, fmt/354, fmt/476, fmt/477, fmt/478, fmt/479, fmt/480, fmt/481",application/pdf,pdf,PDFA,TEXT
+WordPerfect Document (WPD),"x-fmt/44, x-fmt/394",application/vnd.wordperfect,wpd,WORDPERFECT,TEXT
+OpenDocument Text (ODT),"application/vnd.oasis.opendocument.text, application/x-vnd.oasis.opendocument.text, application/vnd.oasis.opendocument.text-template, application/vnd.oasis.opendocument.text-web, application/vnd.oasis.opendocument.text-master, application/vnd.oasis.opendocument.text-master-template","fmt/136, fmt/290, fmt/291","odt, ott, oth, odm, otm",OO_WRITER,TEXT
+Extensible Markup Language (XML),"text/xml, application/xml, application/x-xml",fmt/101,xml,XML,TEXT
+Sharepoint mapping file,text/xml/sharepoint_map,fmt/101,xml,SHAREPOINT_MAP,TEXT
+Comma Separated Values,text/csv,x-fmt/18,csv,CSV,TABULAR
+Microsoft Excel Spreadsheet (XLS),"application/vnd.ms-excel, application/msexcel","fmt/55, fmt/56, fmt/57, fmt/175, fmt/176, fmt/177, fmt/61",xls,MSXLS,TABULAR
+Microsoft Excel OpenXML Spreadheet (XSLX),"fmt/214, fido-fmt/189.xl",application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,xslx,MSXLSX,TABULAR
+Microsoft Excel Non-XML Binary Workbook (XLSB),application/vnd.ms-excel.sheet.binary.macroEnabled.12,fmt/595,xlsb,MSXLSB,TABULAR
+Microsoft Excel Macro-Enabled (XLSM),application/vnd.ms-excel.sheet.macroEnabled.12,fmt/445,xlsm,MSXLSM,TABULAR
+OpenDocument Spreadsheet (ODS),"application/vnd.oasis.opendocument.spreadsheet, application/vnd.oasis.opendocument.spreadsheet-template","fmt/137, fmt/294, fmt/295","ods, ots",OO_CALC,TABULAR
+Microsoft Powerpoint Presentation Show,x-fmt/87,application/vnd.ms-powerpoint,pps,MSPPS,PRESENTATION
+Microsoft Powerpoint Presentation (PPT),"fmt/181, fmt/179, fmt/1747, fmt/1748, x-fmt/88, fmt/125, fmt/126","application/vnd.ms-powerpoint, application/mspowerpoint",ppt,MSPPT,PRESENTATION
+Microsoft Powerpoint OpenXML Presentation (PPTX),fido-fmt/189.ppt,application/vnd.openxmlformats-officedocument.presentationml.presentation,pptx,MSPPTX,PRESENTATION
+OpenDocument Presentation (ODP),"fmt/138, fmt/292, fmt/293","application/vnd.oasis.opendocument.presentation, application/vnd.oasis.opendocument.presentation-template","odp, otp",OO_IMPRESS,PRESENTATION
+Encoded Archival Description (EAD),archive/ead,fmt/101,"ead, xml",EAD,ARCHIVE
+ZIP Format,application/zip,x-fmt/263,"zip, eip",ZIP,ARCHIVE
+Outlook email message (MSG),message/vnd.ms-outlook,x-fmt/430,msg,MSG,EMAIL
+Internet Message Format (EML),message/rfc822,"fmt/278, fmt/950",eml,EML,EMAIL
+Microsoft Outlook Personal Folders,application/vnd.ms-outlook,"x-fmt/248, x-fmt/249",pst,PST,EMAIL
+Test data format,"test/data, application/test/data","test-fmt/001, spec-fmt/101","dat, data",TESTDATA,TESTMEDIUM
+Test specification format,"test/spec, application/test/spec","test-fmt/002, spec-fmt/102","spc, spec",TESTSPEC,TESTMEDIUM
+"report, rep, rpt",TESTREPORT,TESTMEDIUM,"test/report, application/test/report",Test report format

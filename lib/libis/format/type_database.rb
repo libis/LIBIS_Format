@@ -1,11 +1,10 @@
-# coding: utf-8
+# frozen_string_literal: true
 
 require 'yaml'
 require 'libis/tools/extend/hash'
 
 module Libis
   module Format
-
     # noinspection RubyClassVariableUsageInspection
     class TypeDatabase
       @implementation = Libis::Format::TypeDatabaseImpl.instance
@@ -16,16 +15,25 @@ module Libis
 
       def self.enrich(info, map_keys = {})
         return {} unless info.is_a? Hash
-        mapper = Hash.new {|hash,key| hash[key] = key}
+
+        mapper = Hash.new { |hash, key| hash[key] = key }
         mapper.merge! map_keys
         unless (puid = info[mapper[:PUID]]).blank?
-          info[mapper[:TYPE]] ||= puid_infos(puid).first[:TYPE] rescue nil
+          info[mapper[:TYPE]] ||= begin
+            puid_infos(puid).first[:TYPE]
+          rescue StandardError
+            nil
+          end
         end
         unless (mime = info[mapper[:MIME]]).blank?
-          info[mapper[:TYPE]] ||= mime_infos(mime).first[:TYPE] rescue nil
+          info[mapper[:TYPE]] ||= begin
+            mime_infos(mime).first[:TYPE]
+          rescue StandardError
+            nil
+          end
         end
         unless (type_name = info[mapper[:TYPE]]).nil?
-          mapper.keys.each do |key|
+          mapper.each_key do |key|
             info[mapper[key]] = get(type_name, key) || info[mapper[key]]
           end
           info[mapper[:GROUP]] = type_group(type_name)
@@ -35,13 +43,22 @@ module Libis
 
       def self.normalize(info, map_keys = {})
         return {} unless info.is_a? Hash
-        mapper = Hash.new {|hash,key| hash[key] = key}
+
+        mapper = Hash.new { |hash, key| hash[key] = key }
         mapper.merge! map_keys
         unless (puid = info[mapper[:PUID]]).blank?
-          info[mapper[:TYPE]] ||= puid_infos(puid).first[:TYPE] rescue nil
+          info[mapper[:TYPE]] ||= begin
+            puid_infos(puid).first[:TYPE]
+          rescue StandardError
+            nil
+          end
         end
         unless (mime = info[mapper[:MIME]]).blank?
-          info[mapper[:TYPE]] ||= mime_infos(mime).first[:TYPE] rescue nil
+          info[mapper[:TYPE]] ||= begin
+            mime_infos(mime).first[:TYPE]
+          rescue StandardError
+            nil
+          end
         end
         unless (type_name = info[mapper[:TYPE]]).nil?
           info[mapper[:MIME]] = type_mimetypes(type_name).first if type_mimetypes(type_name).first
@@ -52,35 +69,35 @@ module Libis
 
       def self.get(type_name, key)
         case key
-          when :MIME
-            type_mimetypes(type_name).first
-          when :PUID
-            type_puids(type_name).first
-          when :EXTENSION
-            type_extentions(type_name).first
-          else
-            typeinfo(type_name)[key]
+        when :MIME
+          type_mimetypes(type_name).first
+        when :PUID
+          type_puids(type_name).first
+        when :EXTENSION
+          type_extentions(type_name).first
+        else
+          typeinfo(type_name)[key]
         end
       end
 
-      def self.type_group(t)
-        typeinfo(t)[:GROUP]
+      def self.type_group(ftype)
+        typeinfo(ftype)[:GROUP]
       end
 
-      def self.type_mimetypes(t)
-        typeinfo(t)[:MIME] || []
+      def self.type_mimetypes(ftype)
+        typeinfo(ftype)[:MIME] || []
       end
 
-      def self.type_puids(t)
-        typeinfo(t)[:PUID] || []
+      def self.type_puids(ftype)
+        typeinfo(ftype)[:PUID] || []
       end
 
-      def self.type_extentions(t)
-        typeinfo(t)[:EXTENSIONS] || []
+      def self.type_extentions(ftype)
+        typeinfo(ftype)[:EXTENSIONS] || []
       end
 
-      def self.typeinfo(t)
-        @implementation.typeinfo(t)
+      def self.typeinfo(ftype)
+        @implementation.typeinfo(ftype)
       end
 
       def self.group_types(group)

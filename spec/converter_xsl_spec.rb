@@ -1,29 +1,30 @@
-require "spec_helper"
+# frozen_string_literal: true
 
-require "fileutils"
-require "rspec/matchers"
-require "equivalent-xml"
+require 'spec_helper'
 
-require "libis/format/converter/xslt_converter"
+require 'fileutils'
+require 'rspec/matchers'
+require 'equivalent-xml'
 
-describe "Converters" do
+require 'libis/format/converter/xslt_converter'
+
+describe 'Converters' do
   let(:repository) { Libis::Format::Converter::Repository }
-  let(:work_dir) { File.join(data_dir, "..", "work") }
 
-  before(:all) {
-    Libis::Tools::Config.logger.level = "error"
-  }
+  before(:all) do
+    Libis::Tools::Config.logger.level = 'error'
+  end
 
-  if RUBY_PLATFORM != "java"
-    context "XSLT Converter" do
+  if RUBY_PLATFORM != 'java'
+    context 'XSLT Converter' do
       let(:converter) { Libis::Format::Converter::XsltConverter.new }
-      let(:dir) { File.join(data_dir, "xml") }
+      let(:dir) { File.join(data_dir, 'xml') }
 
-      it "converts XML to EAD" do
-        src_file = File.join dir, "134476_raw.XML"
-        tgt_file = File.join work_dir, "134476_ead.XML"
-        cmp_file = File.join dir, "134476_ead.XML"
-        xsl_file = File.join dir, "scope_xmlToEAD_dom.xsl"
+      it 'converts XML to EAD' do
+        src_file = File.join dir, '134476_raw.XML'
+        tgt_file = File.join work_dir, '134476_ead.XML'
+        cmp_file = File.join dir, '134476_ead.XML'
+        xsl_file = File.join dir, 'scope_xmlToEAD_dom.xsl'
         converter.xsl_file xsl_file
         FileUtils.remove tgt_file, force: true
         FileUtils.mkdir_p File.dirname(tgt_file)
@@ -33,11 +34,11 @@ describe "Converters" do
         FileUtils.rm tgt_file, force: true
       end
 
-      it "converts EAD to XML-FO" do
-        src_file = File.join dir, "134476_ead.XML"
-        tgt_file = File.join work_dir, "134476_fo.XML"
-        cmp_file = File.join dir, "134476_fo.XML"
-        xsl_file = File.join dir, "ead2fo_pdf.xsl"
+      it 'converts EAD to XML-FO' do
+        src_file = File.join dir, '134476_ead.XML'
+        tgt_file = File.join work_dir, '134476_fo.XML'
+        cmp_file = File.join dir, '134476_fo.XML'
+        xsl_file = File.join dir, 'ead2fo_pdf.xsl'
         converter.xsl_file xsl_file
         FileUtils.remove tgt_file, force: true
         FileUtils.mkdir_p File.dirname(tgt_file)

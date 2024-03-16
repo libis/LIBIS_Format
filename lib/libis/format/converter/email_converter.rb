@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require_relative 'base'
 
@@ -9,20 +9,19 @@ require 'rexml/document'
 module Libis
   module Format
     module Converter
-
       class EmailConverter < Libis::Format::Converter::Base
-
         def self.input_types
-          [ :MSG ]
+          [:MSG]
         end
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format)
-          [ :PDF ]
+
+          [:PDF]
         end
 
         def email_convert(_)
-          #force usage of this converter
+          # force usage of this converter
         end
 
         def convert(source, target, format, opts = {})
@@ -30,9 +29,7 @@ module Libis
 
           Format::Tool::MsgToPdf.run(source, target)
         end
-
       end
-
     end
   end
 end

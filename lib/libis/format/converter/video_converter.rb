@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'base'
 require 'libis/format/tool/ff_mpeg'
 
@@ -6,24 +8,19 @@ require 'fileutils'
 module Libis
   module Format
     module Converter
-
       class VideoConverter < Libis::Format::Converter::Base
-
         def self.input_types
-          [:WEBM, :MP4, :MPG, :MKV, :MJP2, :QTFF, :AVI, :OGGV, :WMV, :DV, :FLV, :SWF]
+          %i[WEBM MP4 MPG MKV MJP2 QTFF AVI OGGV WMV DV FLV SWF]
         end
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format)
-          [:GIF, :WEBM, :MP4, :MPG, :MKV, :MJP2, :QTFF, :AVI, :OGGV, :WMV, :DV, :FLV, :SWF]
+
+          %i[GIF WEBM MP4 MPG MKV MJP2 QTFF AVI OGGV WMV DV FLV SWF]
         end
 
-        def initialize
-          super
-        end
-
-        def quiet(v)
-          @flags[:quiet] = !!v
+        def quiet(value)
+          @flags[:quiet] = !!value
         end
 
         def format(format)
@@ -126,10 +123,10 @@ module Libis
 
         # @param [Boolean] value If set to true automatically selects optimal format for web viewing. Default: false
         def web_stream(value)
-          if value
-            @options[:video_codec] = 'h264'
-            @options[:audio_codec] = 'acc'
-          end
+          return unless value
+
+          @options[:video_codec] = 'h264'
+          @options[:audio_codec] = 'acc'
         end
 
         # @param [String] name name of a preset. See FFMpeg documentation for more info
@@ -170,7 +167,7 @@ module Libis
 
           elsif File.directory?(source)
 
-            sources = Dir[File.join(source, '**', '*')].reject {|p| File.directory? p}
+            sources = Dir[File.join(source, '**', '*')].reject { |p| File.directory? p }
             assemble_and_convert(sources, target)
 
           else
@@ -183,14 +180,13 @@ module Libis
             files: [target],
             converter: self.class.name
           }
-
         end
 
         def assemble_and_convert(sources, target)
-          Tempfile.create(%w(list .txt)) do |f|
-            sources.each {|src| f.puts src}
+          Tempfile.create(%w[list .txt]) do |f|
+            sources.each { |src| f.puts src }
             opts[:global] ||= []
-            opts[:global] += %w(-f concat)
+            opts[:global] += %w[-f concat]
             f.close
             target = convert_file(f.to_path, target)
           end
@@ -201,15 +197,15 @@ module Libis
 
         def convert_file(source, target)
           # FLV special: only supports aac and speex audio codecs
-          format = (@options[:format] || File.extname(target)[1..-1]).to_s.downcase
-          @options[:audio_codec] ||= 'aac' if %w'flv'.include?(format)
+          format = (@options[:format] || File.extname(target)[1..]).to_s.downcase
+          @options[:audio_codec] ||= 'aac' if %w[flv].include?(format)
 
           # SWF special: only supports mp3 audio codec
-          format = (@options[:format] || File.extname(target)[1..-1]).to_s.downcase
-          @options[:audio_codec] ||= 'mp3' if %w'swf'.include?(format)
+          format = (@options[:format] || File.extname(target)[1..]).to_s.downcase
+          @options[:audio_codec] ||= 'mp3' if %w[swf].include?(format)
 
           # Set up FFMpeg command line parameters
-          opts = {global: [], input: [], filter: [], output: []}
+          opts = { global: [], input: [], filter: [], output: [] }
           opts[:global] << '-hide_banner'
           opts[:global] << '-loglevel' << (@options[:quiet] ? 'fatal' : 'warning')
 
@@ -217,29 +213,21 @@ module Libis
           @options[:watermark_opacity] ||= 0.5
           if @options[:watermark_image]
             opts[:filter] << '-i' << @options[:watermark_image] << '-filter_complex'
-            opts[:filter] << "[1:v]format=argb,colorchannelmixer=aa=%f[wm];[0:v][wm]overlay=%s" %
-                [@options[:watermark_opacity], watermark_position_text]
+            opts[:filter] << format('[1:v]format=argb,colorchannelmixer=aa=%f[wm];[0:v][wm]overlay=%s',
+                                    @options[:watermark_opacity], watermark_position_text)
           elsif @options[:watermark_text]
             @options[:watermark_text_size] ||= 10
             @options[:watermark_text_color] ||= 'white'
             @options[:watermark_text_shadow_color] ||= 'black'
             @options[:watermark_text_shadow_offset] ||= 1
-            filter_text = "drawtext=text='%s':%s:fontfile=%s:fontsize=%d:fontcolor=%s@%f" %
-                [
-                    @options[:watermark_text],
-                    watermark_position_text(true),
-                    Config[:watermark_font],
-                    @options[:watermark_text_size],
-                    @options[:watermark_text_color],
-                    @options[:watermark_opacity]
-                ]
-            filter_text += ':shadowcolor=%s@%f:shadowx=%d:shadowy=%d' %
-                [
-                    @options[:watermark_text_shadow_color],
-                    @options[:watermark_opacity],
-                    @options[:watermark_text_shadow_offset],
-                    @options[:watermark_text_shadow_offset]
-                ] if @options[:watermark_text_shadow_offset] > 0
+            filter_text = format("drawtext=text='%s':%s:fontfile=%s:fontsize=%d:fontcolor=%s@%f",
+                                 @options[:watermark_text], watermark_position_text(true), Config[:watermark_font],
+                                 @options[:watermark_text_size], @options[:watermark_text_color], @options[:watermark_opacity])
+            if (@options[:watermark_text_shadow_offset]).positive?
+              filter_text += format(':shadowcolor=%s@%f:shadowx=%d:shadowy=%d',
+                                    @options[:watermark_text_shadow_color], @options[:watermark_opacity],
+                                    @options[:watermark_text_shadow_offset], @options[:watermark_text_shadow_offset])
+            end
             opts[:filter] << '-vf' << filter_text
           end
           opts[:output] << '-ac' << @options[:audio_channels] if @options[:audio_channels]
@@ -251,7 +239,7 @@ module Libis
           opts[:output] << '-map_metadata:g' << '0:g' # Copy global metadata
           opts[:output] << '-map_metadata:s:a' << '0:s:a' # Copy audio metadata
           opts[:output] << '-map_metadata:s:v' << '0:s:v' # Copy video metadata
-          opts[:input] << '-accurate_seek' << (@options[:start].to_i < 0 ? '-sseof' : '-ss') << @options[:start] if @options[:start]
+          opts[:input] << '-accurate_seek' << (@options[:start].to_i.negative? ? '-sseof' : '-ss') << @options[:start] if @options[:start]
           opts[:input] << '-t' << @options[:duration] if @options[:duration]
           opts[:output] << '-qscale' << @options[:video_quality] if @options[:video_quality]
           opts[:output] << '-q:a' << @options[:audio_quality] if @options[:audio_quality]
@@ -277,21 +265,19 @@ module Libis
           w = for_text ? 'tw' : 'w'
           h = for_text ? 'th' : 'h'
           case @options[:watermark_position]
-            when 'bottom_left'
-              "x=#{margin}:y=H-#{h}-#{margin}"
-            when 'top_left'
-              "x=#{margin}:y=#{margin}"
-            when 'bottom_right'
-              "x=W-#{w}-#{margin}:y=H-#{h}-#{margin}"
-            when 'top_right'
-              "x=W-#{w}-#{margin}:y=#{margin}"
-            else
-              "x=#{margin}:y=H-#{h}-#{margin}"
+          when 'bottom_left'
+            "x=#{margin}:y=H-#{h}-#{margin}"
+          when 'top_left'
+            "x=#{margin}:y=#{margin}"
+          when 'bottom_right'
+            "x=W-#{w}-#{margin}:y=H-#{h}-#{margin}"
+          when 'top_right'
+            "x=W-#{w}-#{margin}:y=#{margin}"
+          else
+            "x=#{margin}:y=H-#{h}-#{margin}"
           end
         end
-
       end
-
     end
   end
 end

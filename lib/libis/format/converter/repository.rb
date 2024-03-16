@@ -1,6 +1,5 @@
-# coding: utf-8
+# frozen_string_literal: true
 
-require 'set'
 require 'singleton'
 
 require 'libis/tools/logger'
@@ -11,7 +10,6 @@ require_relative 'chain'
 module Libis
   module Format
     module Converter
-
       class Repository
         include Singleton
         include ::Libis::Tools::Logger
@@ -24,15 +22,15 @@ module Libis
           @converters_glob = File.join(File.dirname(__FILE__), '*_converter.rb')
         end
 
-        def Repository.register(converter_class)
+        def self.register(converter_class)
           instance.converters.add? converter_class
         end
 
-        def Repository.get_converters
+        def self.get_converters # rubocop:disable Naming/AccessorMethodName
           instance.get_converters
         end
 
-        def get_converters
+        def get_converters # rubocop:disable Naming/AccessorMethodName
           if converters.empty?
             Dir.glob(converters_glob).each do |filename|
               # noinspection RubyResolve
@@ -42,12 +40,12 @@ module Libis
           converters
         end
 
-        def Repository.get_converter_chain(src_type, tgt_type, operations = {})
+        def self.get_converter_chain(src_type, tgt_type, operations = {})
           instance.get_converter_chain src_type, tgt_type, operations
         end
 
         def get_converter_chain(src_type, tgt_type, operations = {})
-          msg = "conversion from #{src_type.to_s} to #{tgt_type.to_s}"
+          msg = "conversion from #{src_type} to #{tgt_type}"
           chain_list = find_chains src_type, tgt_type, operations
           # if chain_list.length > 1
           #   warn "Found more than one conversion chain for #{msg}. Picking the first one."
@@ -70,7 +68,6 @@ module Libis
         end
 
         def build_chains(chain)
-
           found = []
           chains = [chain]
 
@@ -81,18 +78,15 @@ module Libis
               new_chains += chains.map { |c| c.append(converter) }.flatten
             end
 
-            found = new_chains.select { |c| c.valid?}
+            found = new_chains.select(&:valid?)
             return found unless found.empty?
 
             chains = new_chains
           end
 
           found
-
         end
-
       end
-
     end
   end
 end

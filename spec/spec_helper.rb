@@ -1,20 +1,26 @@
-require "coveralls"
+# frozen_string_literal: true
+
+require 'coveralls'
 Coveralls.wear!
 
-require "bundler/setup"
+require 'bundler/setup'
 Bundler.setup
 
-require "rspec"
-require "libis-format"
-require "libis-tools"
+require 'rspec'
+require 'libis-format'
+require 'libis-tools'
 
-require "chromaprint"
+require 'chromaprint'
 
 def data_dir
-  @data_dir ||= (ENV["DATA_DIR"] || File.join(File.absolute_path(File.dirname(__FILE__)), "data"))
+  @data_dir ||= (ENV['DATA_DIR'] || File.join(File.absolute_path(File.dirname(__FILE__)), 'data'))
 end
 
-Libis::Format::Config << ENV["CONFIG_FILE"] if ENV["CONFIG_FILE"]
+def work_dir
+  @work_dir ||= File.absolute_path(File.join(data_dir, '..', 'work'))
+end
+
+Libis::Format::Config << ENV['CONFIG_FILE'] if ENV['CONFIG_FILE']
 
 RSpec::Matchers.define :sound_like do |exp_file, threshold, rate, channels|
   match do |tgt_file|

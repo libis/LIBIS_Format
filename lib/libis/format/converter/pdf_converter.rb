@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 require_relative 'base'
 
@@ -11,20 +11,19 @@ require 'libis/format/tool/pdf_optimizer'
 module Libis
   module Format
     module Converter
-
       class PdfConverter < Libis::Format::Converter::Base
-
         def self.input_types
           [:PDF]
         end
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format)
-          [:PDF, :PDFA]
+
+          %i[PDF PDFA]
         end
 
         def pdf_convert(_)
-          #force usage of this converter
+          # force usage of this converter
         end
 
         # Set metadata for Pdf file
@@ -40,7 +39,8 @@ module Libis
         def metadata(values = {})
           values.key_strings_to_symbols!
           values.each do |k, v|
-            next unless [:title, :author, :creator, :keywords, :subject].include?(k)
+            next unless %i[title author creator keywords subject].include?(k)
+
             @options["md_#{k}"] = v
           end
         end
@@ -59,7 +59,8 @@ module Libis
         #     - rotation: rotation of the watermark text (in degrees; integer number)
         #     - size: font size of the watermark text
         #     - opacity: opacity of the watermark (fraction 0.0 - 1.0)
-        #     - gap: size of the gap between watermark instances. Integer value is absolute size in points (1/72 inch). Fractions are percentage of widht/height.
+        #     - gap: size of the gap between watermark instances. Integer value is absolute size in points (1/72 inch).
+        #            Fractions are percentage of widht/height.
         # If both options are given, the file will be used as-is if it exists and is a valid image file. Otherwise the
         # file will be created or overwritten with a newly created watermark image.
         #
@@ -96,7 +97,7 @@ module Libis
         #
         # @param [Integer] setting quality setting. [0-4]
         def optimize(setting = 1)
-          @options['optimize'] = %w(screen ebook default printer prepress)[setting] if (0..4) === setting
+          @options['optimize'] = %w[screen ebook default printer prepress][setting] if (0..4).include?(setting)
         end
 
         def convert(source, target, format, opts = {})
@@ -107,31 +108,29 @@ module Libis
           if (quality = @options.delete('optimize'))
             result = optimize_pdf(source, target, quality)
             return nil unless result
+
             source = result
           end
 
           unless @options.empty?
             result = convert_pdf(source, target)
             return nil unless result
+
             source = result
           end
 
-          if format == :PDFA and source
-            result = pdf_to_pdfa(source, target)
-          end
+          result = pdf_to_pdfa(source, target) if (format == :PDFA) && source
 
-          { 
+          {
             files: [result],
             converter: self.class.name
           }
-
         end
 
         def optimize_pdf(source, target, quality)
-
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfOptimizer.run(source, tmpname, quality)
-            unless result[:status] == 0
+            unless (result[:status]).zero?
               error("Pdf optimization encountered errors:\n%s", (result[:err] + result[:out]).join("\n"))
               next nil
             end
@@ -140,16 +139,16 @@ module Libis
         end
 
         def convert_pdf(source, target)
-
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfCopy.run(
-                source, tmpname,
-                @options.map {|k, v|
-                  if v.nil?
-                    nil
-                  else
-                    ["--#{k}", (v.is_a?(Array) ? v : v.to_s)]
-                  end}.flatten
+              source, tmpname,
+              @options.map do |k, v|
+                if v.nil?
+                  nil
+                else
+                  ["--#{k}", (v.is_a?(Array) ? v : v.to_s)]
+                end
+              end.flatten
             )
             unless result[:err].empty?
               error("Pdf conversion encountered errors:\n%s", result[:err].join(join("\n")))
@@ -157,11 +156,9 @@ module Libis
             end
             tmpname
           end
-
         end
 
         def pdf_to_pdfa(source, target)
-
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfToPdfa.run source, tmpname
 
@@ -177,11 +174,8 @@ module Libis
             end
             tmpname
           end
-
         end
-
       end
-
     end
   end
 end

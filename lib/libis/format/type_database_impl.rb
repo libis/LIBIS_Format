@@ -1,21 +1,22 @@
-# coding: utf-8
+# frozen_string_literal: true
 
 require 'singleton'
 require 'yaml'
+require 'csv'
 
 require 'libis/tools/logger'
 require 'libis/tools/extend/hash'
 require 'libis/tools/extend/string'
+require 'libis/tools/extend/symbol'
 
 module Libis
   module Format
-
     class TypeDatabaseImpl
       include Singleton
       include ::Libis::Tools::Logger
 
-      def typeinfo(t)
-        @types[t.to_sym] || {}
+      def typeinfo(ftype)
+        @types[ftype.to_sym] || {}
       end
 
       def group_types(group)
@@ -26,52 +27,64 @@ module Libis
 
       def puid_infos(puid)
         @types.select do |_, v|
-          v[:PUID].include? puid rescue false
+          v[:PUID].include? puid
+        rescue StandardError
+          false
         end.values
       end
 
       def puid_types(puid)
         @types.select do |_, v|
-          v[:PUID].include? puid rescue false
+          v[:PUID].include? puid
+        rescue StandardError
+          false
         end.keys
       end
 
       def mime_infos(mime)
         @types.select do |_, v|
-          v[:MIME].include? mime rescue false
+          v[:MIME].include? mime
+        rescue StandardError
+          false
         end.values
       end
 
       def mime_types(mime)
         @types.select do |_, v|
-          v[:MIME].include? mime rescue false
+          v[:MIME].include? mime
+        rescue StandardError
+          false
         end.keys
       end
 
       def ext_infos(ext)
-        ext = ext.gsub /^\./, ''
+        ext = ext.gsub(/^\./, '')
         @types.select do |_, v|
-          v[:EXTENSIONS].include?(ext) rescue false
+          v[:EXTENSIONS].include?(ext)
+        rescue StandardError
+          false
         end.values
       end
 
       def ext_types(ext)
-        ext = ext.gsub /^\./, ''
+        ext = ext.gsub(/^\./, '')
         @types.select do |_, v|
-          v[:EXTENSIONS].include?(ext) rescue false
+          v[:EXTENSIONS].include?(ext)
+        rescue StandardError
+          false
         end.keys
       end
 
       def puid_typeinfo(puid)
         @types.each do |_, v|
-          return v if v[:PUID] and v[:PUID].include?(puid)
+          return v if v[:PUID]&.include?(puid)
         end
         nil
       end
 
       def known_mime?(mime)
         @types.each do |_, v|
-          return true if v[:MIME].include? mime
+          return true if v[:MIME]&.include? mime
         end
         false
       end
@@ -89,8 +102,9 @@ module Libis
           end
         end
       end
+
       def load_types(file_or_hash = {}, append = true)
-        hash = file_or_hash.is_a?(Hash) ? file_or_hash : YAML::load_file(file_or_hash)
+        hash = file_or_hash.is_a?(Hash) ? file_or_hash : YAML.load_file(file_or_hash)
         # noinspection RubyResolve
         hash.each do |group, type_info|
           type_info.each do |type_name, info|
@@ -98,12 +112,20 @@ module Libis
             info.symbolize_keys!
             info[:TYPE] = type_key
             info[:GROUP] = group.to_sym
-            info[:MIME] = info[:MIME].strip.split(/[\s,]+/).map(&:strip) rescue []
-            info[:EXTENSIONS] = info[:EXTENSIONS].strip.split(/[\s,]+/).map { |v| v.strip } rescue []
-            info[:PUID] = info[:PUID].strip.split(/[\s,]+/).map { |v| v.strip } if info[:PUID]
-            if @types.has_key?(type_key)
-              warn 'Type %s already defined; merging with info from %s.', type_name.to_s, file_or_hash
-              info.merge!(@types[type_key]) do |_,v_new,v_old|
+            info[:MIME] = begin
+              info[:MIME].strip.split(/[\s,]+/).map(&:strip)
+            rescue StandardError
+              []
+            end
+            info[:EXTENSIONS] = begin
+              info[:EXTENSIONS].strip.split(/[\s,]+/).map(&:strip)
+            rescue StandardError
+              []
+            end
+            info[:PUID] = info[:PUID].strip.split(/[\s,]+/).map(&:strip) if info[:PUID]
+            if @types.key?(type_key)
+              warn 'Type %s already defined; merging with info from %s.', type_name, file_or_hash
+              info.merge!(@types[type_key]) do |_, v_new, v_old|
                 case v_old
                 when Array
                   append ? v_old + v_new : v_new + v_old
@@ -122,12 +144,10 @@ module Libis
       protected
 
       def initialize
-        @types = Hash.new
+        @types = {}
         type_database = Libis::Format::Config[:type_database]
         load_types(type_database)
       end
-
     end
-
   end
 end

@@ -6,7 +6,7 @@ TESTMEDIUM:
     EXTENSIONS: dat data
 
   TESTSPEC:
-    NEW: Test specification format
+    NAME: Test specification format
     MIME: test/spec application/test/spec
     PUID: test-fmt/002 spec-fmt/102
     EXTENSIONS: spc,spec

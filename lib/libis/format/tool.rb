@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 # code utf-8
 
 module Libis
   module Format
     module Tool
-
       autoload :Droid, 'libis/format/tool/droid'
       autoload :ExtensionIdentification, 'libis/format/tool/extension_identification'
       autoload :Fido, 'libis/format/tool/fido'
@@ -19,7 +20,6 @@ module Libis
       autoload :PdfToPdfa, 'libis/format/tool/pdf_to_pdfa'
       autoload :PdfaValidator, 'libis/format/tool/pdfa_validator'
       autoload :MsgToPdf, 'libis/format/tool/msg_to_pdf'
-
     end
   end
 end

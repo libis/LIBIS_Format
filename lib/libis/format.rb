@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'libis/format/version'
 
 module Libis
@@ -13,6 +15,5 @@ module Libis
     ROOT_DIR = File.absolute_path(File.join(File.dirname(__FILE__), '..', '..'))
     DATA_DIR = File.join(ROOT_DIR, 'data')
     TOOL_DIR = File.join(ROOT_DIR, 'tools')
-
   end
 end
