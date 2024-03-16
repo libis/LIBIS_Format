@@ -213,20 +213,20 @@ module Libis
           @options[:watermark_opacity] ||= 0.5
           if @options[:watermark_image]
             opts[:filter] << '-i' << @options[:watermark_image] << '-filter_complex'
-            opts[:filter] << format('[1:v]format=argb,colorchannelmixer=aa=%f[wm];[0:v][wm]overlay=%s',
-                                    @options[:watermark_opacity], watermark_position_text)
+            opts[:filter] << Kernel.format('[1:v]format=argb,colorchannelmixer=aa=%f[wm];[0:v][wm]overlay=%s',
+                                           @options[:watermark_opacity], watermark_position_text)
           elsif @options[:watermark_text]
             @options[:watermark_text_size] ||= 10
             @options[:watermark_text_color] ||= 'white'
             @options[:watermark_text_shadow_color] ||= 'black'
             @options[:watermark_text_shadow_offset] ||= 1
-            filter_text = format("drawtext=text='%s':%s:fontfile=%s:fontsize=%d:fontcolor=%s@%f",
-                                 @options[:watermark_text], watermark_position_text(true), Config[:watermark_font],
-                                 @options[:watermark_text_size], @options[:watermark_text_color], @options[:watermark_opacity])
+            filter_text = Kernel.format("drawtext=text='%s':%s:fontfile=%s:fontsize=%d:fontcolor=%s@%f",
+                                        @options[:watermark_text], watermark_position_text(true), Config[:watermark_font],
+                                        @options[:watermark_text_size], @options[:watermark_text_color], @options[:watermark_opacity])
             if (@options[:watermark_text_shadow_offset]).positive?
-              filter_text += format(':shadowcolor=%s@%f:shadowx=%d:shadowy=%d',
-                                    @options[:watermark_text_shadow_color], @options[:watermark_opacity],
-                                    @options[:watermark_text_shadow_offset], @options[:watermark_text_shadow_offset])
+              filter_text += Kernel.format(':shadowcolor=%s@%f:shadowx=%d:shadowy=%d',
+                                           @options[:watermark_text_shadow_color], @options[:watermark_opacity],
+                                           @options[:watermark_text_shadow_offset], @options[:watermark_text_shadow_offset])
             end
             opts[:filter] << '-vf' << filter_text
           end
