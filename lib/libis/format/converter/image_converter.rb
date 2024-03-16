@@ -13,6 +13,7 @@ MiniMagick.configure do |config|
   config.validate_on_create = false
   config.validate_on_write = false
   config.whiny = false
+  config.tmpdir = Libis::Format::Config[:tempdir] || Dir.tmpdir
 end
 
 module Libis
