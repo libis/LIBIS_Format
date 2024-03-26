@@ -90,7 +90,7 @@ module Libis
       end
 
       def groups
-        @types.values.map(&:dig.call(:GROUP)).uniq
+        @types.values.map(&:dig.with(:GROUP)).uniq
       end
 
       def export_csv(filename, **options)
