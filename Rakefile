@@ -12,7 +12,7 @@ task :default => :spec
 require 'github_changelog_generator/task'
 GitHubChangelogGenerator::RakeTask.new :changelog do |config|
   config.user = 'libis'
-  config.project = 'LIBIS_Ingester'
+  config.project = 'LIBIS_Format'
   config.token = ENV['CHANGELOG_GITHUB_TOKEN']
   config.date_format = '%d/%m/%Y'
   config.unreleased = true
