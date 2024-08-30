@@ -3,7 +3,7 @@
 require_relative 'base'
 
 require 'libis/tools/extend/hash'
-require 'libis/format/tool/pdf_copy'
+require 'libis/format/tool/pdf_tool'
 require 'libis/format/tool/pdf_to_pdfa'
 require 'libis/format/tool/pdfa_validator'
 require 'libis/format/tool/pdf_optimizer'
@@ -40,15 +40,14 @@ module Libis
           values.key_strings_to_symbols!
           values.each do |k, v|
             next unless %i[title author creator keywords subject].include?(k)
-
-            @options["md_#{k}"] = v
+            (@options[:metadata] ||= {})[k] = v
           end
         end
 
         # Select a partial list of pages
         # @param [String] selection as described in com.itextpdf.text.pdf.SequenceList: [!][o][odd][e][even]start-end
         def range(selection)
-          @options[:ranges] = selection
+          @options[:select] = {range: [selection].flatten.compact.join(',')}
         end
 
         # Create or use a watermark image.
@@ -56,6 +55,7 @@ module Libis
         # The watermark options are (use symbols):
         #     - text: text to create a watermark from
         #     - file: watermark image to use
+        #     - image: same as above
         #     - rotation: rotation of the watermark text (in degrees; integer number)
         #     - size: font size of the watermark text
         #     - opacity: opacity of the watermark (fraction 0.0 - 1.0)
@@ -70,16 +70,56 @@ module Libis
         # @param [Hash] options Hash of options for watermark creation.
         def watermark(options = {})
           options.key_strings_to_symbols!
-          if options[:file] && File.exist?(options[:file])
-            @options['wm_image'] = options[:file]
-          else
-            @options['wm_text'] = (options[:text] || '© LIBIS').split('\n')
-            @options['wm_text_rotation'] = options[:rotation] if options[:rotation]
-            @options['wm_font_size'] = options[:size] if options[:size]
+          if options[:file] || options[:image]
+            watermark_image(options)
+          elsif options[:text]
+            watermark_text(options)
+          elsif options[:banner]
+            watermark_banner(options)
           end
-          @options['wm_opacity'] = options[:opacity] || '0.3'
-          @options['wm_gap_ratio'] = options[:gap] if options[:gap].to_s =~ /^\s*(0+\.\d+|1\.0+)\s*$/
-          @options['wm_gap_size'] = options[:gap] if options[:gap].to_s =~ /^\s*\d+\s*$/
+        end
+
+        def watermark_image(options = {})
+          options.key_strings_to_symbols!
+          @options[:watermark] = {command: 'image'}
+          @options[:watermark][:data] = options[:file] || options[:image]
+          @options[:watermark][:opacity] = options[:opacity] || '0.3'
+
+        end
+
+        def watermark_text(options = {})
+          options.key_strings_to_symbols!
+          @options[:watermark] = {command: 'text'}
+          @options[:watermark][:data] = (options[:text] || '© LIBIS').split('\n')
+          @options[:watermark][:rotation] = options[:rotation] if options[:rotation]
+          @options[:watermark][:size] = options[:size] if options[:size]
+          @options[:watermark][:gap] = options[:gap] if options[:gap].to_s =~ /^\s*\d+\s*$/
+          @options[:watermark][:padding] = options[:gap] if options[:gap].to_s =~ /^\s*(0+\.\d+|1\.0+)\s*$/
+          @options[:watermark][:padding] = options[:padding] if options[:padding]
+          @options[:watermark][:opacity] = options[:opacity] || '0.3'
+        end
+
+        # Create a vertical banner to the right side of each page
+        #
+        # The banner options are:
+        # - banner: text to put in the banner
+        # - add_filename: append filename to the text (use any value to enable)
+        # - fontsize: size of the font (in points)
+        # - width: width of the banner
+        # - (background|text)_color_(red|green|blue): color components of background and text
+        def watermark_banner(options = {})
+          options.key_strings_to_symbols!
+          @options[:watermark] = {command: 'banner'}
+          @options[:watermark][:data] = (options[:banner] || '© LIBIS')
+          @options[:watermark][:add_filename] = !!options[:add_filename]
+          @options[:watermark][:size] = options[:fontsize] if options[:fontsize]
+          @options[:watermark][:width] = options[:width] if options[:width]
+          @options[:watermark][:background_red] = options[:background_color_red] if options[:background_color_red]
+          @options[:watermark][:background_green] = options[:background_color_green] if options[:background_color_green]
+          @options[:watermark][:background_blue] = options[:background_color_blue] if options[:background_color_blue]
+          @options[:watermark][:text_red] = options[:text_color_red] if options[:text_color_red]
+          @options[:watermark][:text_green] = options[:text_color_green] if options[:text_color_green]
+          @options[:watermark][:text_blue] = options[:text_color_blue] if options[:text_color_blue]
         end
 
         # Optimize the PDF
@@ -89,7 +129,7 @@ module Libis
         #
         # - 0 : lowest quality (Acrobat Distiller 'Screen Optimized' equivalent)
         # - 1 : medium quality (Acrobat Distiller 'eBook' equivalent)
-        # - 2 : good quality
+        # - 2 : good quality (Acrobat Distiller 'Default' equivalent)
         # - 3 : high quality (Acrobat Distiller 'Print Optimized' equivalent)
         # - 4 : highest quality (Acrobat Distiller 'Prepress Optimized' equivalent)
         #
@@ -97,7 +137,7 @@ module Libis
         #
         # @param [Integer] setting quality setting. [0-4]
         def optimize(setting = 1)
-          @options['optimize'] = %w[screen ebook default printer prepress][setting] if (0..4).include?(setting)
+          @options[:optimize] = %w[screen ebook default printer prepress][setting] if (0..4).include?(setting)
         end
 
         def convert(source, target, format, opts = {})
@@ -105,21 +145,19 @@ module Libis
 
           result = nil
 
-          if (quality = @options.delete('optimize'))
-            result = optimize_pdf(source, target, quality)
-            return nil unless result
-
-            source = result
-          end
-
           unless @options.empty?
             result = convert_pdf(source, target)
-            return nil unless result
-
             source = result
           end
 
-          result = pdf_to_pdfa(source, target) if (format == :PDFA) && source
+          if source && (quality = @options.delete(:optimize))
+            result = optimize_pdf(source, target, quality)
+            source = result
+          end
+
+          if source && (format == :PDFA)
+            result = pdf_to_pdfa(source, target)
+          end
 
           {
             files: [result],
@@ -127,32 +165,81 @@ module Libis
           }
         end
 
+        protected
+
         def optimize_pdf(source, target, quality)
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfOptimizer.run(source, tmpname, quality)
-            unless (result[:status]).zero?
+            unless result[:err].empty?
               error("Pdf optimization encountered errors:\n%s", (result[:err] + result[:out]).join("\n"))
-              next nil
+              return nil
             end
             tmpname
           end
         end
 
         def convert_pdf(source, target)
+          result = source
+          result = add_watermark(result, target, @options[:watermark]) if @options[:watermark]
+          result = add_metadata(result, target, @options[:metadata]) if @options[:metadata]
+          result = select_range(result, target, @options[:select]) if @options[:select]
+          return result
+        end
+
+        def options_to_args(options)
+          options.map do |k, v|
+            key = "--#{k.to_s.tr_s('_', '-')}"
+            value = v
+            case value
+            when TrueClass
+              value = nil
+            when FalseClass
+              value = key = nil
+            when Array
+              value = value.map(&:to_s)
+            else
+              value = v.to_s
+            end
+            [key, value]
+          end.flatten.compact
+        end
+
+        def add_watermark(source, target, options)
+          command = options.delete(:command)
+          data = [options.delete(:data)].flatten.compact
+          args = data + options_to_args(options)
+
           using_temp(target) do |tmpname|
-            result = Libis::Format::Tool::PdfCopy.run(
-              source, tmpname,
-              @options.map do |k, v|
-                if v.nil?
-                  nil
-                else
-                  ["--#{k}", (v.is_a?(Array) ? v : v.to_s)]
-                end
-              end.flatten
-            )
+            result = Libis::Format::Tool::PdfTool.run(['watermark', command], source, tmpname, *args)
             unless result[:err].empty?
-              error("Pdf conversion encountered errors:\n%s", result[:err].join(join("\n")))
-              next nil
+              error("Pdf watermarking encountered errors:\n%s", result[:err].join(join("\n")))
+              return nil
+            end
+            tmpname
+          end
+        end
+
+        def add_metadata(source, target, options)
+          args = options_to_args(options)
+
+          using_temp(target) do |tmpname|
+            result = Libis::Format::Tool::PdfTool.run('metadata', source, tmpname, *args)
+            unless result[:err].empty?
+              error("Pdf metadata encountered errors:\n%s", result[:err].join(join("\n")))
+              return nil
+            end
+            tmpname
+          end
+        end
+
+        def select_range(source, target, options)
+          args = options_to_args(options)
+
+          using_temp(target) do |tmpname|
+            result = Libis::Format::Tool::PdfTool.run('select', source, tmpname, *args)
+            unless result[:err].empty?
+              error("Pdf select encountered errors:\n%s", result[:err].join(join("\n")))
+              return nil
             end
             tmpname
           end
@@ -162,14 +249,14 @@ module Libis
           using_temp(target) do |tmpname|
             result = Libis::Format::Tool::PdfToPdfa.run source, tmpname
 
-            if result[:command][:status] != 0
-              error("Pdf/A conversion encountered errors:\n%s", (result[:command][:out] + result[:command][:err]).join("\n"))
-              next nil
+            unless result[:status].zero?
+              error("Pdf/A conversion encountered errors:\n%s", (result[:out] + result[:err]).join("\n"))
+              return nil
             else
               r = Libis::Format::Tool::PdfaValidator.run tmpname
               if r[:status] != 0
                 error "Pdf/A file failed to validate with following errors:\n%s", (r[:err] || r[:out] || []).join("\n")
-                next nil
+                return nil
               end
             end
             tmpname

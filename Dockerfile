@@ -38,10 +38,6 @@ RUN apt-get update -qq \
  && truncate -s 0 /var/log/*log \
  && fc-cache
 
-# Select java version
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-RUN update-alternatives --set java ${JAVA_HOME}/jre/bin/java
-
 # Install fido
 ARG FIDO_VERSION=1.6.1
 RUN wget -q https://github.com/openpreserve/fido/archive/refs/tags/v${FIDO_VERSION}.zip \
@@ -52,7 +48,7 @@ RUN wget -q https://github.com/openpreserve/fido/archive/refs/tags/v${FIDO_VERSI
   && rm -fr fido-${FIDO_VERSION}
 
 # Install droid
-ARG DROID_VERSION=6.7.0
+ARG DROID_VERSION=6.8.0
 RUN wget -q https://github.com/digital-preservation/droid/releases/download/droid-${DROID_VERSION}/droid-binary-${DROID_VERSION}-bin.zip \
   && unzip -qd /opt/droid droid-binary-${DROID_VERSION}-bin.zip \
     && chmod 755 /opt/droid/droid.sh \

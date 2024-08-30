@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'libis-format'
+require 'libis-tools'
+
+::Libis::Tools::Config.logger.level = :WARN
+
+command = ARGV.shift
+command = command.split('_')
+source = ARGV.shift
+target = ARGV.shift
+options = ARGV
+
+::Libis::Format::Tool::PdfTool.run command, source, target, *options

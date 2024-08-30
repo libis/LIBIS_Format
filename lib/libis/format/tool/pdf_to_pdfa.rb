@@ -64,15 +64,11 @@ module Libis
             kill_after: timeout * 2
           )
 
-          raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
-          raise "#{self.class} failed with error #{result[:status]}: \n#{(result[:out] + result[:err]).join("\n")}" if result[:status] != 0
+          result[:err] << "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
 
           FileUtils.rm [icc_file, def_filename].compact, force: true
 
-          {
-            command: result,
-            files: [target]
-          }
+          result
         end
 
         private

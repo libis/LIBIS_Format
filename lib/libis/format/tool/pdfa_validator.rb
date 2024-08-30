@@ -38,8 +38,7 @@ module Libis
               kill_after: timeout * 2
             )
 
-            raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
-            raise "#{self.class} errors: #{result[:err].join("\n")}" unless (result[:status]).zero? && result[:err].empty?
+            result[:err] << "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
 
             Dir.chdir(previous_wd)
 
@@ -57,7 +56,7 @@ module Libis
               kill_after: timeout * 2
             )
 
-            raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
+            result[:err] << "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
 
           end
           result

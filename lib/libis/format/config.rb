@@ -20,7 +20,7 @@ module Libis
     Config[:ffmpeg_cmd] = 'ffmpeg'
     Config[:fido_formats] = [File.join(Libis::Format::DATA_DIR, 'lias_formats.xml')]
     Config[:pdf_tool] = File.join(Libis::Format::TOOL_DIR, 'PdfTool.jar')
-    Config[:preflight_jar] = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-2.0.13.jar')
+    Config[:preflight_jar] = File.join(Libis::Format::TOOL_DIR, 'pdfbox', 'preflight-app-3.0.3.jar')
     Config[:wkhtmltopdf] = 'wkhtmltopdf'
     Config[:xml_validations] = [['archive/ead', File.join(Libis::Format::DATA_DIR, 'ead.xsd')]]
     Config[:type_database] = File.join(Libis::Format::DATA_DIR, 'types.yml')
@@ -35,10 +35,8 @@ module Libis
       identification_tool: 5 * 60,
       office_to_pdf: 5 * 60,
       email2pdf: 5 * 60,
-      pdf_copy: 5 * 60,
-      pdf_merge: 5 * 60,
+      pdf_tool: 5 * 60,
       pdf_optimizer: 5 * 60,
-      pdf_split: 5 * 60,
       pdf_to_pdfa: 5 * 60,
       pdfa_validator: 5 * 60
     }
