@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.3.3](https://github.com/libis/LIBIS_Format/tree/v1.3.3) (06/09/2024)
+
+[Full Changelog](https://github.com/libis/LIBIS_Format/compare/v...v1.3.3)
+
+## [v](https://github.com/libis/LIBIS_Format/tree/v) (06/09/2024)
+
+[Full Changelog](https://github.com/libis/LIBIS_Format/compare/v1.3.2...v)
+
 ## [v1.3.2](https://github.com/libis/LIBIS_Format/tree/v1.3.2) (30/08/2024)
 
 [Full Changelog](https://github.com/libis/LIBIS_Format/compare/v1.3.0...v1.3.2)
