@@ -24,3 +24,16 @@ run:
 
 shell:
 	docker run --rm -ti $(MOUNTS) -u 0 $(IMAGE) bash
+
+VERSION := $(shell ruby -e 'require_relative "lib/libis/format/version"; puts Libis::Format::VERSION')
+
+version:
+	echo $(VERSION)
+
+release:
+	git commit -am "Version bump: $(VERSION)" || true
+	git tag --force "v$(VERSION)"
+	git push --tags
+	rake changelog
+	git commit -a -m "Changelog update"
+	git push
