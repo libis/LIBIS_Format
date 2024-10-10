@@ -37,3 +37,4 @@ release:
 	rake changelog
 	git commit -a -m "Changelog update"
 	git push
+	rake release
