@@ -33,7 +33,7 @@ version:
 release:
 	git commit -am "Version bump: $(VERSION)" || true
 	git tag --force "v$(VERSION)"
-	git push --tags
+	git push --force --tags
 	bundle exec rake changelog
 	git commit -a -m "Changelog update"
 	git push
