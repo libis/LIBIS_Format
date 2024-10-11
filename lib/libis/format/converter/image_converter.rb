@@ -169,13 +169,13 @@ module Libis
           @options[:watermark][:rotation] = 360 - (options[:rotation] || 30).to_i
         end
 
-        # Create a vertical banner to the right side of each page
+        # Create a vertical banner to the right side of the image
         #
         # The banner options are:
         # - banner: text to put in the banner
         # - add_filename: append filename to the text (use any value to enable)
         # - fontsize: size of the font (in points) (default: autoscale)
-        # - width: width of the banner (default: 3% of image height). Not including a border of 30% of the banner width
+        # - width: width of the banner (default: 3% of image height). Not including a border of 1/3 of the banner width
         # - background_color_(red|green|blue): color components of background (default: rgb(84,190,233))
         # - text_color_(red|green|blue): color components of background (default: rgb(255,255,255))
         def watermark_banner(options = {})
