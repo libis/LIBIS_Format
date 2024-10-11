@@ -122,6 +122,70 @@ describe 'Converters' do
       expect(File.exist?(tgt_file)).to be_truthy
       FileUtils.rm tgt_file, force: true
     end
+
+    context 'adds atermark' do
+
+      it 'with text' do
+        src_file = File.join(data_dir, 'test.png')
+        tgt_file = File.join(work_dir, 'test_wm_text.jpg')
+        ref_file = File.join(data_dir, 'image', 'test_wm_text.jpg')
+        FileUtils.mkdir_p File.dirname(tgt_file)
+        converter.watermark text: 'LIBIS'
+        result = converter.convert(src_file, tgt_file, :JPG)
+        expect(result[:files].first).to eq tgt_file
+        expect(File.exist?(tgt_file)).to be_truthy
+        compare = MiniMagick::Tool::Compare.new
+        compare << ref_file << tgt_file
+        compare.metric << 'AE'
+        compare.fuzz << '100%'
+        compare << diff_file
+        compare.call do |_stdin, _stdout, status|
+          expect(status).to be 0
+        end
+        FileUtils.rm tgt_file, force: true
+      end
+
+      it 'with image' do
+        src_file = File.join(data_dir, 'test.png')
+        tgt_file = File.join(work_dir, 'test_wm_image.jpg')
+        ref_file = File.join(data_dir, 'image', 'test_wm_image.jpg')
+        FileUtils.mkdir_p File.dirname(tgt_file)
+        converter.watermark image: File.join(data_dir, 'test.jpg'), rotation: 30
+        result = converter.convert(src_file, tgt_file, :JPG)
+        expect(result[:files].first).to eq tgt_file
+        expect(File.exist?(tgt_file)).to be_truthy
+        compare = MiniMagick::Tool::Compare.new
+        compare << ref_file << tgt_file
+        compare.metric << 'AE'
+        compare.fuzz << '100%'
+        compare << diff_file
+        compare.call do |_stdin, _stdout, status|
+          expect(status).to be 0
+        end
+        FileUtils.rm tgt_file, force: true
+      end
+
+      it 'with banner' do
+        src_file = File.join(data_dir, 'test.png')
+        tgt_file = File.join(work_dir, 'test_wm_banner.jpg')
+        ref_file = File.join(data_dir, 'image', 'test_wm_banner.jpg')
+        FileUtils.mkdir_p File.dirname(tgt_file)
+        converter.watermark banner: 'Test banner for: ', add_filename: true
+        result = converter.convert(src_file, tgt_file, :JPG)
+        expect(result[:files].first).to eq tgt_file
+        expect(File.exist?(tgt_file)).to be_truthy
+        compare = MiniMagick::Tool::Compare.new
+        compare << ref_file << tgt_file
+        compare.metric << 'AE'
+        compare.fuzz << '100%'
+        compare << diff_file
+        compare.call do |_stdin, _stdout, status|
+          expect(status).to be 0
+        end
+        FileUtils.rm tgt_file, force: true
+      end
+
+    end
   end
 
   context 'JP2 Converter', unless: `which "#{Libis::Format::Config[:j2k_cmd]}"` do
