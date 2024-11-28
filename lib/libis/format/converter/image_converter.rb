@@ -86,20 +86,13 @@ module Libis
 
         # Create or use a watermark image.
         #
-        # The watermark options are (use symbols):
+        # The main watermark options are (use symbols):
         #     - text: text to create a watermark from
         #     - file: watermark image to use
         #     - image: same as above
-        #     - rotation: rotation of the watermark text (in degrees; integer number)
-        #     - size: font size of the watermark text
-        #     - opacity: opacity of the watermark (fraction 0.0 - 1.0)
-        #     - gap: size of the gap between watermark instances. Integer value is absolute size in points (1/72 inch).
-        #            Fractions are percentage of widht/height.
-        # If both options are given, the file will be used as-is if it exists and is a valid image file. Otherwise the
-        # file will be created or overwritten with a newly created watermark image.
+        #     - banner: use side banner
         #
-        # The created watermark file will be a PNG image with transparent background containing the supplied text
-        # slanted by 30 degrees counter-clockwise.
+        # For each of these options above a dedicated option handler will be called
         #
         # @param [Hash] options Hash of options for watermark creation.
 
@@ -261,6 +254,8 @@ module Libis
             wm = @options.delete(:watermark)
             if wm
               image_info = MiniMagick::Image::Info.new(source) { |b| b.quiet }
+              im_height = image_info['height']
+              im_width = image_info['width']
               case wm[:command]
               when 'text'
                 convert.background 'transparent'
@@ -272,7 +267,7 @@ module Libis
                 convert.trim.repage.+ # rubocop:disable Lint/Void
                 convert.bordercolor('transparent').border("#{wm[:gap]}%") if wm[:gap].positive?
                 convert.filter('Lagrange')
-                convert.resize("#{image_info['width'] / wm[:tiles]}x#{image_info['height'] / wm[:tiles]}") if wm[:tiles].positive?
+                convert.resize("#{im_width / wm[:tiles]}x#{im_height / wm[:tiles]}") if wm[:tiles].positive?
                 convert.resize("#{wm[:resize]}%") if wm[:resize]
               when 'image'
                 convert << wm[:data]
@@ -280,13 +275,13 @@ module Libis
                 convert.bordercolor('transparent').border("#{wm[:gap]}%") if wm[:gap].positive?
                 convert.rotate wm[:rotation]
                 convert.filter('Lagrange')
-                convert.resize("#{image_info['width'] / wm[:tiles]}x#{image_info['height'] / wm[:tiles]}") if wm[:tiles].positive?
+                convert.resize("#{im_width / wm[:tiles]}x#{im_height / wm[:tiles]}") if wm[:tiles].positive?
                 convert.resize("#{wm[:resize]}%") if wm[:resize]
               when 'banner'
-                banner_width = wm[:width] || [0.03 * image_info['height'], 20].max.round(0)
+                banner_width = wm[:width] || [0.03 * im_height, 20].max.round(0)
                 banner_border = banner_width / 3
                 convert.background "rgb(#{wm[:background_red]},#{wm[:background_green]},#{wm[:background_blue]})"
-                convert.size("#{image_info['height']}x#{banner_width}")
+                convert.size("#{im_height}x#{banner_width}")
                 convert.bordercolor "rgb(#{wm[:background_red]},#{wm[:background_green]},#{wm[:background_blue]})"
                 convert.border "0x#{banner_border}"
                 convert.fill "rgb(#{wm[:text_red]},#{wm[:text_green]},#{wm[:text_blue]})"
@@ -298,6 +293,9 @@ module Libis
 
               # Save watermark image to buffer
               convert.write('mpr:watermark').delete.+
+
+              # Restore canvas to source image size (workaround for IM bug when loading JP2K files)
+              convert.size("#{im_width}x#{im_height}")
             end
 
             # load source image

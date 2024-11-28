@@ -5,6 +5,80 @@ require 'spec_helper'
 require 'libis/format/converter/image_converter'
 require 'libis/format/converter/jp2_converter'
 
+RSpec.shared_examples 'an image watermark' do |source_format, target_format|
+
+  let (:src_file) { File.join(data_dir, "test.#{source_format}")}
+  let (:tgt_file) { File.join(work_dir, "test_#{source_format}_wm_#{variant}.#{target_format}") }
+  let (:ref_file) { File.join(data_dir, "image", "test_#{source_format}_wm_#{variant}.#{target_format}") }
+
+  context 'with text' do
+    let (:variant) { 'text' }
+
+    it 'watermark' do
+      FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.watermark text: 'LIBIS'
+      result = converter.convert(src_file, tgt_file, :JPG)
+      expect(result[:files].first).to eq tgt_file
+      expect(File.exist?(tgt_file)).to be_truthy
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare.fuzz << '1%'
+      compare << diff_file
+      compare.call do |_stdin, _stdout, status|
+        expect(status).to be 0
+      end
+      FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
+    end
+  end
+
+  context 'with image' do
+    let (:variant) { 'image' }
+
+    it 'watermark' do
+      FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.watermark image: File.join(data_dir, 'test.jpg'), rotation: 30
+      result = converter.convert(src_file, tgt_file, :JPG)
+      expect(result[:files].first).to eq tgt_file
+      expect(File.exist?(tgt_file)).to be_truthy
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare.fuzz << '1%'
+      compare << diff_file
+      compare.call do |_stdin, _stdout, status|
+        expect(status).to be 0
+      end
+      FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
+    end
+  end
+
+  context 'with banner' do
+    let (:variant) { 'banner' }
+
+    it 'watermark' do
+      FileUtils.mkdir_p File.dirname(tgt_file)
+      converter.watermark banner: 'Test banner for: ', add_filename: true
+      result = converter.convert(src_file, tgt_file, :JPG)
+      expect(result[:files].first).to eq tgt_file
+      expect(File.exist?(tgt_file)).to be_truthy
+      compare = MiniMagick::Tool::Compare.new
+      compare << ref_file << tgt_file
+      compare.metric << 'AE'
+      compare.fuzz << '1%'
+      compare << diff_file
+      compare.call do |_stdin, _stdout, status|
+        expect(status).to be 0
+      end
+      FileUtils.rm tgt_file, force: true
+      FileUtils.rm diff_file, force: true
+    end
+  end
+
+end
+
 describe 'Converters' do
   let(:repository) { Libis::Format::Converter::Repository }
 
@@ -123,66 +197,25 @@ describe 'Converters' do
       FileUtils.rm tgt_file, force: true
     end
 
-    context 'adds atermark' do
-
-      it 'with text' do
-        src_file = File.join(data_dir, 'test.png')
-        tgt_file = File.join(work_dir, 'test_wm_text.jpg')
-        ref_file = File.join(data_dir, 'image', 'test_wm_text.jpg')
-        FileUtils.mkdir_p File.dirname(tgt_file)
-        converter.watermark text: 'LIBIS'
-        result = converter.convert(src_file, tgt_file, :JPG)
-        expect(result[:files].first).to eq tgt_file
-        expect(File.exist?(tgt_file)).to be_truthy
-        compare = MiniMagick::Tool::Compare.new
-        compare << ref_file << tgt_file
-        compare.metric << 'AE'
-        compare.fuzz << '100%'
-        compare << diff_file
-        compare.call do |_stdin, _stdout, status|
-          expect(status).to be 0
-        end
-        FileUtils.rm tgt_file, force: true
+    context 'adds watermark' do
+      context 'from jpg' do
+        it_should_behave_like 'an image watermark', 'jpg', 'jpg'
       end
 
-      it 'with image' do
-        src_file = File.join(data_dir, 'test.png')
-        tgt_file = File.join(work_dir, 'test_wm_image.jpg')
-        ref_file = File.join(data_dir, 'image', 'test_wm_image.jpg')
-        FileUtils.mkdir_p File.dirname(tgt_file)
-        converter.watermark image: File.join(data_dir, 'test.jpg'), rotation: 30
-        result = converter.convert(src_file, tgt_file, :JPG)
-        expect(result[:files].first).to eq tgt_file
-        expect(File.exist?(tgt_file)).to be_truthy
-        compare = MiniMagick::Tool::Compare.new
-        compare << ref_file << tgt_file
-        compare.metric << 'AE'
-        compare.fuzz << '100%'
-        compare << diff_file
-        compare.call do |_stdin, _stdout, status|
-          expect(status).to be 0
-        end
-        FileUtils.rm tgt_file, force: true
+      context 'from png' do
+        it_should_behave_like 'an image watermark', 'png', 'jpg'
       end
 
-      it 'with banner' do
-        src_file = File.join(data_dir, 'test.png')
-        tgt_file = File.join(work_dir, 'test_wm_banner.jpg')
-        ref_file = File.join(data_dir, 'image', 'test_wm_banner.jpg')
-        FileUtils.mkdir_p File.dirname(tgt_file)
-        converter.watermark banner: 'Test banner for: ', add_filename: true
-        result = converter.convert(src_file, tgt_file, :JPG)
-        expect(result[:files].first).to eq tgt_file
-        expect(File.exist?(tgt_file)).to be_truthy
-        compare = MiniMagick::Tool::Compare.new
-        compare << ref_file << tgt_file
-        compare.metric << 'AE'
-        compare.fuzz << '100%'
-        compare << diff_file
-        compare.call do |_stdin, _stdout, status|
-          expect(status).to be 0
-        end
-        FileUtils.rm tgt_file, force: true
+      context 'from tiff' do
+        it_should_behave_like 'an image watermark', 'tif', 'jpg'
+      end
+
+      context 'from JPEG2000' do
+        it_should_behave_like 'an image watermark', 'jp2', 'jpg'
+      end
+
+      context 'from and to JPEG2000' do
+        it_should_behave_like 'an image watermark', 'jp2', 'jp2'
       end
 
     end
