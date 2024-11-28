@@ -67,7 +67,7 @@ describe 'Converters' do
       ].each do |source|
         it "text with default options - #{source}" do
           src_file = File.join(dir, source.to_s)
-          tgt_file = File.join(work_dir, "test.#{source}_watermark.mp4")
+          tgt_file = File.join(work_dir, "test.#{source}_watermark_text.mp4")
           FileUtils.remove tgt_file, force: true
           FileUtils.mkdir_p File.dirname(tgt_file)
           converter.watermark_text '© LIBIS Format gem test'
@@ -88,7 +88,58 @@ describe 'Converters' do
           expect(File.size(tgt_file)).to be > 2000
           FileUtils.remove tgt_file, force: true
         end
+
+        it "text with KADOC style - #{source}" do
+          src_file = File.join(dir, source.to_s)
+          tgt_file = File.join(work_dir, "test.#{source}_watermark_kadoc.mp4")
+          FileUtils.remove tgt_file, force: true
+          FileUtils.mkdir_p File.dirname(tgt_file)
+          converter.watermark_text 'KADOC-KU Leuven'
+          converter.watermark_text_add_filename 1
+          converter.watermark_text_size 'w/60'
+          converter.watermark_text_color 'black'
+          converter.watermark_opacity 0.5
+          converter.watermark_position 'top_left'
+          converter.watermark_offset_x '12'
+          converter.watermark_offset_y '12'
+          converter.watermark_text_shadow_offset 0
+          converter.watermark_text_box 1
+          converter.watermark_text_box_color '0x9FB6CD'
+          converter.watermark_text_box_width '12'
+          converter.watermark_blending 0.7
+          result = converter.convert(src_file, tgt_file, :MP4)
+          expect(result[:files].first).to eq tgt_file
+          expect(File.size(tgt_file)).to be > 2000
+          FileUtils.remove tgt_file, force: true
+        end
+
       end
     end
+
+    context 'thumbnail' do
+      # noinspection RubyLiteralArrayInspection
+      [
+        'SampleVideo_176x144_2mb.3gp',
+        'SampleVideo_320x240_2mb.3gp',
+        'SampleVideo_360x240_2mb.flv',
+        'SampleVideo_360x240_2mb.mkv',
+        'SampleVideo_1080x720_2mb.mp4'
+      ].each do |source|
+        it "default - #{source}" do
+          src_file = File.join(dir, source.to_s)
+          tgt_file = File.join(work_dir, "test.#{source}_thumbnail.gif")
+          FileUtils.remove tgt_file, force: true
+          FileUtils.mkdir_p File.dirname(tgt_file)
+          converter.start 1
+          converter.duration 5
+          converter.scale '150x150'
+          result = converter.convert(src_file, tgt_file, :MP4)
+          expect(result[:files].first).to eq tgt_file
+          expect(File.size(tgt_file)).to be > 2000
+          FileUtils.remove tgt_file, force: true
+        end
+      end
+    end
+
   end
 end

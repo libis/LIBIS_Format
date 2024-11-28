@@ -64,7 +64,7 @@ module Libis
         end
 
         def constant_rate_factor(value)
-          @options[:crf] = value.to_s
+          @options[:constant_rate_factor] = value.to_s
         end
 
         def frame_rate(value)
@@ -84,41 +84,76 @@ module Libis
           @options[:watermark_image] = file
         end
 
-        # @param [String] value text for watermark. No watermark if nil (default)
+        # @param [String] value Text for watermark. No watermark if nil (default)
         def watermark_text(value)
-          @options[:watermark_text] = value
+          @options[:watermark_text] = value.to_s
         end
 
-        # @param [Integer] value Font size for watermark text. Default: 10
+        # @param [Boolean] value Should the filename be appended to the watermark text; use any value to enable
+        def watermark_text_add_filename(value)
+          @options[:watermark_text_add_filename] = !!value
+        end
+
+        # @param [String] value Font size for watermark text. Default: 10
         # Note that the font is selected by the Config[:watermark_font] setting
         def watermark_text_size(value)
-          @options[:watermark_text_size] = value.to_i
+          @options[:watermark_text_size] = value.to_s
         end
 
         # @param [String] value Text color for the watermark text. Default: white
         def watermark_text_color(value)
-          @options[:watermark_text_color] = value
-        end
-
-        # @param [String] value Text color for the watermark text shadow. Default: black
-        def watermark_text_shadow_color(value)
-          @options[:watermark_text_shadow_color] = value
+          @options[:watermark_text_color] = value.to_s
         end
 
         # @param [Integer] value Offset of the watermark text shadow. Used for both x and y offset; default: 1
         # If the offset is set to 0, no shadow will be printed
         def watermark_text_shadow_offset(value)
-          @options[:watermark_text_offset] = value.to_i
+          @options[:watermark_text_shadow_offset] = value.to_i
+        end
+
+        # @param [String] value Text color for the watermark text shadow. Default: black
+        def watermark_text_shadow_color(value)
+          @options[:watermark_text_shadow_color] = value.to_s
+        end
+
+        # @param [Integer] value Enable/disable watermark text box. 1 to enanble, 0 to disable; default: 0
+        def watermark_text_box(value)
+          @options[:watermark_text_box] = value.to_i
+        end
+
+        # @param [String] value Color of the watermark text box; default: white
+        def watermark_text_box_color(value)
+          @options[:watermark_text_box_color] = value.to_s
+        end
+
+        # @param [String] value Border width of the watermark text box
+        def watermark_text_box_width(value)
+          @options[:watermark_text_box_width] = value.to_s
         end
 
         # @param [String] value one of 'bottom_left' (default), 'top_left', 'bottom_right', 'top_right', 'center'
         def watermark_position(value)
-          @options[:watermark_position] = value
+          @options[:watermark_position] = value.to_s
+        end
+
+        # @param [String] value offset x value for the text box. Default: 10
+        def watermark_offset_x(value)
+          @options[:watermark_offset_x] = value.to_s
+        end
+
+        # @param [String] value offset y value for the text box. Default: 10
+        def watermark_offset_y(value)
+          @options[:watermark_offset_y] = value.to_s
         end
 
         # @param [Number] value watermark opacity (0-1) with 0 = invisible and 1 = 100% opaque. Default: 0.5
         def watermark_opacity(value)
           @options[:watermark_opacity] = value.to_f
+        end
+
+        # @param [Number] value watermark blending (0-1) with 0 = invisible and 1 = 100% opaque. Default: 0.5
+        def watermark_blending(value)
+          @options[:watermark_blending] = value.to_f
         end
 
         # @param [Boolean] value If set to true automatically selects optimal format for web viewing. Default: false
@@ -214,19 +249,29 @@ module Libis
           if @options[:watermark_image]
             opts[:filter] << '-i' << @options[:watermark_image] << '-filter_complex'
             opts[:filter] << Kernel.format('[1:v]format=argb,colorchannelmixer=aa=%f[wm];[0:v][wm]overlay=%s',
-                                           @options[:watermark_opacity], watermark_position_text)
+                                           @options[:watermark_opacity], watermark_position_filter)
           elsif @options[:watermark_text]
-            @options[:watermark_text_size] ||= 10
+            wm_text = @options[:watermark_text]
+            wm_text += File.basename(source, '.*') if @options[:watermark_text_add_filename]
+            @options[:watermark_text_size] ||= '10'
             @options[:watermark_text_color] ||= 'white'
             @options[:watermark_text_shadow_color] ||= 'black'
             @options[:watermark_text_shadow_offset] ||= 1
-            filter_text = Kernel.format("drawtext=text='%s':%s:fontfile=%s:fontsize=%d:fontcolor=%s@%f",
-                                        @options[:watermark_text], watermark_position_text(true), Config[:watermark_font],
+            filter_text = Kernel.format("drawtext=text='%s':%s:fontfile=%s:fontsize=%s:fontcolor=%s@%f",
+                                        wm_text, watermark_position_filter(true), Config[:watermark_font],
                                         @options[:watermark_text_size], @options[:watermark_text_color], @options[:watermark_opacity])
-            if (@options[:watermark_text_shadow_offset]).positive?
+            if !(@options[:watermark_text_shadow_offset] == 0)
               filter_text += Kernel.format(':shadowcolor=%s@%f:shadowx=%d:shadowy=%d',
                                            @options[:watermark_text_shadow_color], @options[:watermark_opacity],
                                            @options[:watermark_text_shadow_offset], @options[:watermark_text_shadow_offset])
+            end
+            @options[:watermark_text_box] ||= 0
+            if (@options[:watermark_text_box]).positive?
+              filter_text += Kernel.format(':box=1:boxcolor=%s:boxborderw=%s',
+                                           @options[:watermark_text_box_color], @options[:watermark_text_box_width])
+            end
+            if (@options[:watermark_blending])
+              filter_text += Kernel.format(':alpha=%f', @options[:watermark_blending])
             end
             opts[:filter] << '-vf' << filter_text
           end
@@ -235,7 +280,7 @@ module Libis
           opts[:output] << '-c:v' << @options[:video_codec] if @options[:video_codec]
           opts[:output] << '-b:a' << @options[:audio_bitrate] if @options[:audio_bitrate]
           opts[:output] << '-b:v' << @options[:video_bitrate] if @options[:video_bitrate]
-          opts[:output] << '-crf' << @options[:crf] if @options[:crf]
+          opts[:output] << '-crf' << @options[:constant_rate_factor] if @options[:constant_rate_factor]
           opts[:output] << '-map_metadata:g' << '0:g' # Copy global metadata
           opts[:output] << '-map_metadata:s:a' << '0:s:a' # Copy audio metadata
           opts[:output] << '-map_metadata:s:v' << '0:s:v' # Copy video metadata
@@ -261,20 +306,22 @@ module Libis
           target
         end
 
-        def watermark_position_text(for_text = false, margin = 10)
+        def watermark_position_filter(for_text = false)
+          margin_x = @options[:watermark_offset_x] || 10
+          margin_y = @options[:watermark_offset_y] || 10
           w = for_text ? 'tw' : 'w'
           h = for_text ? 'th' : 'h'
           case @options[:watermark_position]
           when 'bottom_left'
-            "x=#{margin}:y=H-#{h}-#{margin}"
+            "x=#{margin_x}:y=H-#{h}-#{margin_y}"
           when 'top_left'
-            "x=#{margin}:y=#{margin}"
+            "x=#{margin_x}:y=#{margin_y}"
           when 'bottom_right'
-            "x=W-#{w}-#{margin}:y=H-#{h}-#{margin}"
+            "x=W-#{w}-#{margin_x}:y=H-#{h}-#{margin_y}"
           when 'top_right'
-            "x=W-#{w}-#{margin}:y=#{margin}"
+            "x=W-#{w}-#{margin_x}:y=#{margin_y}"
           else
-            "x=#{margin}:y=H-#{h}-#{margin}"
+            "x=#{margin_x}:y=H-#{h}-#{margin_y}"
           end
         end
       end
