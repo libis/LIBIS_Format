@@ -35,6 +35,6 @@ release:
 	git tag --force "v$(VERSION)"
 	git push --force --tags
 	bundle exec rake changelog
-	git commit -a -m "Changelog update"
+	git commit -a -m "Changelog update" || true
 	git push
 	bundle exec rake release
