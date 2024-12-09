@@ -53,6 +53,7 @@ module Libis
 
         def to_s
           result = @source_format.to_s
+          result << '->-'
           result << @converter_chain.map { |node| node_to_s(node) }.join('->-')
         end
 
