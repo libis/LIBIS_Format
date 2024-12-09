@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.3.5](https://github.com/libis/LIBIS_Format/tree/v1.3.5) (28/11/2024)
+## [v1.3.5](https://github.com/libis/LIBIS_Format/tree/v1.3.5) (09/12/2024)
 
 [Full Changelog](https://github.com/libis/LIBIS_Format/compare/v1.3.4...v1.3.5)
 
@@ -66,7 +66,11 @@
 
 ## [v1.1.0](https://github.com/libis/LIBIS_Format/tree/v1.1.0) (08/05/2023)
 
-[Full Changelog](https://github.com/libis/LIBIS_Format/compare/v2.0.5...v1.1.0)
+[Full Changelog](https://github.com/libis/LIBIS_Format/compare/v1.0.8...v1.1.0)
+
+## [v1.0.8](https://github.com/libis/LIBIS_Format/tree/v1.0.8) (18/04/2023)
+
+[Full Changelog](https://github.com/libis/LIBIS_Format/compare/v2.0.5...v1.0.8)
 
 ## [v2.0.5](https://github.com/libis/LIBIS_Format/tree/v2.0.5) (05/03/2021)
 
