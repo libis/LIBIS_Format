@@ -10,14 +10,15 @@ module Libis
   module Format
     module Converter
       class EmailConverter < Libis::Format::Converter::Base
+
         def self.input_types
-          [:MSG]
+          %i[MSG EML]
         end
 
         def self.output_types(format = nil)
           return [] unless input_types.include?(format)
 
-          [:PDF]
+          %i[PDF]
         end
 
         def email_convert(_)
