@@ -70,6 +70,7 @@ module Libis
 
           # noinspection RubyParenthesesAroundConditionInspection
           conversion_success = @converter_chain.each_with_index do |node, i|
+            debug "Converting with node #{node}"
             target_type = node[:output]
             converter_class = node[:converter]
             converter = converter_class.new
@@ -77,6 +78,8 @@ module Libis
             node[:operations]&.each do |operation|
               converter.send operation[:method], operation[:argument]
             end
+
+            debug "Converter: #{converter.inspect}"
 
             target = target_file
 
@@ -88,7 +91,9 @@ module Libis
 
             FileUtils.mkdir_p File.dirname(target)
 
+            debug "Target file: #{target}"
             r = converter.convert(src_file, target, target_type)
+            debug "Conversion result: #{r}"
 
             src_file = r[:files].first
             xtra_files += r[:files][1..]
@@ -99,7 +104,11 @@ module Libis
             :success
           end
 
+          debug "Final conversion result: #{conversion_success}"
+
           result[:files] = [src_file] + xtra_files
+
+          debug "Final result: #{result}"
 
           temp_files.each do |f|
             FileUtils.rm(f, force: true)

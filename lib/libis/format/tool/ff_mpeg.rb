@@ -40,7 +40,7 @@ module Libis
           )
 
           raise "#{self.class} took too long (> #{timeout} seconds) to complete" if result[:timeout]
-          raise "#{self.class} errors: #{result[:err].join("\n")}" unless (result[:status]).zero?
+          raise "#{self.class} errors: #{result[:err].join("\n")}" unless result[:status] == 0
 
           warn "FFMpeg warnings: #{(result[:err] + result[:out]).join("\n")}" unless result[:err].empty?
 
