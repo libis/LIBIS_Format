@@ -176,7 +176,7 @@ module Libis
             prefix = "#{format('%0*d', digits, i)}-"
             if (sub_msg = a.instance_variable_get(:@embedded_msg))
               subject = a.properties[:display_name] || sub_msg.subject || ''
-              file = File.join(outdir, "#{prefix}#{subject}.msg.#{target_format.to_s.downcase}")
+              file = File.join(outdir, "#{prefix}#{subject.gsub('/', '_')}.msg.#{target_format.to_s.downcase}")
               result = msg_to_pdf(sub_msg, file, target_format, pdf_options, root_msg: false)
               if (e = result[:error])
                 raise e
@@ -186,7 +186,7 @@ module Libis
             elsif a.filename
               next if used_files.include?(a.filename)
 
-              file = File.join(outdir, "#{prefix}#{a.filename}")
+              file = File.join(outdir, "#{prefix}#{a.filename.gsub('/', '_')}")
               FileUtils.mkdir_p(File.dirname(file))
               File.open(file, 'wb') { |f| a.save(f) }
               files << file
