@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = ''
   spec.license       = 'MIT'
 
-  spec.platform      = Gem::Platform::JAVA if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'
+  # spec.platform      = Gem::Platform::JAVA if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'
   spec.required_ruby_version = '>= 3.2'
 
   spec.files = `git ls-files -z`.split("\x0").select do |f|
@@ -29,12 +29,15 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'deep_dive', '~> 0.3'
   spec.add_runtime_dependency 'libis-mapi', '~> 0.3'
   spec.add_runtime_dependency 'libis-tools', '~> 1.1'
+  spec.add_runtime_dependency 'mail', '~> 2.9'
   spec.add_runtime_dependency 'mini_magick', '~> 5.0.1'
   spec.add_runtime_dependency 'naturally', '~> 2.2'
   spec.add_runtime_dependency 'new_rfc_2047', '~> 1.0'
   spec.add_runtime_dependency 'os', '~> 1.1'
   spec.add_runtime_dependency 'pdfinfo', '~> 1.4'
   spec.add_runtime_dependency 'pdfkit', '~> 0.8'
+  # spec.add_runtime_dependency 'ruby-msg', '~> 1.5.3.1'
+  spec.add_runtime_dependency 'word_wrap', '~> 1.0'
 
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'equivalent-xml'
