@@ -2,6 +2,6 @@
 
 module Libis
   module Format
-    VERSION = '1.3.7.2'
+    VERSION = '1.3.8'
   end
 end
