@@ -16,9 +16,6 @@ build:
 install:
 	docker run --rm -ti $(MOUNTS) $(IMAGE) bundle install --no-cache
 
-patch-vcard:
-	docker run --rm -ti --entrypoint /bin/bash $(MOUNTS) $(IMAGE) ./patch-vcard.sh
-
 run:
 	docker run --rm -ti $(MOUNTS) $(IMAGE)
 
