@@ -7,7 +7,6 @@ require 'pdfkit'
 require 'time'
 require 'fileutils'
 require 'pathname'
-require 'libis/format/config'
 
 module Libis
   module Format
@@ -130,11 +129,6 @@ module Libis
       IMG_CID_HTML_REGEX = /cid:([^"]*)/im
 
       class MailToPdf
-        include ::Libis::Tools::Logger
-
-        def self.installed?
-          File.exist?(Libis::Format::Config[:wkhtmltopdf])
-        end
 
         def self.run(source, target, **options)
           new.run source, target, **options
