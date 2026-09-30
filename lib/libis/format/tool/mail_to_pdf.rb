@@ -157,7 +157,7 @@ module Libis
           email = open_email(source)
 
           # Convert the email message to PDF
-          result = email_to_pdf(email, target, root_msg: true)
+          result = email_to_pdf(email, target, root_msg: true, output_format: options.fetch(:output_format, :pdf))
 
           # Close email message
           close_email(email)
@@ -167,7 +167,7 @@ module Libis
 
         protected
 
-        def email_to_pdf(msg, target, root_msg: false)
+        def email_to_pdf(msg, target, root_msg: false, output_format: :pdf)
           # Make sure the target directory exists
           outdir = File.dirname(target)
           FileUtils.mkdir_p(outdir)
@@ -192,17 +192,18 @@ module Libis
           # ----------------------
           attachments_dir = "#{target}.attachments"
 
-          files = save_attachments(attachments, attachments_dir, used_files)
+          files = save_attachments(attachments, attachments_dir, used_files, output_format: output_format)
 
           # Add attachment section to the HTML body
           body = add_attachments_to_body(body, files, attachments_dir)
 
-          # Save the HTML body as a .html file next to the PDF for debugging purposes
-          File.open("#{target}.html", 'wb') { |f| f.write(body) }
-
-          # Create PDF
-          # ----------
-          write_target_file(body, get_subject(msg), target)
+          if output_format == :html
+            # Create HTML file
+            File.open(target, 'wb') { |f| f.write(body) }
+          else
+            # Create PDF
+            write_target_file(body, get_subject(msg), target)
+          end
 
           files = [target] + files if File.exist?(target)
 
@@ -215,8 +216,8 @@ module Libis
 
           {
             command: { status: 0 },
-            files:,
-            headers:,
+            files: files,
+            headers: headers,
             warnings: @warnings
           }
         rescue StandardError => e
@@ -307,7 +308,7 @@ module Libis
           used_files
         end
 
-        def save_attachments(attachments, outdir, used_files)
+        def save_attachments(attachments, outdir, used_files, output_format: :pdf)
           files = []
 
           digits = ((attachments.count + 1) / 10) + 1
@@ -320,9 +321,9 @@ module Libis
 
             if info[:embedded_msg]
               sub_msg = info[:embedded_msg]
-              file = File.join(outdir, "#{prefix}#{info[:filename].tr('/', '_')}.msg.pdf")
+              file = File.join(outdir, "#{prefix}#{info[:filename].tr('/', '_')}.msg.#{output_format}")
 
-              result = email_to_pdf(sub_msg, file, root_msg: false)
+              result = email_to_pdf(sub_msg, file, root_msg: false, output_format: output_format)
 
               if (e = result[:error])
                 raise e
